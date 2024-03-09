@@ -12,8 +12,7 @@ erDiagram
     
     MS_CLINIC { 
         uuid id PK
-        string code "unique"
-        int pph21 
+        string code "unique" 
         decimal commissionFee 
         decimal sittingFee
         decimal medicalItemFee
@@ -30,6 +29,7 @@ erDiagram
         string role
         string status
         decimal salary
+        int taxPercentage
     }
     MS_PATIENT {
         uuid id PK
