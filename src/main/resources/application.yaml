@@ -1,5 +1,7 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432
-    username: x-admin
-    password: x-admin
+server.servlet.context-path: /
+
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+    tagsSorter: alpha
+
