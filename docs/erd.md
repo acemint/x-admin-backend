@@ -3,9 +3,9 @@ erDiagram
     MS_CLINIC ||--o{ MS_EMPLOYEE : have
     MS_CLINIC ||--o{ MS_PATIENT : have
     MS_CLINIC ||--o{ MS_TREATMENT : have
-    MS_CLINIC ||--o{ MS_INVENTORY : have
+    MS_CLINIC ||--o{ MS_ITEM : have
     MS_EMPLOYEE ||--o{ MS_VISIT : confirms
-    MS_EMPLOYEE ||--o{ MS_CLOCK_IN : creates
+    MS_EMPLOYEE ||--o{ MS_ATTENDANCE : creates
     MS_PATIENT ||--o{ MS_VISIT : confirms
     MS_VISIT ||--o| MS_VISIT_TREATMENT : performs
     MS_VISIT_TREATMENT }|--|| MS_TREATMENT : details
@@ -29,7 +29,7 @@ erDiagram
         string role
         string status
         decimal salary
-        int taxPercentage
+        double taxPercentage
     }
     MS_PATIENT {
         uuid id PK
@@ -45,7 +45,7 @@ erDiagram
         datetime start
         datetime end 
     }
-    MS_CLOCK_IN {
+    MS_ATTENDANCE {
         uuid id PK
         uuid employeeId FK
         date clockIn
@@ -56,16 +56,16 @@ erDiagram
         string code "unique"
         uuid clinidId FK
         string name 
-        int price
+        double price
     }
-    MS_INVENTORY {
+    MS_ITEM {
         uuid id PK 
         string code "unique"
         uuid clinicId FK
         string name
-        int qty
+        double quantity
         string status
-        string uom
+        string unitOfMeasurement
         date expiryDate
     }
     MS_VISIT_TREATMENT {
