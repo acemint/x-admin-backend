@@ -30,6 +30,6 @@ public class Patient {
   private String name;
 
   @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
-  private Set<Patient> patient;
+  private Set<Visit> visits;
 
 }
