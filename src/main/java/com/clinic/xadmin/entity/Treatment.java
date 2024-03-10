@@ -33,7 +33,7 @@ public class Treatment {
   @Column(name = "price")
   private BigDecimal price;
 
-  @OneToMany(mappedBy = "treatments", fetch = FetchType.LAZY)
-  private Set<Treatment> treatments;
+  @OneToMany(mappedBy = "treatment", fetch = FetchType.LAZY)
+  private Set<VisitTreatment> visitTreatments;
 
 }
