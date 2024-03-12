@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 @Entity
-@Table(name = "ms_treatment")
+@Table(name = "xa_treatment")
 public class Treatment {
 
   @Id

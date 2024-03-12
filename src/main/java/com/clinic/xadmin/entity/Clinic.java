@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
-@Table(name = "ms_clinic")
+@Table(name = "xa_clinic")
 public class Clinic {
 
   @Id
