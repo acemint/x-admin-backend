@@ -29,6 +29,7 @@ erDiagram
         string type
         string role
         string status
+        string password
         decimal salary
         double taxPercentage
     }
