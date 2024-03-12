@@ -24,7 +24,8 @@ erDiagram
         uuid id PK
         string code "unique"
         uuid clinicId FK
-        string name
+        string nameFirst
+        string nameLast
         string type
         string role
         string status
@@ -35,7 +36,8 @@ erDiagram
         uuid id PK
         string code "unique"
         uuid clinicId FK
-        string name
+        string nameFirst
+        string nameLast 
         string phoneNumber
         date age
         string gender
