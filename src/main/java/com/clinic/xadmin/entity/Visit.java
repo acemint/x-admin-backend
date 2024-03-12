@@ -30,11 +30,11 @@ public class Visit {
   @Column(name = "cancelled")
   private Boolean cancelled;
 
-  @Column(name = "start")
-  private LocalDateTime start;
+  @Column(name = "startTime")
+  private LocalDateTime startTime;
 
-  @Column(name = "end")
-  private LocalDateTime end;
+  @Column(name = "endTIme")
+  private LocalDateTime endTime;
 
   @OneToOne(mappedBy = "visit")
   private VisitTreatment visitTreatment;

@@ -42,8 +42,8 @@ erDiagram
         uuid patientId FK
         uuid employeeId FK
         bool cancelled
-        datetime start
-        datetime end 
+        datetime startTime
+        datetime endTime 
     }
     XA_ATTENDANCE {
         uuid id PK
