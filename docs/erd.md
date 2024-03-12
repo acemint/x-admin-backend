@@ -35,7 +35,12 @@ erDiagram
         uuid id PK
         string code "unique"
         uuid clinicId FK
-        string name   
+        string name
+        string phoneNumber
+        date age
+        string gender
+        string email
+        string address
     }
     MS_VISIT {
         uuid id PK
