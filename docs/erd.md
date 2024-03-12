@@ -26,9 +26,13 @@ erDiagram
         uuid clinicId FK
         string nameFirst
         string nameLast
+        date age
         string type
         string role
         string status
+        string gender
+        string phoneNumber
+        string address
         string password
         decimal salary
         double taxPercentage
