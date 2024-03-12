@@ -1,16 +1,16 @@
 ```mermaid
 erDiagram
-    MS_CLINIC ||--o{ MS_EMPLOYEE : have
-    MS_CLINIC ||--o{ MS_PATIENT : have
-    MS_CLINIC ||--o{ MS_TREATMENT : have
-    MS_CLINIC ||--o{ MS_ITEM : have
-    MS_EMPLOYEE ||--o{ MS_VISIT : confirms
-    MS_EMPLOYEE ||--o{ MS_ATTENDANCE : creates
-    MS_PATIENT ||--o{ MS_VISIT : confirms
-    MS_VISIT ||--o| MS_VISIT_TREATMENT : performs
-    MS_VISIT_TREATMENT }|--|| MS_TREATMENT : details
+    XA_CLINIC ||--o{ XA_EMPLOYEE : have
+    XA_CLINIC ||--o{ XA_PATIENT : have
+    XA_CLINIC ||--o{ XA_TREATMENT : have
+    XA_CLINIC ||--o{ XA_ITEM : have
+    XA_EMPLOYEE ||--o{ XA_VISIT : confirms
+    XA_EMPLOYEE ||--o{ XA_ATTENDANCE : creates
+    XA_PATIENT ||--o{ XA_VISIT : confirms
+    XA_VISIT ||--o| XA_VISIT_TREATMENT : performs
+    XA_VISIT_TREATMENT }|--|| XA_TREATMENT : details
     
-    MS_CLINIC { 
+    XA_CLINIC { 
         uuid id PK
         string code "unique" 
         decimal commissionFee 
@@ -20,7 +20,7 @@ erDiagram
         date subscriptionValidTo
         int subscriptionTier
     }
-    MS_EMPLOYEE {
+    XA_EMPLOYEE {
         uuid id PK
         string code "unique"
         uuid clinicId FK
@@ -37,7 +37,7 @@ erDiagram
         decimal salary
         double taxPercentage
     }
-    MS_PATIENT {
+    XA_PATIENT {
         uuid id PK
         string code "unique"
         uuid clinicId FK
@@ -49,28 +49,28 @@ erDiagram
         string email
         string address
     }
-    MS_VISIT {
+    XA_VISIT {
         uuid id PK
         uuid patientId FK
         uuid employeeId FK
         bool cancelled
-        datetime start
-        datetime end 
+        datetime startTime
+        datetime endTime 
     }
-    MS_ATTENDANCE {
+    XA_ATTENDANCE {
         uuid id PK
         uuid employeeId FK
         date clockIn
         date clockOut
     }
-    MS_TREATMENT {
+    XA_TREATMENT {
         uuid id PK
         string code "unique"
         uuid clinidId FK
         string name 
         double price
     }
-    MS_ITEM {
+    XA_ITEM {
         uuid id PK 
         string code "unique"
         uuid clinicId FK
@@ -80,7 +80,7 @@ erDiagram
         string unitOfMeasurement
         date expiryDate
     }
-    MS_VISIT_TREATMENT {
+    XA_VISIT_TREATMENT {
         uuid id PK
         uuid visitId FK
         uuid treatmentId FK

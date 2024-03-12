@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import java.util.Set;
 
 @Entity
-@Table(name = "ms_patient")
+@Table(name = "xa_patient")
 public class Patient {
 
   @Id

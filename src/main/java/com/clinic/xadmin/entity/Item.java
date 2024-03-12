@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "ms_item")
+@Table(name = "xa_item")
 public class Item {
 
   @Id
