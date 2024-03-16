@@ -8,17 +8,30 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "xa_employee")
 public class Employee {
 
   @Id
+  @Builder.Default
   @Column(name = "id")
-  private String id;
+  private String id = UUID.randomUUID().toString();
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name ="clinic_id")
@@ -27,8 +40,20 @@ public class Employee {
   @Column(name = "code")
   private String code;
 
-  @Column(name = "name")
-  private String name;
+  @Column(name = "first_name")
+  private String firstName;
+
+  @Column(name = "last_name")
+  private String lastName;
+
+  @Column(name = "email_address")
+  private String emailAddress;
+
+  @Column(name = "phone_number")
+  private String phoneNumber;
+
+  @Column(name = "password")
+  private String password;
 
   @Column(name = "type")
   private String type;

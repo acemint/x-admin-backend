@@ -2,3 +2,6 @@ spring.datasource:
   url: jdbc:postgresql://localhost:5432/x-admin
   username: postgres
   password: admin123
+
+xadmin.jwt.secret-key: 12ij3oi1mwodmkaosimfoaismodim29034i2190i310ijwdokasmldkamslkmodmasokmdk1lmwe9u12h0ed91n2ndm
+xadmin.jwt.access-token.expiration-time: 360000
