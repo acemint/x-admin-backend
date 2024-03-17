@@ -5,7 +5,7 @@ FROM eclipse-temurin:21-jre-alpine as build
 WORKDIR /app
 
 # Copies maven wrapper & pom.xml
-#COPY ./.mvn ./.mvn
+COPY ./.mvn ./.mvn
 COPY ./mvnw ./
 COPY ./pom.xml ./
 
