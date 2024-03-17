@@ -5,7 +5,6 @@ import com.clinic.xadmin.model.security.LoginEmployeeRequest;
 import com.clinic.xadmin.security.configuration.AuthenticationManagerConfiguration;
 import com.clinic.xadmin.security.util.JwtTokenUtil;
 import com.clinic.xadmin.security.util.JwtTokenUtilImpl;
-import com.clinic.xadmin.service.employee.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
