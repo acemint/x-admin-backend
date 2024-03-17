@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM eclipse-temurin:21-jre-alpine as build
+FROM eclipse-temurin:21-jdk-alpine as build
 
 # Set cwd to /app
 WORKDIR /app
