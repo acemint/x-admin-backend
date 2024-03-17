@@ -10,11 +10,11 @@ COPY ./mvnw ./
 COPY ./pom.xml ./
 
 # Download project dependencies
-RUN ./mvnw dependency:go-offline
+RUN ./mvnw -X dependency:go-offline
 
 # Copy the src folder and build the app
 COPY ./src ./src
-RUN ./mvnw package -DskipTests
+RUN ./mvnw -X package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine as run
 
