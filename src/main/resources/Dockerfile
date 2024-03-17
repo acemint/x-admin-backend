@@ -5,15 +5,15 @@ FROM eclipse-temurin:21-jre-alpine as build
 WORKDIR /app
 
 # Copies maven wrapper & pom.xml
-COPY .mvn ./.mvn
-COPY mvnw ./
-COPY pom.xml ./
+COPY ./.mvn ./.mvn
+COPY ./mvnw ./
+COPY ./pom.xml ./
 
 # Download project dependencies
 RUN ./mvnw dependency:go-offline
 
 # Copy the src folder and build the app
-COPY src ./src
+COPY ./src ./src
 RUN ./mvnw package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine as run
