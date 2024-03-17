@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 
@@ -24,21 +25,24 @@ public class WebSecurityConfiguration {
 
   private final AuthenticationProvider daoAuthenticationProvider;
   private final OncePerRequestFilter jwtTokenFilter;
+  private final CorsConfigurationSource corsConfigurationSource;
 
 
   @Autowired
   public WebSecurityConfiguration(
       @Qualifier(value = AuthenticationProviderConfiguration.DAO_AUTHENTICATION_PROVIDER_BEAN_NAME) AuthenticationProvider daoAuthenticationProvider,
-      @Qualifier(value = JWTTokenRequestFilter.JWT_TOKEN_FILTER_BEAN) OncePerRequestFilter jwtTokenFilter) {
+      @Qualifier(value = JWTTokenRequestFilter.JWT_TOKEN_FILTER_BEAN) OncePerRequestFilter jwtTokenFilter,
+      @Qualifier(value = CustomCorsConfiguration.CORS_CONFIGURATION_BEAN_NAME) CorsConfigurationSource corsConfigurationSource) {
     this.daoAuthenticationProvider = daoAuthenticationProvider;
     this.jwtTokenFilter = jwtTokenFilter;
+    this.corsConfigurationSource = corsConfigurationSource;
   }
 
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.csrf(Customizer.withDefaults());
-    http.cors(Customizer.withDefaults());
+    http.cors(cors -> cors.configurationSource(corsConfigurationSource));
     http.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     http.authorizeHttpRequests((authorize) -> authorize
             .requestMatchers(HttpMethod.POST, SecurityControllerPath.BASE + SecurityControllerPath.LOGIN)

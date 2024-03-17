@@ -27,7 +27,7 @@ public class JwtTokenUtilImpl implements JwtTokenUtil {
   @Value("${xadmin.jwt.secret-key}")
   private String jwtSecret;
 
-  @Value("${xadmin.jwt.access-token.expiration-time}")
+  @Value("${xadmin.jwt.expiration-time-in-ms}")
   private int jwtExpirationMs;
 
   @Override

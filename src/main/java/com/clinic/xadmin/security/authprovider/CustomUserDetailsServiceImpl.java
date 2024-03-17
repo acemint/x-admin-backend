@@ -18,7 +18,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
   private EmployeeRepository employeeRepository;
 
   @Autowired
-  private CustomUserDetailsServiceImpl(EmployeeRepository employeeRepository) {
+  public CustomUserDetailsServiceImpl(EmployeeRepository employeeRepository) {
     this.employeeRepository = employeeRepository;
   }
 
