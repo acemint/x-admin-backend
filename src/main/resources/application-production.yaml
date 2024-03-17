@@ -1,1 +1,13 @@
+spring.datasource:
+  url: ${SPRING_DATASOURCE_URL}
+  username: ${SPRING_DATASOURCE_USERNAME}
+  password: ${SPRING_DATASOURCE_PASSWORD}
 
+xadmin.jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  expiration-time-in-ms: 18000000
+
+xadmin.security:
+  cors:
+    allowed-hosts:
+      - ${CORS_ALLOWED_HOST_1}
