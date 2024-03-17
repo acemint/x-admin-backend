@@ -31,4 +31,4 @@ ENV PORT=${PORT}
 COPY --from=build /app/target/x-admin-0.0.1-SNAPSHOT*.jar /app.jar
 
 # Define the default command to run the Spring Boot application
-CMD ["java", "-Dserver.port=${PORT}", "-jar", "/app.jar"]
+CMD ["java", "-Dserver.port=${PORT}", "-Dspring.profiles.active=production", "-jar", "/app.jar"]
