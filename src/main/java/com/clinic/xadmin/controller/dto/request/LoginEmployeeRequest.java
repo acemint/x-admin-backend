@@ -1,4 +1,4 @@
-package com.clinic.xadmin.model.security;
+package com.clinic.xadmin.controller.dto.request;
 
 import lombok.Builder;
 import lombok.Data;

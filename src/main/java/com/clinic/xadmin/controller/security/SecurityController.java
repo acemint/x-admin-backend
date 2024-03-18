@@ -1,7 +1,7 @@
 package com.clinic.xadmin.controller.security;
 
 
-import com.clinic.xadmin.model.security.LoginEmployeeRequest;
+import com.clinic.xadmin.controller.dto.request.LoginEmployeeRequest;
 import com.clinic.xadmin.security.configuration.AuthenticationManagerConfiguration;
 import com.clinic.xadmin.security.util.JwtTokenUtil;
 import com.clinic.xadmin.security.util.JwtTokenUtilImpl;
