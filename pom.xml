@@ -18,6 +18,7 @@
 		<querydsl.version>5.0.0</querydsl.version>
 		<springdoc.version>2.3.0</springdoc.version>
 		<jjwt-api.version>0.11.5</jjwt-api.version>
+		<commons-validator.version>1.8.0</commons-validator.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -48,6 +49,11 @@
 			<artifactId>querydsl-jpa</artifactId>
 			<classifier>jakarta</classifier>
 			<version>${querydsl.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>${commons-validator.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>

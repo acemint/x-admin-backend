@@ -43,16 +43,11 @@ public class JwtTokenUtilImpl implements JwtTokenUtil {
 
   @Override
   public Claims getClaimsFromToken(String token) {
-    JwtParser parser = this.getDefaultJwtParser();
-    return (Claims) parser.parse(token).getBody();
-  }
-
-  @Override
-  public boolean isStillValid(String token) {
     try {
-      Claims claims = (Claims) this.getDefaultJwtParser().parse(token).getBody();
-      return true;
-    } catch (MalformedJwtException e) {
+      JwtParser parser = this.getDefaultJwtParser();
+      return (Claims) parser.parse(token).getBody();
+    }
+    catch (MalformedJwtException e) {
       log.error("Invalid JWT token: {}", e.getMessage());
     } catch (ExpiredJwtException e) {
       log.error("JWT token is expired: {}", e.getMessage());
@@ -61,7 +56,7 @@ public class JwtTokenUtilImpl implements JwtTokenUtil {
     } catch (IllegalArgumentException e) {
       log.error("JWT claims string is empty: {}", e.getMessage());
     }
-    return false;
+    return null;
   }
 
   private JwtParser getDefaultJwtParser() {
