@@ -8,6 +8,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SecurityException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,6 +29,7 @@ public class XAdminControllerAdvice {
   }
 
   @ExceptionHandler(value = { BadCredentialsException.class,
+      AccessDeniedException.class,
       UsernameNotFoundException.class,
       MalformedJwtException.class,
       ExpiredJwtException.class,
