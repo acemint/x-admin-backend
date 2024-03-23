@@ -1,4 +1,4 @@
-package com.clinic.xadmin.controller.security.dto.response;
+package com.clinic.xadmin.controller.employee.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

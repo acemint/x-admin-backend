@@ -1,4 +1,4 @@
-package com.clinic.xadmin.controller.security.dto.request;
+package com.clinic.xadmin.controller.employee.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;

@@ -1,13 +1,11 @@
 package com.clinic.xadmin.service.employee;
 
 import com.clinic.xadmin.constant.EmployeeRole;
-import com.clinic.xadmin.constant.EmployeeStatus;
 import com.clinic.xadmin.constant.EmployeeType;
-import com.clinic.xadmin.controller.security.dto.request.RegisterEmployeeRequest;
+import com.clinic.xadmin.controller.employee.dto.request.RegisterEmployeeRequest;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
 import com.clinic.xadmin.service.exception.XAdminBadRequestException;
-import jakarta.validation.constraints.Email;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
