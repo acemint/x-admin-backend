@@ -59,6 +59,11 @@ public class JwtTokenUtilImpl implements JwtTokenUtil {
     return null;
   }
 
+  @Override
+  public long getExpiryTime() {
+    return this.jwtExpirationMs;
+  }
+
   private JwtParser getDefaultJwtParser() {
     return Jwts.parserBuilder()
         .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))

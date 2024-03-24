@@ -4,7 +4,7 @@ package com.clinic.xadmin.controller.employee;
 import com.clinic.xadmin.controller.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.dto.request.employee.ResetPasswordRequest;
 import com.clinic.xadmin.mapper.EmployeeResponseMapper;
-import com.clinic.xadmin.controller.constant.AuthorizationHeaderKey;
+import com.clinic.xadmin.controller.constant.CookieName;
 import com.clinic.xadmin.dto.request.employee.LoginEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
@@ -14,9 +14,13 @@ import com.clinic.xadmin.security.configuration.AuthenticationManagerConfigurati
 import com.clinic.xadmin.security.util.JwtTokenUtil;
 import com.clinic.xadmin.security.util.JwtTokenUtilImpl;
 import com.clinic.xadmin.service.employee.EmployeeService;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,17 +50,29 @@ public class EmployeeController {
     this.employeeService = employeeService;
   }
 
-  @PostMapping(value = EmployeeControllerPath.LOGIN)
-  public ResponseEntity<String> login(@RequestBody LoginEmployeeRequest request) {
-    Authentication authenticationRequest = UsernamePasswordAuthenticationToken.unauthenticated(request.getEmail(), request.getPassword());
-    Authentication authenticationResponse = this.authenticationManager.authenticate(authenticationRequest);
+  @Operation(
+      summary = EmployeeControllerDocs.LOGIN_SUMMARY,
+      description = EmployeeControllerDocs.LOGIN_DESCRIPTION)
+  @PostMapping(value = EmployeeControllerPath.LOGIN, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<EmployeeResponse> login(@RequestBody LoginEmployeeRequest request, HttpServletResponse response) {
+    Authentication authenticationResponse = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-    return ResponseEntity.ok()
-        .header(AuthorizationHeaderKey.NAME, this.jwtTokenUtil.generateJwtToken(authenticationResponse))
-        .body("Successfully Authenticated");
+    String jwt = this.jwtTokenUtil.generateJwtToken(authenticationResponse);
+
+    Cookie cookie = new Cookie(CookieName.CREDENTIAL, jwt);
+    cookie.setMaxAge(Math.toIntExact(this.jwtTokenUtil.getExpiryTime() / 1000));
+    cookie.setHttpOnly(true);
+    cookie.setPath("/");
+    response.addCookie(cookie);
+
+    CustomUserDetails userDetails =(CustomUserDetails) authenticationResponse.getPrincipal();
+    return ResponseEntity.ok().body(EmployeeResponseMapper.INSTANCE.employeeToEmployeeResponseDto(userDetails.getEmployee()));
   }
 
-  @PostMapping(value = EmployeeControllerPath.REGISTER)
+  @Operation(
+      summary = EmployeeControllerDocs.REGISTER_SUMMARY,
+      description = EmployeeControllerDocs.REGISTER_DESCRIPTION)
+  @PostMapping(value = EmployeeControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_ADMIN_OR_DEVELOPER)
   public ResponseEntity<EmployeeResponse> register(@RequestBody @Valid RegisterEmployeeRequest request) {
     Employee employee = this.employeeService.createEmployee(request);
@@ -64,7 +80,9 @@ public class EmployeeController {
         EmployeeResponseMapper.INSTANCE.employeeToEmployeeResponseDto(employee));
   }
 
-  @GetMapping(value = EmployeeControllerPath.SELF)
+  @Operation(
+      summary = EmployeeControllerDocs.GET_SELF_SUMMARY)
+  @GetMapping(value = EmployeeControllerPath.SELF, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
   public ResponseEntity<EmployeeResponse> getSelf(Authentication authentication) {
     CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
