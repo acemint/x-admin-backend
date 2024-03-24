@@ -16,6 +16,10 @@ public class CustomUserDetails implements UserDetails {
 
   private Employee employee;
 
+  public Employee getEmployee() {
+    return this.employee;
+  }
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return Stream.of(Optional.ofNullable(this.employee.getRole())

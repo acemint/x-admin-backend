@@ -2,11 +2,10 @@ package com.clinic.xadmin.service.employee;
 
 import com.clinic.xadmin.constant.EmployeeRole;
 import com.clinic.xadmin.constant.EmployeeType;
-import com.clinic.xadmin.controller.employee.dto.request.RegisterEmployeeRequest;
+import com.clinic.xadmin.controller.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
 import com.clinic.xadmin.service.exception.XAdminBadRequestException;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,11 +27,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public Employee createEmployee(RegisterEmployeeRequest request) {
-    if (!EmailValidator.getInstance().isValid(request.getEmail())) {
-      throw new XAdminBadRequestException("Email format is invalid");
-    }
-
-    Employee existingEmployee = this.employeeRepository.findEmployeeByEmailAddress(request.getEmail());
+    Employee existingEmployee = this.employeeRepository.findEmployeeByEmailAddress(request.getEmailAddress());
     if (!Objects.isNull(existingEmployee)) {
       throw new XAdminBadRequestException("Email has been taken");
     }
@@ -49,7 +44,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     Employee employee = Employee.builder()
         .firstName(request.getFirstName())
         .lastName(request.getLastName())
-        .emailAddress(request.getEmail())
+        .emailAddress(request.getEmailAddress())
         .phoneNumber(request.getPhoneNumber())
         .password(this.passwordEncoder.encode(request.getPassword()))
         .type(request.getType())

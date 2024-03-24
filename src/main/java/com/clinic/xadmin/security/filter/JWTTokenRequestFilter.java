@@ -1,6 +1,6 @@
 package com.clinic.xadmin.security.filter;
 
-import com.clinic.xadmin.controller.header.XAdminAuthorizationHeader;
+import com.clinic.xadmin.controller.constant.AuthorizationHeaderKey;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
@@ -40,7 +40,7 @@ public class JWTTokenRequestFilter extends OncePerRequestFilter {
       HttpServletResponse response,
       FilterChain chain) throws ServletException, IOException {
     // Get authorization header and validate
-    final String token = request.getHeader(XAdminAuthorizationHeader.NAME);
+    final String token = request.getHeader(AuthorizationHeaderKey.NAME);
 
     // Get user identity and set it on the spring security context
     Claims claims = jwtTokenUtil.getClaimsFromToken(token);

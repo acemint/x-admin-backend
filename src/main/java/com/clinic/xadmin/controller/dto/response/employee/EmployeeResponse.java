@@ -1,4 +1,4 @@
-package com.clinic.xadmin.controller.employee.dto.response;
+package com.clinic.xadmin.controller.dto.response.employee;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,9 +12,13 @@ import lombok.NoArgsConstructor;
 public class EmployeeResponse {
 
   private String id;
-  private String email;
+  private String code;
   private String firstName;
   private String lastName;
+  private String emailAddress;
   private String phoneNumber;
+  private String type;
+  private String role;
+  private String status;
 
 }
