@@ -5,3 +5,6 @@ springdoc:
     operationsSorter: method
     tagsSorter: alpha
 
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect

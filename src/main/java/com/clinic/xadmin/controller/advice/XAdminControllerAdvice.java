@@ -1,6 +1,6 @@
 package com.clinic.xadmin.controller.advice;
 
-import com.clinic.xadmin.controller.dto.response.exception.StandardizedErrorResponse;
+import com.clinic.xadmin.dto.response.exception.StandardizedErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
