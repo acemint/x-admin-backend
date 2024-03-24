@@ -1,0 +1,20 @@
+spring.datasource:
+  url: jdbc:postgresql://localhost:5432/x-admin
+  username: postgres
+  password: admin123
+
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+xadmin.jwt:
+  secret-key: 12ij3oi1mwodmkaosimfoaismodim29034i2190i310ijwdokasmldkamslkmodmasokmdk1lmwe9u12h0ed91n2ndm
+  expiration-time-in-ms: 18000000
+
+xadmin.security:
+  cors:
+    allowed-hosts:
+      - http://localhost:5173/

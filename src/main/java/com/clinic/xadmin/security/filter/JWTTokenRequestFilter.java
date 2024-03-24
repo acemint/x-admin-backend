@@ -1,16 +1,17 @@
 package com.clinic.xadmin.security.filter;
 
+import com.clinic.xadmin.controller.constant.AuthorizationHeaderKey;
+import com.clinic.xadmin.entity.Employee;
+import com.clinic.xadmin.repository.employee.EmployeeRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.authprovider.CustomUserDetailsFactory;
 import com.clinic.xadmin.security.util.JwtTokenUtil;
-import com.clinic.xadmin.entity.Employee;
-import com.clinic.xadmin.repository.employee.EmployeeRepository;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -39,26 +40,17 @@ public class JWTTokenRequestFilter extends OncePerRequestFilter {
       HttpServletResponse response,
       FilterChain chain) throws ServletException, IOException {
     // Get authorization header and validate
-    final String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-    if (Objects.isNull(token)) {
-      chain.doFilter(request, response);
-      return;
-    }
-
-    // Get jwt token and validate
-    if (!jwtTokenUtil.isStillValid(token)) {
-      chain.doFilter(request, response);
-      return;
-    }
+    final String token = request.getHeader(AuthorizationHeaderKey.NAME);
 
     // Get user identity and set it on the spring security context
-    Employee employee = employeeRepository.findEmployeeByEmailAddress(jwtTokenUtil.getClaimsFromToken(token).getSubject());
-    if (Objects.isNull(employee)) {
+    Claims claims = jwtTokenUtil.getClaimsFromToken(token);
+    if (Objects.isNull(claims)) {
       chain.doFilter(request, response);
       return;
     }
 
-    // if all passed then create authentication object and insert it into SecurityContext
+    // Create authentication object and insert it into SecurityContext
+    Employee employee = employeeRepository.findEmployeeByEmailAddress(claims.getSubject());
     CustomUserDetails customUserDetails = CustomUserDetailsFactory.createFrom(employee);
     UsernamePasswordAuthenticationToken authentication =
         new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities()

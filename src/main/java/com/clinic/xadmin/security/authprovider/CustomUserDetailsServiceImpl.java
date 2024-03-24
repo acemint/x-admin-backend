@@ -15,7 +15,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
 
   public static final String BEAN_NAME = "CustomUserDetailsServiceImpl";
 
-  private EmployeeRepository employeeRepository;
+  private final EmployeeRepository employeeRepository;
 
   @Autowired
   public CustomUserDetailsServiceImpl(EmployeeRepository employeeRepository) {
