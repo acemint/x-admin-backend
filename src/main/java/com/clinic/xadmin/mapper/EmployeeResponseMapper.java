@@ -1,5 +1,6 @@
-package com.clinic.xadmin.controller.dto.response.employee;
+package com.clinic.xadmin.mapper;
 
+import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
 import com.clinic.xadmin.entity.Employee;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

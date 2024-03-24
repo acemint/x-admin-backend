@@ -1,6 +1,6 @@
 package com.clinic.xadmin.controller.advice;
 
-import com.clinic.xadmin.controller.dto.response.exception.StandardizedErrorResponse;
+import com.clinic.xadmin.dto.response.exception.StandardizedErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -12,11 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @ControllerAdvice
@@ -28,17 +31,24 @@ public class XAdminControllerAdvice {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(StandardizedErrorResponse.builder()
             .message(exception.getMessage())
-            .stackTrace(Arrays.stream(exception.getStackTrace()).findFirst().map(StackTraceElement::toString).orElse(null))
             .build());
   }
 
   @ExceptionHandler(value = {MethodArgumentNotValidException.class })
   public ResponseEntity<StandardizedErrorResponse> handleMethodArgNotValid(MethodArgumentNotValidException exception) {
-    log.error("bad request", exception);
+    String errorMessage = "Method argument is invalid";
+
+    log.error(errorMessage, exception);
+
+    Map<String, String> fieldValidations = new HashMap<>();
+    for (ObjectError e : exception.getBindingResult().getAllErrors()) {
+      fieldValidations.put(((FieldError) e).getField(), e.getDefaultMessage());
+    }
+
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(StandardizedErrorResponse.builder()
-            .message(String.valueOf(exception.getDetailMessageArguments()))
-            .stackTrace(Arrays.stream(exception.getStackTrace()).findFirst().map(StackTraceElement::toString).orElse(null))
+            .message(errorMessage)
+            .fields(fieldValidations)
             .build());
   }
 
@@ -52,11 +62,12 @@ public class XAdminControllerAdvice {
       SecurityException.class,
       ExpiredJwtException.class })
   public ResponseEntity<StandardizedErrorResponse> handleInvalidJwt(Exception exception) {
-    log.error("forbidden", exception);
+    String error = "forbidden access";
+
+    log.error(error, exception);
     return ResponseEntity.status(HttpStatus.FORBIDDEN)
         .body(StandardizedErrorResponse.builder()
             .message(exception.getMessage())
-            .stackTrace(Arrays.stream(exception.getStackTrace()).findFirst().map(StackTraceElement::toString).orElse(null))
             .build());
   }
 

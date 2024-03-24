@@ -1,4 +1,4 @@
-package com.clinic.xadmin.controller.dto.request.employee;
+package com.clinic.xadmin.dto.request.employee;
 
 import com.clinic.xadmin.validator.annotation.ValidEmail;
 import com.clinic.xadmin.validator.annotation.ValidPassword;

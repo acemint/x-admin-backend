@@ -2,7 +2,8 @@ package com.clinic.xadmin.service.employee;
 
 import com.clinic.xadmin.constant.EmployeeRole;
 import com.clinic.xadmin.constant.EmployeeType;
-import com.clinic.xadmin.controller.dto.request.employee.RegisterEmployeeRequest;
+import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
+import com.clinic.xadmin.dto.request.employee.ResetPasswordRequest;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
 import com.clinic.xadmin.service.exception.XAdminBadRequestException;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -32,7 +34,7 @@ public class EmployeeServiceImpl implements EmployeeService {
       throw new XAdminBadRequestException("Email has been taken");
     }
 
-    if (request.getType().equals(EmployeeType.DOCTOR)
+    if (Optional.ofNullable(request.getType()).map(r -> r.equals(EmployeeType.DOCTOR)).orElse(false)
         && !StringUtils.isEmpty(request.getDoctorNumber())) {
       throw new XAdminBadRequestException("Doctor number should be inputted");
     }
