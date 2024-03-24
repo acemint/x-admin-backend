@@ -1,6 +1,6 @@
 package com.clinic.xadmin.security.filter;
 
-import com.clinic.xadmin.controller.constant.AuthorizationHeaderKey;
+import com.clinic.xadmin.controller.constant.CookieName;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
@@ -9,6 +9,7 @@ import com.clinic.xadmin.security.util.JwtTokenUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class JWTTokenRequestFilter extends OncePerRequestFilter {
       HttpServletResponse response,
       FilterChain chain) throws ServletException, IOException {
     // Get authorization header and validate
-    final String token = request.getHeader(AuthorizationHeaderKey.NAME);
+    String token = this.extractJwtFromCookie(request);
 
     // Get user identity and set it on the spring security context
     Claims claims = jwtTokenUtil.getClaimsFromToken(token);
@@ -58,5 +59,17 @@ public class JWTTokenRequestFilter extends OncePerRequestFilter {
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
     chain.doFilter(request, response);
+  }
+
+  private String extractJwtFromCookie(HttpServletRequest request) {
+    if (request.getCookies() == null) {
+      return null;
+    }
+    for (Cookie cookie : request.getCookies()) {
+      if (CookieName.CREDENTIAL.equals(cookie.getName())) {
+        return cookie.getValue();
+      }
+    }
+    return null;
   }
 }
