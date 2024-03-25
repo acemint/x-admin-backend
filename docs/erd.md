@@ -46,7 +46,7 @@ erDiagram
         string phoneNumber
         date age
         string gender
-        string email
+        string emailAddress
         string address
     }
     XA_VISIT {
