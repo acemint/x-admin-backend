@@ -11,6 +11,7 @@ import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.configuration.AuthenticationManagerConfiguration;
+import com.clinic.xadmin.security.role.AuthorizationEvaluator;
 import com.clinic.xadmin.security.util.JwtTokenUtil;
 import com.clinic.xadmin.security.util.JwtTokenUtilImpl;
 import com.clinic.xadmin.service.employee.EmployeeService;
@@ -55,7 +56,7 @@ public class EmployeeController {
       description = EmployeeControllerDocs.LOGIN_DESCRIPTION)
   @PostMapping(value = EmployeeControllerPath.LOGIN, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<EmployeeResponse> login(@RequestBody LoginEmployeeRequest request, HttpServletResponse response) {
-    Authentication authenticationResponse = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+    Authentication authenticationResponse = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmailAddress(), request.getPassword()));
 
     String jwt = this.jwtTokenUtil.generateJwtToken(authenticationResponse);
 
