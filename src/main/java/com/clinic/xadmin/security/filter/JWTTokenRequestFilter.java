@@ -42,6 +42,10 @@ public class JWTTokenRequestFilter extends OncePerRequestFilter {
       FilterChain chain) throws ServletException, IOException {
     // Get authorization header and validate
     String token = this.extractJwtFromCookie(request);
+    if (Objects.isNull(token)) {
+      chain.doFilter(request, response);
+      return;
+    }
 
     // Get user identity and set it on the spring security context
     Claims claims = jwtTokenUtil.getClaimsFromToken(token);
