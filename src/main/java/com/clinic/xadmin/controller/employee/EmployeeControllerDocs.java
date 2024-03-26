@@ -16,5 +16,7 @@ public class EmployeeControllerDocs {
   public static final String REGISTER_DESCRIPTION = "The user of this API must have at least the role of ADMIN";
 
   public static final String GET_SELF_SUMMARY = "Get the data of current logged-in employee";
+  public static final String GET_EMPLOYEES_SUMMARY = "Get the list of employees in own's clinic";
+  public static final String GET_EMPLOYEES_DESCRIPTION = "Returns list of employees in the clinic that the authenticated user is at";
 
 }

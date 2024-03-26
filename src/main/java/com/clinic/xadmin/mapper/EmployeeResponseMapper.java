@@ -5,11 +5,15 @@ import com.clinic.xadmin.entity.Employee;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper
 public interface EmployeeResponseMapper {
 
   EmployeeResponseMapper INSTANCE = Mappers.getMapper( EmployeeResponseMapper.class );
 
-  EmployeeResponse employeeToEmployeeResponseDto(Employee employee);
+  EmployeeResponse createFrom(Employee employee);
+
+  List<EmployeeResponse> createFrom(List<Employee> employees);
 
 }
