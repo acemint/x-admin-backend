@@ -1,5 +1,6 @@
 package com.clinic.xadmin.security.filter;
 
+import com.clinic.xadmin.context.ThreadLocalAuthenticationHolder;
 import com.clinic.xadmin.controller.constant.CookieName;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
@@ -12,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Objects;
 
+@Slf4j
 @Component(value = JWTTokenRequestFilter.JWT_TOKEN_FILTER_BEAN)
 public class JWTTokenRequestFilter extends OncePerRequestFilter {
 
@@ -62,7 +65,11 @@ public class JWTTokenRequestFilter extends OncePerRequestFilter {
     );
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
+    log.debug("AUTHENTICATION SET");
+    ThreadLocalAuthenticationHolder.authentication.set(authentication);
     chain.doFilter(request, response);
+    log.debug("AUTHENTICATION DELETED");
+    ThreadLocalAuthenticationHolder.authentication.remove();
   }
 
   private String extractJwtFromCookie(HttpServletRequest request) {

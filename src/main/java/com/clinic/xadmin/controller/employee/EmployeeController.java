@@ -1,6 +1,7 @@
 package com.clinic.xadmin.controller.employee;
 
 
+import com.clinic.xadmin.context.ThreadLocalAuthenticationHolder;
 import com.clinic.xadmin.controller.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.dto.request.employee.ResetPasswordRequest;
 import com.clinic.xadmin.mapper.EmployeeResponseMapper;
@@ -33,6 +34,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = EmployeeControllerPath.BASE)
@@ -85,8 +89,8 @@ public class EmployeeController {
       summary = EmployeeControllerDocs.GET_SELF_SUMMARY)
   @GetMapping(value = EmployeeControllerPath.SELF, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
-  public ResponseEntity<EmployeeResponse> getSelf(Authentication authentication) {
-    CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+  public ResponseEntity<EmployeeResponse> getSelf() {
+    CustomUserDetails userDetails = (CustomUserDetails) ThreadLocalAuthenticationHolder.authentication.get().getPrincipal();
     return ResponseEntity.ok().body(
         EmployeeResponseMapper.INSTANCE.employeeToEmployeeResponseDto(userDetails.getEmployee()));
   }
