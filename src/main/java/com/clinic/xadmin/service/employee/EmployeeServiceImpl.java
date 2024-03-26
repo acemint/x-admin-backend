@@ -2,12 +2,18 @@ package com.clinic.xadmin.service.employee;
 
 import com.clinic.xadmin.constant.EmployeeRole;
 import com.clinic.xadmin.constant.EmployeeType;
+import com.clinic.xadmin.context.ThreadLocalAuthenticationHolder;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.ResetPasswordRequest;
 import com.clinic.xadmin.entity.Employee;
+import com.clinic.xadmin.model.employee.EmployeeFilter;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
+import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.service.exception.XAdminBadRequestException;
+import com.clinic.xadmin.service.exception.XAdminInternalException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -54,6 +60,32 @@ public class EmployeeServiceImpl implements EmployeeService {
         .status(request.getStatus())
         .build();
     return this.employeeRepository.save(employee);
+  }
+
+  @Override
+  public Page<Employee> getEmployees(EmployeeFilter employeeFilter) {
+    Authentication authentication = ThreadLocalAuthenticationHolder.authentication.get();
+    Employee employee = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
+
+    if (!employee.getRole().equals(EmployeeRole.ROLE_DEVELOPER)) {
+      employeeFilter.setClinicId(employee.getClinic().getId());
+    }
+    return this.employeeRepository.findByFilter(employeeFilter);
+  }
+
+  @Override
+  public Employee resetPassword(ResetPasswordRequest request) {
+    Employee existingEmployee = this.employeeRepository.findEmployeeByEmailAddress(request.getEmailAddress());
+    if (Objects.isNull(existingEmployee)) {
+      throw new XAdminBadRequestException("User not found");
+    }
+
+    if (this.passwordEncoder.matches(request.getPreviousPassword(), existingEmployee.getPassword())) {
+      throw new XAdminBadRequestException("Previous password does not match");
+    }
+
+    existingEmployee.setPassword(this.passwordEncoder.encode(request.getNewPassword()));
+    return this.employeeRepository.save(existingEmployee);
   }
 
 }
