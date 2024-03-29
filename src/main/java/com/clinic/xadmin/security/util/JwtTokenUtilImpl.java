@@ -18,16 +18,17 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+@Deprecated
 @Slf4j
 @Component(value = JwtTokenUtilImpl.BEAN_NAME)
 public class JwtTokenUtilImpl implements JwtTokenUtil {
 
   public static final String BEAN_NAME = "JwtTokenUtil";
 
-  @Value("${xadmin.jwt.secret-key}")
+  @Value("${xadmin.jwt.secret-key:#{null}}")
   private String jwtSecret;
 
-  @Value("${xadmin.jwt.expiration-time-in-ms}")
+  @Value("${xadmin.jwt.expiration-time-in-ms:#{18000000}}")
   private int jwtExpirationMs;
 
   @Override

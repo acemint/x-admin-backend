@@ -1,11 +1,6 @@
 package com.clinic.xadmin.controller.advice;
 
 import com.clinic.xadmin.dto.response.exception.StandardizedErrorResponse;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +29,9 @@ public class XAdminControllerAdvice {
             .build());
   }
 
-  @ExceptionHandler(value = {MethodArgumentNotValidException.class })
+  @ExceptionHandler(value = {
+      MethodArgumentNotValidException.class
+  })
   public ResponseEntity<StandardizedErrorResponse> handleMethodArgNotValid(MethodArgumentNotValidException exception) {
     String errorMessage = "Method argument is invalid";
 
@@ -54,14 +51,9 @@ public class XAdminControllerAdvice {
 
   @ExceptionHandler(value = { BadCredentialsException.class,
       AccessDeniedException.class,
-      UsernameNotFoundException.class,
-      MalformedJwtException.class,
-      ExpiredJwtException.class,
-      UnsupportedJwtException.class,
-      SignatureException.class,
-      SecurityException.class,
-      ExpiredJwtException.class })
-  public ResponseEntity<StandardizedErrorResponse> handleInvalidJwt(Exception exception) {
+      UsernameNotFoundException.class
+  })
+  public ResponseEntity<StandardizedErrorResponse> forbiddenAuthentication(Exception exception) {
     String error = "forbidden access";
 
     log.error(error, exception);

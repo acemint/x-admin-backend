@@ -17,15 +17,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Objects;
 
+@Deprecated
 @Slf4j
-@Component(value = JWTTokenRequestFilter.JWT_TOKEN_FILTER_BEAN)
+//@Component(value = JWTTokenRequestFilter.JWT_TOKEN_FILTER_BEAN)
 public class JWTTokenRequestFilter extends OncePerRequestFilter {
+
+  // component is commented so that it won't be picked-up by spring-security
 
   public static final String JWT_TOKEN_FILTER_BEAN = "JWT_TOKEN_FILTER_BEAN";
 
