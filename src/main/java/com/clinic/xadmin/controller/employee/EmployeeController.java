@@ -126,6 +126,5 @@ public class EmployeeController {
 
     return ResponseEntity.ok().body(new PageImpl<>(employeeResponses, pageRequest, employees.getTotalElements()));
   }
-  }
 
 }
