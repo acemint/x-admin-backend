@@ -1,23 +1,21 @@
 package com.clinic.xadmin.controller.employee;
 
 
-import com.clinic.xadmin.context.ThreadLocalAuthenticationHolder;
 import com.clinic.xadmin.controller.constant.SecurityAuthorizationType;
-import com.clinic.xadmin.dto.request.employee.ResetPasswordRequest;
-import com.clinic.xadmin.mapper.EmployeeResponseMapper;
-import com.clinic.xadmin.controller.constant.CookieName;
 import com.clinic.xadmin.dto.request.employee.LoginEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
+import com.clinic.xadmin.dto.request.employee.ResetPasswordRequest;
 import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
 import com.clinic.xadmin.entity.Employee;
+import com.clinic.xadmin.mapper.EmployeeResponseMapper;
 import com.clinic.xadmin.model.employee.EmployeeFilter;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.configuration.AuthenticationManagerConfiguration;
-import com.clinic.xadmin.security.util.JwtTokenUtil;
-import com.clinic.xadmin.security.util.JwtTokenUtilImpl;
+import com.clinic.xadmin.security.configuration.SessionManagementConfiguration;
+import com.clinic.xadmin.security.context.AppSecurityContextHolder;
 import com.clinic.xadmin.service.employee.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,39 +43,39 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = EmployeeControllerPath.BASE)
 public class EmployeeController {
   private final AuthenticationManager authenticationManager;
-  private final JwtTokenUtil jwtTokenUtil;
   private final EmployeeService employeeService;
+  private final SecurityContextRepository securityContextRepository;
+
+  private AppSecurityContextHolder appSecurityContextHolder;
 
   @Autowired
   public EmployeeController(
       EmployeeService employeeService,
       @Qualifier(value = AuthenticationManagerConfiguration.AUTHENTICATION_MANAGER_BEAN_NAME)  AuthenticationManager authenticationManager,
-      @Qualifier(value = JwtTokenUtilImpl.BEAN_NAME) JwtTokenUtil jwtTokenUtil) {
+      @Qualifier(value = SessionManagementConfiguration.DEFAULT_SESSION_MANAGEMENT_REPOSITORY_BEAN_NAME)  SecurityContextRepository securityContextRepository,
+      AppSecurityContextHolder appSecurityContextHolder) {
     this.authenticationManager = authenticationManager;
-    this.jwtTokenUtil = jwtTokenUtil;
     this.employeeService = employeeService;
+    this.securityContextRepository = securityContextRepository;
+    this.appSecurityContextHolder = appSecurityContextHolder;
   }
 
   @Operation(
       summary = EmployeeControllerDocs.LOGIN_SUMMARY,
       description = EmployeeControllerDocs.LOGIN_DESCRIPTION)
   @PostMapping(value = EmployeeControllerPath.LOGIN, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<EmployeeResponse> login(@RequestBody LoginEmployeeRequest request, HttpServletResponse response) {
+  public ResponseEntity<EmployeeResponse> login(@RequestBody LoginEmployeeRequest request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
     Authentication authenticationResponse = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmailAddress(), request.getPassword()));
 
-    String jwt = this.jwtTokenUtil.generateJwtToken(authenticationResponse);
-
-    Cookie cookie = new Cookie(CookieName.CREDENTIAL, jwt);
-    cookie.setMaxAge(Math.toIntExact(this.jwtTokenUtil.getExpiryTime() / 1000));
-    cookie.setHttpOnly(true);
-    cookie.setPath("/");
-    response.addCookie(cookie);
+    SecurityContext context = this.appSecurityContextHolder.createEmptyContext();
+    context.setAuthentication(authenticationResponse);
+    this.appSecurityContextHolder.setContext(context);
+    this.securityContextRepository.saveContext(context, httpServletRequest, httpServletResponse);
 
     CustomUserDetails userDetails =(CustomUserDetails) authenticationResponse.getPrincipal();
     return ResponseEntity.ok().body(EmployeeResponseMapper.INSTANCE.createFrom(userDetails.getEmployee()));
@@ -96,7 +97,7 @@ public class EmployeeController {
   @GetMapping(value = EmployeeControllerPath.SELF, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
   public ResponseEntity<EmployeeResponse> getSelf() {
-    CustomUserDetails userDetails = (CustomUserDetails) ThreadLocalAuthenticationHolder.authentication.get().getPrincipal();
+    CustomUserDetails userDetails = (CustomUserDetails) this.appSecurityContextHolder.getCurrentContext().getAuthentication().getPrincipal();
     return ResponseEntity.ok().body(
         EmployeeResponseMapper.INSTANCE.createFrom(userDetails.getEmployee()));
   }

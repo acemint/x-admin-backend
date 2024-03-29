@@ -1,7 +1,6 @@
 package com.clinic.xadmin.repository.employee;
 
 
-import com.clinic.xadmin.context.ThreadLocalAuthenticationHolder;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.entity.QEmployee;
 import com.clinic.xadmin.model.employee.EmployeeFilter;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

@@ -3,9 +3,10 @@ spring.datasource:
   username: ${SPRING_DATASOURCE_USERNAME}
   password: ${SPRING_DATASOURCE_PASSWORD}
 
-xadmin.jwt:
-  secret-key: ${XADMIN_JWT_SECRET_KEY}
-  expiration-time-in-ms: 18000000
+# DEPRECATED
+# xadmin.jwt:
+#  secret-key: ${XADMIN_JWT_SECRET_KEY}
+#  expiration-time-in-ms: 18000000
 
 xadmin.security:
   cors:

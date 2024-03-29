@@ -2,15 +2,14 @@ package com.clinic.xadmin.service.employee;
 
 import com.clinic.xadmin.constant.EmployeeRole;
 import com.clinic.xadmin.constant.EmployeeType;
-import com.clinic.xadmin.context.ThreadLocalAuthenticationHolder;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.ResetPasswordRequest;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.model.employee.EmployeeFilter;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
+import com.clinic.xadmin.security.context.AppSecurityContextHolder;
 import com.clinic.xadmin.service.exception.XAdminBadRequestException;
-import com.clinic.xadmin.service.exception.XAdminInternalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -26,11 +25,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   private final EmployeeRepository employeeRepository;
   private final PasswordEncoder passwordEncoder;
+  private final AppSecurityContextHolder appSecurityContextHolder;
 
   @Autowired
-  private EmployeeServiceImpl(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder) {
+  private EmployeeServiceImpl(EmployeeRepository employeeRepository,
+      PasswordEncoder passwordEncoder,
+      AppSecurityContextHolder appSecurityContextHolder) {
     this.employeeRepository = employeeRepository;
     this.passwordEncoder = passwordEncoder;
+    this.appSecurityContextHolder = appSecurityContextHolder;
   }
 
   @Override
@@ -64,7 +67,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public Page<Employee> getEmployees(EmployeeFilter employeeFilter) {
-    Authentication authentication = ThreadLocalAuthenticationHolder.authentication.get();
+    Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
     Employee employee = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
 
     if (!employee.getRole().equals(EmployeeRole.ROLE_DEVELOPER)) {
