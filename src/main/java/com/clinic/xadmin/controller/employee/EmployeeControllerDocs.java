@@ -1,7 +1,5 @@
 package com.clinic.xadmin.controller.employee;
 
-import com.clinic.xadmin.controller.constant.CookieName;
-
 public class EmployeeControllerDocs {
 
   public static final String LOGIN_SUMMARY = "Logging in to the current application";
