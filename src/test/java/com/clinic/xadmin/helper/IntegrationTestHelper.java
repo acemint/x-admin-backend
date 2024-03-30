@@ -1,13 +1,11 @@
 package com.clinic.xadmin.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.Assertions;
 import org.testcontainers.shaded.org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Objects;
@@ -29,10 +27,11 @@ public class IntegrationTestHelper {
     }
   }
 
-  public static String readJsonAsString(String fileName, String... hints) {
+  public static byte[] readJsonAsBytes(String fileName, String... hints) {
     File inputStream = fileFetcher(fileName, hints);
     try {
-      return objectMapper.writeValueAsString(inputStream);
+      Object object = objectMapper.readValue(inputStream, Object.class);
+      return objectMapper.writeValueAsBytes(object);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
