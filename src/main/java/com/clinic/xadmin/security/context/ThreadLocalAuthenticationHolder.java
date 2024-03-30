@@ -1,4 +1,4 @@
-package com.clinic.xadmin.context;
+package com.clinic.xadmin.security.context;
 
 import org.springframework.security.core.Authentication;
 
