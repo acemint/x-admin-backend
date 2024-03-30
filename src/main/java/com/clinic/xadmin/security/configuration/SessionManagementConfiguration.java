@@ -2,6 +2,7 @@ package com.clinic.xadmin.security.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 
@@ -12,6 +13,7 @@ public class SessionManagementConfiguration {
 
   @Bean(value = DEFAULT_SESSION_MANAGEMENT_REPOSITORY_BEAN_NAME)
   public SecurityContextRepository securityContextRepository() {
-    return new HttpSessionSecurityContextRepository();
+    return new DelegatingSecurityContextRepository(
+        new HttpSessionSecurityContextRepository());
   }
 }

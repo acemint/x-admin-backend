@@ -4,7 +4,6 @@ package com.clinic.xadmin.controller.employee;
 import com.clinic.xadmin.controller.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.dto.request.employee.LoginEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
-import com.clinic.xadmin.dto.request.employee.ResetPasswordRequest;
 import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.mapper.EmployeeResponseMapper;
@@ -31,10 +30,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,7 +48,7 @@ public class EmployeeController {
   private final EmployeeService employeeService;
   private final SecurityContextRepository securityContextRepository;
 
-  private AppSecurityContextHolder appSecurityContextHolder;
+  private final AppSecurityContextHolder appSecurityContextHolder;
 
   @Autowired
   public EmployeeController(
@@ -77,7 +74,7 @@ public class EmployeeController {
     this.appSecurityContextHolder.setContext(context);
     this.securityContextRepository.saveContext(context, httpServletRequest, httpServletResponse);
 
-    CustomUserDetails userDetails =(CustomUserDetails) authenticationResponse.getPrincipal();
+    CustomUserDetails userDetails = (CustomUserDetails) authenticationResponse.getPrincipal();
     return ResponseEntity.ok().body(EmployeeResponseMapper.INSTANCE.createFrom(userDetails.getEmployee()));
   }
 
