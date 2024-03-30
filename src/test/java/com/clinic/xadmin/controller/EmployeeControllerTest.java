@@ -3,13 +3,16 @@ package com.clinic.xadmin.controller;
 import com.clinic.xadmin.constant.EmployeeRole;
 import com.clinic.xadmin.controller.employee.EmployeeControllerPath;
 import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
+import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.helper.IntegrationTestHelper;
 import com.clinic.xadmin.helper.WithMockCustomUser;
+import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.configuration.PasswordEncoderConfiguration;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,10 +25,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
+
 public class EmployeeControllerTest extends BaseControllerTest {
 
   @Autowired
   private EmployeeRepository employeeRepository;
+
+  @Autowired
+  private ClinicRepository clinicRepository;
 
   @Autowired
   @Qualifier(value = PasswordEncoderConfiguration.BEAN_NAME)
@@ -41,6 +49,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
 
   @AfterEach
   public void afterEach() {
+    this.clinicRepository.deleteAll();
     this.employeeRepository.deleteAll();
   }
 
@@ -50,6 +59,33 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .password(this.passwordEncoder.encode("Test123:>"))
         .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
         .build();
+  }
+
+  private Clinic constructMultipleEmployeeOnAGivenClinic() {
+    Clinic clinic = Clinic.builder()
+        .id("123")
+        .build();
+    List<Employee> employees = List.of(
+        Employee.builder()
+            .emailAddress("user1@gmail.com")
+            .password(this.passwordEncoder.encode("Test123:>"))
+            .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
+            .clinic(clinic)
+            .build(),
+        Employee.builder()
+            .emailAddress("user2@gmail.com")
+            .password(this.passwordEncoder.encode("Test123:>"))
+            .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
+            .clinic(clinic)
+            .build(),
+        Employee.builder()
+            .emailAddress("user3@gmail.com")
+            .password(this.passwordEncoder.encode("Test123:>"))
+            .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
+            .clinic(clinic)
+            .build()
+        );
+    return clinic;
   }
 
   @Test
@@ -104,6 +140,29 @@ public class EmployeeControllerTest extends BaseControllerTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()));
   }
+
+  @Test
+  @WithMockCustomUser(clinicId = "234")
+  public void filter_EmployeeCannotAccessOtherClinic_Success() throws Exception {
+    this.clinicRepository.save(this.constructMultipleEmployeeOnAGivenClinic());
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(0)));
+  }
+
+  @Test
+  @WithMockCustomUser(clinicId = "123")
+  public void filter_EmployeeAccessOwnClinicData_Success() throws Exception {
+    this.clinicRepository.save(this.constructMultipleEmployeeOnAGivenClinic());
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(0)));
+  }
+
 
 
 }
