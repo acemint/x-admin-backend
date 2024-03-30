@@ -106,13 +106,13 @@ public class EmployeeController {
   @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
   public ResponseEntity<Page<EmployeeResponse>> getListEmployeesByName(
       @RequestParam(required = false) String name,
-      @RequestParam(required = false) List<String> sortBy,
+      @RequestParam(required = false) String[] sortBy,
       @RequestParam(defaultValue = EmployeeControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
       @RequestParam(defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
       @RequestParam(defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_SIZE) Integer pageSize) {
     PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
     if (!Objects.isNull(sortBy)) {
-      pageRequest.withSort(Sort.Direction.valueOf(sortDirection), sortBy.toArray(new String[0]));
+      pageRequest.withSort(Sort.Direction.valueOf(sortDirection), sortBy);
     }
 
     EmployeeFilter employeeFilter = EmployeeFilter.builder()

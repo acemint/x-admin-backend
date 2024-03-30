@@ -13,4 +13,6 @@ public @interface WithMockCustomUser {
   String username() default "username";
 
   String[] roles() default {EmployeeRole.ROLE_REGULAR_EMPLOYEE};
+
+  String clinicId() default "123";
 }
