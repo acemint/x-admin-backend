@@ -1,4 +1,4 @@
-package com.clinic.xadmin.controller.constant;
+package com.clinic.xadmin.security.constant;
 
 public class CookieName {
 

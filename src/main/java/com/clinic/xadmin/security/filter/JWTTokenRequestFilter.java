@@ -1,7 +1,7 @@
 package com.clinic.xadmin.security.filter;
 
 import com.clinic.xadmin.security.context.ThreadLocalAuthenticationHolder;
-import com.clinic.xadmin.controller.constant.CookieName;
+import com.clinic.xadmin.security.constant.CookieName;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
