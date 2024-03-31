@@ -1,5 +1,6 @@
 package com.clinic.xadmin.helper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.testcontainers.shaded.org.checkerframework.checker.nullness.qual.Nullable;
@@ -33,6 +34,14 @@ public class IntegrationTestHelper {
       Object object = objectMapper.readValue(inputStream, Object.class);
       return objectMapper.writeValueAsBytes(object);
     } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static <T> byte[] convertToByte(T data) {
+    try {
+      return objectMapper.writeValueAsBytes(data);
+    } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
     }
   }
