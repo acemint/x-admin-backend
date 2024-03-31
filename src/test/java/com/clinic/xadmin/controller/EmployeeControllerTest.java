@@ -25,7 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.List;
+import java.util.Set;
 
 public class EmployeeControllerTest extends BaseControllerTest {
 
@@ -49,8 +49,8 @@ public class EmployeeControllerTest extends BaseControllerTest {
 
   @AfterEach
   public void afterEach() {
-    this.clinicRepository.deleteAll();
     this.employeeRepository.deleteAll();
+    this.clinicRepository.deleteAll();
   }
 
   private Employee constructBasicEmployee() {
@@ -61,31 +61,36 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .build();
   }
 
-  private Clinic constructMultipleEmployeeOnAGivenClinic() {
-    Clinic clinic = Clinic.builder()
+  private Clinic constructBasicClinic() {
+    return Clinic.builder()
         .id("123")
         .build();
-    List<Employee> employees = List.of(
+  }
+
+  private Set<Employee> constructBasicEmployeesFromClinic(Clinic clinic) {
+    return Set.of(
         Employee.builder()
+            .firstName("user1")
             .emailAddress("user1@gmail.com")
             .password(this.passwordEncoder.encode("Test123:>"))
             .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
             .clinic(clinic)
             .build(),
         Employee.builder()
+            .firstName("user2")
             .emailAddress("user2@gmail.com")
             .password(this.passwordEncoder.encode("Test123:>"))
             .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
             .clinic(clinic)
             .build(),
         Employee.builder()
+            .firstName("user3")
             .emailAddress("user3@gmail.com")
             .password(this.passwordEncoder.encode("Test123:>"))
             .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
             .clinic(clinic)
             .build()
-        );
-    return clinic;
+    );
   }
 
   @Test
@@ -104,7 +109,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .content(requestBody))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.emailAddress").value(expectedResponseBody.getEmailAddress()));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content.emailAddress").value(expectedResponseBody.getEmailAddress()));
   }
 
   @Test
@@ -130,8 +135,8 @@ public class EmployeeControllerTest extends BaseControllerTest {
     this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.SELF)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.emailAddress").value(customUserDetails.getEmployee().getEmailAddress()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.role").value(customUserDetails.getEmployee().getRole()));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content.emailAddress").value(customUserDetails.getEmployee().getEmailAddress()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content.role").value(customUserDetails.getEmployee().getRole()));
   }
 
   @Test
@@ -144,7 +149,10 @@ public class EmployeeControllerTest extends BaseControllerTest {
   @Test
   @WithMockCustomUser(clinicId = "234")
   public void filter_EmployeeCannotAccessOtherClinic_Success() throws Exception {
-    this.clinicRepository.save(this.constructMultipleEmployeeOnAGivenClinic());
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    Set<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    this.employeeRepository.saveAll(employees);
 
     this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -155,12 +163,15 @@ public class EmployeeControllerTest extends BaseControllerTest {
   @Test
   @WithMockCustomUser(clinicId = "123")
   public void filter_EmployeeAccessOwnClinicData_Success() throws Exception {
-    this.clinicRepository.save(this.constructMultipleEmployeeOnAGivenClinic());
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    Set<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    this.employeeRepository.saveAll(employees);
 
     this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(0)));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(3)));
   }
 
 
