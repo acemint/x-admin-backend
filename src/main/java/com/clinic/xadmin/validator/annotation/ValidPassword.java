@@ -4,10 +4,12 @@ import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
+import jakarta.validation.constraints.NotNull;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.Objects;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
@@ -17,7 +19,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({TYPE, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
-@Constraint(validatedBy = ValidPassword.PasswordValidator.class)
+@Constraint(validatedBy = ValidPassword.Validator.class)
 @Documented
 public @interface ValidPassword {
 
@@ -27,11 +29,11 @@ public @interface ValidPassword {
 
   Class<? extends Payload>[] payload() default {};
 
-  class PasswordValidator implements ConstraintValidator<ValidPassword, String> {
+  class Validator implements ConstraintValidator<ValidPassword, String> {
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
-      if (password == null) {
+      if (Objects.isNull(password)) {
         return false;
       }
 

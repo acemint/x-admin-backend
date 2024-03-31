@@ -4,12 +4,15 @@ import com.clinic.xadmin.constant.EmployeeRole;
 import com.clinic.xadmin.constant.EmployeeType;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.ResetPasswordRequest;
+import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.model.employee.EmployeeFilter;
+import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
 import com.clinic.xadmin.service.exception.XAdminBadRequestException;
+import com.clinic.xadmin.service.exception.XAdminInternalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -26,14 +29,17 @@ public class EmployeeServiceImpl implements EmployeeService {
   private final EmployeeRepository employeeRepository;
   private final PasswordEncoder passwordEncoder;
   private final AppSecurityContextHolder appSecurityContextHolder;
+  private final ClinicRepository clinicRepository;
 
   @Autowired
   private EmployeeServiceImpl(EmployeeRepository employeeRepository,
       PasswordEncoder passwordEncoder,
-      AppSecurityContextHolder appSecurityContextHolder) {
+      AppSecurityContextHolder appSecurityContextHolder,
+      ClinicRepository clinicRepository) {
     this.employeeRepository = employeeRepository;
     this.passwordEncoder = passwordEncoder;
     this.appSecurityContextHolder = appSecurityContextHolder;
+    this.clinicRepository = clinicRepository;
   }
 
   @Override
@@ -43,12 +49,13 @@ public class EmployeeServiceImpl implements EmployeeService {
       throw new XAdminBadRequestException("Email has been taken");
     }
 
-    if (Optional.ofNullable(request.getType()).map(r -> r.equals(EmployeeType.DOCTOR)).orElse(false)
-        && !StringUtils.isEmpty(request.getDoctorNumber())) {
-      throw new XAdminBadRequestException("Doctor number should be inputted");
+    Clinic clinic = this.findClinicFromAuth();
+    if (Objects.isNull(clinic)) {
+      throw new XAdminInternalException("Clinic not found from authentication object");
     }
 
-    if (request.getRole().equals(EmployeeRole.ROLE_DEVELOPER)) {
+    // TODO: Move to Jakarta Bean Validation
+    if (request.getRole().equals(EmployeeRole.ROLE_REGULAR_EMPLOYEE)) {
       throw new XAdminBadRequestException("Unsupported role");
     }
 
@@ -61,6 +68,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         .type(request.getType())
         .role(request.getRole())
         .status(request.getStatus())
+        .clinic(clinic)
         .build();
     return this.employeeRepository.save(employee);
   }
@@ -89,6 +97,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     existingEmployee.setPassword(this.passwordEncoder.encode(request.getNewPassword()));
     return this.employeeRepository.save(existingEmployee);
+  }
+
+  private Clinic findClinicFromAuth() {
+    Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
+    Employee employee = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
+    return employee.getClinic();
   }
 
 }

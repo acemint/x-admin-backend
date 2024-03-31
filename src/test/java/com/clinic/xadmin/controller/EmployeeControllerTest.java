@@ -14,6 +14,7 @@ import com.clinic.xadmin.security.configuration.PasswordEncoderConfiguration;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
 import java.util.Set;
 
 public class EmployeeControllerTest extends BaseControllerTest {
@@ -174,6 +176,36 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(3)));
   }
 
+  @Test
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  public void register_EmployeeRoleIsNotRegularEmployee_Success() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    byte[] requestBody = IntegrationTestHelper
+        .readJsonAsBytes("employee_register_normalUser.json", "json", "request");
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.notNullValue()));
+    List<Employee> savedEmployees = this.employeeRepository.findAll();
+    Assertions.assertEquals(savedEmployees.size(), 1);
+    Assertions.assertEquals(savedEmployees.get(0).getClinic().getId(), "123");
+    Assertions.assertEquals(savedEmployees.get(0).getEmailAddress(), "master@gmail.com");
+  }
+
+  @Test
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_REGULAR_EMPLOYEE })
+  public void register_EmployeeRoleIsRegularEmployee_Error() throws Exception {
+    byte[] requestBody = IntegrationTestHelper
+        .readJsonAsBytes("employee_register_normalUser.json", "json", "request");
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()));
+  }
 
 
 }
