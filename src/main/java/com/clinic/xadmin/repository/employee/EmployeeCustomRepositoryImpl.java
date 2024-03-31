@@ -8,6 +8,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -64,16 +66,21 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
     return new PageImpl<>(employees, filter.getPageable(), employees.size());
   }
 
-  private BooleanExpression getBooleanExpression(EmployeeFilter filter) {
+  private @Nullable BooleanExpression getBooleanExpression(EmployeeFilter filter) {
     QEmployee qEmployee = QEmployee.employee;
 
-    String nameWithPercentSign = "%" + Optional.ofNullable(filter.getName()).orElse("") + "%";
-    BooleanExpression booleanExpression = qEmployee.firstName.likeIgnoreCase(nameWithPercentSign)
-        .or(qEmployee.lastName.likeIgnoreCase(nameWithPercentSign));
-
-    Optional.ofNullable(filter.getClinicId()).map(qEmployee.clinic.id::eq)
-        .ifPresent(clinicIdBooleanExpression -> booleanExpression.and(clinicIdBooleanExpression));
-
+    BooleanExpression booleanExpression = qEmployee.id.isNotNull();
+    if (StringUtils.hasText(filter.getName())) {
+      String nameWithPercentSign = "%" + Optional.ofNullable(filter.getName()).orElse("") + "%";
+      booleanExpression.and(
+          booleanExpression = booleanExpression.and(
+              qEmployee.firstName.likeIgnoreCase(nameWithPercentSign).or(qEmployee.lastName.likeIgnoreCase(nameWithPercentSign)))
+      );
+    }
+    if (StringUtils.hasText(filter.getClinicId())) {
+      booleanExpression = booleanExpression.and(
+          booleanExpression.and(qEmployee.clinic.id.eq(filter.getClinicId())));
+    }
     return booleanExpression;
   }
 

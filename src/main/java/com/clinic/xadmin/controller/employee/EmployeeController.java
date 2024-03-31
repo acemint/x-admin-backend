@@ -4,9 +4,11 @@ package com.clinic.xadmin.controller.employee;
 import com.clinic.xadmin.controller.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.dto.request.employee.LoginEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
+import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.mapper.EmployeeResponseMapper;
+import com.clinic.xadmin.mapper.PaginationMapper;
 import com.clinic.xadmin.model.employee.EmployeeFilter;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.configuration.AuthenticationManagerConfiguration;
@@ -20,7 +22,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -66,7 +67,7 @@ public class EmployeeController {
       summary = EmployeeControllerDocs.LOGIN_SUMMARY,
       description = EmployeeControllerDocs.LOGIN_DESCRIPTION)
   @PostMapping(value = EmployeeControllerPath.LOGIN, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<EmployeeResponse> login(@RequestBody LoginEmployeeRequest request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+  public ResponseEntity<StandardizedResponse<EmployeeResponse>> login(@RequestBody LoginEmployeeRequest request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
     Authentication authenticationResponse = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmailAddress(), request.getPassword()));
 
     SecurityContext context = this.appSecurityContextHolder.createEmptyContext();
@@ -75,7 +76,10 @@ public class EmployeeController {
     this.securityContextRepository.saveContext(context, httpServletRequest, httpServletResponse);
 
     CustomUserDetails userDetails = (CustomUserDetails) authenticationResponse.getPrincipal();
-    return ResponseEntity.ok().body(EmployeeResponseMapper.INSTANCE.createFrom(userDetails.getEmployee()));
+    return ResponseEntity.ok().body(
+        StandardizedResponse.<EmployeeResponse>builder()
+            .content(EmployeeResponseMapper.INSTANCE.createFrom(userDetails.getEmployee()))
+            .build());
   }
 
   @Operation(
@@ -83,20 +87,24 @@ public class EmployeeController {
       description = EmployeeControllerDocs.REGISTER_DESCRIPTION)
   @PostMapping(value = EmployeeControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_ADMIN_OR_DEVELOPER)
-  public ResponseEntity<EmployeeResponse> register(@RequestBody @Valid RegisterEmployeeRequest request) {
+  public ResponseEntity<StandardizedResponse<EmployeeResponse>> register(@RequestBody @Valid RegisterEmployeeRequest request) {
     Employee employee = this.employeeService.createEmployee(request);
     return ResponseEntity.ok().body(
-        EmployeeResponseMapper.INSTANCE.createFrom(employee));
+        StandardizedResponse.<EmployeeResponse>builder()
+            .content(EmployeeResponseMapper.INSTANCE.createFrom(employee))
+            .build());
   }
 
   @Operation(
       summary = EmployeeControllerDocs.GET_SELF_SUMMARY)
   @GetMapping(value = EmployeeControllerPath.SELF, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
-  public ResponseEntity<EmployeeResponse> getSelf() {
+  public ResponseEntity<StandardizedResponse<EmployeeResponse>> getSelf() {
     CustomUserDetails userDetails = (CustomUserDetails) this.appSecurityContextHolder.getCurrentContext().getAuthentication().getPrincipal();
     return ResponseEntity.ok().body(
-        EmployeeResponseMapper.INSTANCE.createFrom(userDetails.getEmployee()));
+        StandardizedResponse.<EmployeeResponse>builder()
+            .content(EmployeeResponseMapper.INSTANCE.createFrom(userDetails.getEmployee()))
+            .build());
   }
 
   @Operation(
@@ -104,7 +112,7 @@ public class EmployeeController {
       description = EmployeeControllerDocs.GET_EMPLOYEES_DESCRIPTION)
   @GetMapping(value = EmployeeControllerPath.FILTER, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
-  public ResponseEntity<Page<EmployeeResponse>> getListEmployeesByName(
+  public ResponseEntity<StandardizedResponse<List<EmployeeResponse>>> filter(
       @RequestParam(required = false) String name,
       @RequestParam(required = false) String[] sortBy,
       @RequestParam(defaultValue = EmployeeControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
@@ -120,9 +128,12 @@ public class EmployeeController {
         .pageable(pageRequest)
         .build();
     Page<Employee> employees = this.employeeService.getEmployees(employeeFilter);
-    List<EmployeeResponse> employeeResponses = EmployeeResponseMapper.INSTANCE.createFrom(employees.getContent());
 
-    return ResponseEntity.ok().body(new PageImpl<>(employeeResponses, pageRequest, employees.getTotalElements()));
+    return ResponseEntity.ok().body(StandardizedResponse
+        .<List<EmployeeResponse>>builder()
+        .content(EmployeeResponseMapper.INSTANCE.createFrom(employees.getContent()))
+        .paginationMetadata(PaginationMapper.INSTANCE.createFrom(employees))
+        .build());
   }
 
 }
