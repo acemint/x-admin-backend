@@ -1,0 +1,14 @@
+{
+  "firstName": "Master",
+  "lastName": "Jungler",
+  "age": 18,
+  "gender": "MALE",
+  "doctorNumber": null,
+  "emailAddress": "master@gmail.com",
+  "status": "INACTIVE",
+  "role": "ROLE_ADMIN",
+  "type": "DOC?",
+  "address": "Jl. Fountain No. 123",
+  "phoneNumber": "0896120101010",
+  "password": "Admin123:>"
+}

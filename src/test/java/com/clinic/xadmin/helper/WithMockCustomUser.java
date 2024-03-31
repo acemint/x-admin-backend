@@ -1,6 +1,5 @@
 package com.clinic.xadmin.helper;
 
-import com.clinic.xadmin.constant.EmployeeRole;
 import org.springframework.security.test.context.support.WithSecurityContext;
 
 import java.lang.annotation.Retention;
@@ -10,9 +9,9 @@ import java.lang.annotation.RetentionPolicy;
 @WithSecurityContext(factory = WithMockCustomUserSecurityContextFactory.class)
 public @interface WithMockCustomUser {
 
-  String username() default "username";
+  String username() default WithMockCustomUserConstants.DEFAULT_USERNAME;
 
-  String[] roles() default {EmployeeRole.ROLE_REGULAR_EMPLOYEE};
+  String[] roles() default { WithMockCustomUserConstants.DEFAULT_ROLES };
 
-  String clinicId() default "123";
+  String clinicId() default WithMockCustomUserConstants.DEFAULT_CLINIC_ID;
 }
