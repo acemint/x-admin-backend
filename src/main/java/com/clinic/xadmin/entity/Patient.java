@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldNameConstants;
 
 import java.util.Set;
 
@@ -23,6 +24,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "xa_patient")
+@FieldNameConstants
 public class Patient {
 
   @Id
@@ -36,8 +38,26 @@ public class Patient {
   @Column(name = "code")
   private String code;
 
-  @Column(name = "name")
-  private String name;
+  @Column(name = "first_name")
+  private String firstName;
+
+  @Column(name = "last_name")
+  private String lastName;
+
+  @Column(name = "age")
+  private Integer age;
+
+  @Column(name = "gender")
+  private String gender;
+
+  @Column(name = "email")
+  private String email;
+
+  @Column(name = "address")
+  private String address;
+
+  @Column(name = "phone_number")
+  private String phoneNumber;
 
   @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
   private Set<Visit> visits;
