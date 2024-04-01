@@ -1,10 +1,6 @@
 package com.clinic.xadmin.helper;
 
-import com.clinic.xadmin.constant.EmployeeRole;
-import org.springframework.security.test.context.support.WithSecurityContext;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import com.clinic.xadmin.constant.employee.EmployeeRole;
 
 public class WithMockCustomUserConstants {
 

@@ -1,6 +1,6 @@
 package com.clinic.xadmin.validator.annotation;
 
-import com.clinic.xadmin.constant.EmployeeType;
+import com.clinic.xadmin.constant.employee.EmployeeType;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -11,8 +11,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;

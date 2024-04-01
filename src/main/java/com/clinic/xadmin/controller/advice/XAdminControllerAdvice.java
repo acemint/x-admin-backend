@@ -1,6 +1,6 @@
 package com.clinic.xadmin.controller.advice;
 
-import com.clinic.xadmin.dto.response.exception.StandardizedErrorResponse;
+import com.clinic.xadmin.dto.response.StandardizedErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,13 +1,13 @@
-package com.clinic.xadmin.controller.constant;
+package com.clinic.xadmin.security.constant;
 
-import com.clinic.xadmin.constant.EmployeeRole;
+import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.security.role.AuthorizationEvaluator;
 
 public class SecurityAuthorizationType {
 
   public static final String IS_FULLY_AUTHENTICATED = "isFullyAuthenticated()";
   public static final String ROLE_SPLITTER = "::";
-  public static final String HAS_PERMISSION_FUNCTION_PREFIX = "@" + AuthorizationEvaluator.BEAN_NAME + ".hasRole('";
+  private static final String HAS_PERMISSION_FUNCTION_PREFIX = "@" + AuthorizationEvaluator.BEAN_NAME + ".hasRole('";
   public static final String IS_DEVELOPER =
       HAS_PERMISSION_FUNCTION_PREFIX +
           EmployeeRole.ROLE_DEVELOPER + "')";

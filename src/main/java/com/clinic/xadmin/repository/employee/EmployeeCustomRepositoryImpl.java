@@ -26,6 +26,7 @@ import java.util.Optional;
 @Repository
 public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
 
+  //  TODO: Choose where to move this (which layer)
   public static final LinkedHashSet<String> AVAILABLE_SORTED_BY = new LinkedHashSet<>();
 
   static {
@@ -91,6 +92,7 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
         .orElse(Order.ASC);
 
     List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
+    // TODO: Change the field sort to "name" instead of specific "firstName"
     for (String property : sort.stream().map(Sort.Order::getProperty).toList()) {
       if (property.equals(Employee.Fields.firstName)) {
         orderSpecifiers.add(new OrderSpecifier<>(order, qEmployee.firstName));

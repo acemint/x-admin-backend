@@ -1,4 +1,4 @@
-package com.clinic.xadmin.service.exception;
+package com.clinic.xadmin.exception;
 
 public class XAdminBadRequestException extends RuntimeException {
 

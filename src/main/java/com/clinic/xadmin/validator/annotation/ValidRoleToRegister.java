@@ -1,6 +1,6 @@
 package com.clinic.xadmin.validator.annotation;
 
-import com.clinic.xadmin.constant.EmployeeRole;
+import com.clinic.xadmin.constant.employee.EmployeeRole;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

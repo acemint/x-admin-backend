@@ -1,7 +1,6 @@
 package com.clinic.xadmin.service.employee;
 
-import com.clinic.xadmin.constant.EmployeeRole;
-import com.clinic.xadmin.constant.EmployeeType;
+import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.ResetPasswordRequest;
 import com.clinic.xadmin.entity.Clinic;
@@ -11,17 +10,15 @@ import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
-import com.clinic.xadmin.service.exception.XAdminBadRequestException;
-import com.clinic.xadmin.service.exception.XAdminInternalException;
+import com.clinic.xadmin.exception.XAdminBadRequestException;
+import com.clinic.xadmin.exception.XAdminInternalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {

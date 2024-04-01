@@ -1,7 +1,7 @@
 package com.clinic.xadmin.controller.employee;
 
 
-import com.clinic.xadmin.controller.constant.SecurityAuthorizationType;
+import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.dto.request.employee.LoginEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;

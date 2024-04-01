@@ -1,4 +1,4 @@
-package com.clinic.xadmin.constant;
+package com.clinic.xadmin.constant.employee;
 
 public class EmployeeRole {
 
