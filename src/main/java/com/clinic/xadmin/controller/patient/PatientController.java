@@ -1,9 +1,8 @@
 package com.clinic.xadmin.controller.patient;
 
 
-import com.clinic.xadmin.controller.constant.SecurityAuthorizationType;
+import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.controller.employee.EmployeeControllerDefaultValue;
-import com.clinic.xadmin.controller.employee.EmployeeControllerPath;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.patient.PatientResponse;
 import com.clinic.xadmin.entity.Patient;

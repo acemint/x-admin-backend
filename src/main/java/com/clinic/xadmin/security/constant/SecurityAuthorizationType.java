@@ -1,4 +1,4 @@
-package com.clinic.xadmin.controller.constant;
+package com.clinic.xadmin.security.constant;
 
 import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.security.role.AuthorizationEvaluator;
