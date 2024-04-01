@@ -1,6 +1,7 @@
 package com.clinic.xadmin.controller;
 
 import com.clinic.xadmin.constant.EmployeeRole;
+import com.clinic.xadmin.constant.EmployeeType;
 import com.clinic.xadmin.controller.employee.EmployeeControllerPath;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
@@ -222,7 +223,8 @@ public class EmployeeControllerTest extends BaseControllerTest {
     this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
-        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()));
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.emailAddress)));
   }
 
   @Test
@@ -238,10 +240,130 @@ public class EmployeeControllerTest extends BaseControllerTest {
     this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
-        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()));
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.password)));
   }
 
-  //  TODO: Test more validation bean, like EmployeeType is Doctor and DoctorNumber should not be null
+  @Test
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  public void register_RequestBodyFirstNameIsNull_IsBadRequest() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+
+    RegisterEmployeeRequest requestBody = IntegrationTestHelper
+        .readJsonFile("employee_register_normalUser.json", RegisterEmployeeRequest.class, "json", "request");
+    requestBody.setFirstName(null);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(IntegrationTestHelper.convertToByte(requestBody)))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.firstName)));
+  }
+
+  @Test
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  public void register_RequestBodyGenderIsInvalid_IsBadRequest() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+
+    RegisterEmployeeRequest requestBody = IntegrationTestHelper
+        .readJsonFile("employee_register_normalUser.json", RegisterEmployeeRequest.class, "json", "request");
+    requestBody.setGender("unknown");
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(IntegrationTestHelper.convertToByte(requestBody)))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.gender)));
+  }
+
+  @Test
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  public void register_RequestBodyAgeIsInvalid_IsBadRequest() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+
+    RegisterEmployeeRequest requestBody = IntegrationTestHelper
+        .readJsonFile("employee_register_normalUser.json", RegisterEmployeeRequest.class, "json", "request");
+    requestBody.setAge(1);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(IntegrationTestHelper.convertToByte(requestBody)))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.age)));
+  }
+
+  @Test
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  public void register_AddressIsNull_IsBadRequest() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+
+    RegisterEmployeeRequest requestBody = IntegrationTestHelper
+        .readJsonFile("employee_register_normalUser.json", RegisterEmployeeRequest.class, "json", "request");
+    requestBody.setAddress(null);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(IntegrationTestHelper.convertToByte(requestBody)))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.address)));
+  }
+
+
+  @Test
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  public void register_PhoneNumberIsNull_IsBadRequest() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+
+    RegisterEmployeeRequest requestBody = IntegrationTestHelper
+        .readJsonFile("employee_register_normalUser.json", RegisterEmployeeRequest.class, "json", "request");
+    requestBody.setPhoneNumber(null);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(IntegrationTestHelper.convertToByte(requestBody)))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.phoneNumber)));
+  }
+
+  @Test
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  public void register_EmployeeRoleCreationIsInvalid_IsBadRequest() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+
+    RegisterEmployeeRequest requestBody = IntegrationTestHelper
+        .readJsonFile("employee_register_normalUser.json", RegisterEmployeeRequest.class, "json", "request");
+    requestBody.setRole(EmployeeRole.ROLE_DEVELOPER);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(IntegrationTestHelper.convertToByte(requestBody)))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.role)));
+  }
+
+  @Test
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  public void register_EmployeeTypeDoctorHasNoDoctorNumber_IsBadRequest() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+
+    RegisterEmployeeRequest requestBody = IntegrationTestHelper
+        .readJsonFile("employee_register_normalUser.json", RegisterEmployeeRequest.class, "json", "request");
+    requestBody.setType(EmployeeType.DOCTOR);
+    requestBody.setDoctorNumber(null);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(IntegrationTestHelper.convertToByte(requestBody)))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.doctorNumber)));
+  }
 
 
 }

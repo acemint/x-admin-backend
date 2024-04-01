@@ -1,14 +1,15 @@
 package com.clinic.xadmin.validator.annotation;
 
+import com.clinic.xadmin.constant.EmployeeType;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
-import jakarta.validation.constraints.NotNull;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,31 +22,34 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({TYPE, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
-@Constraint(validatedBy = ValidEmail.EmailValidator.class)
+@Constraint(validatedBy = ValidEmployeeType.Validator.class)
 @Documented
-public @interface ValidEmail {
+public @interface ValidEmployeeType {
 
-  String message() default "email is unsupported: ${validatedValue}";
+  String message() default "employee type is unknown: ${validatedValue}";
 
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};
 
 
-  class EmailValidator implements ConstraintValidator<ValidEmail, String> {
+  class Validator implements ConstraintValidator<ValidEmployeeType, String> {
 
-    private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
-        "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    private static final Pattern PATTERN = Pattern.compile(EMAIL_PATTERN);
+    private static final String[] VALID_EMPLOYEE_TYPE = {
+        EmployeeType.DOCTOR
+    };
 
     @Override
-    public boolean isValid(String email, ConstraintValidatorContext context) {
-      if (Objects.isNull(email)) {
+    public boolean isValid(String employeeType, ConstraintValidatorContext context) {
+      if (Objects.isNull(employeeType)) {
         return false;
       }
 
-      Matcher matcher = PATTERN.matcher(email);
-      return matcher.matches();
+      if (!Arrays.stream(VALID_EMPLOYEE_TYPE).toList().contains(employeeType)) {
+        return false;
+      }
+
+      return true;
     }
 
   }
