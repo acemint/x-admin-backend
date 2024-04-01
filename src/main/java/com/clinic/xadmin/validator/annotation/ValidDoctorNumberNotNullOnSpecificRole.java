@@ -40,6 +40,11 @@ public @interface ValidDoctorNumberNotNullOnSpecificRole {
       }
       if (registerEmployeeRequest.getType().equals(EmployeeType.DOCTOR) &&
           Objects.isNull(registerEmployeeRequest.getDoctorNumber())) {
+        constraintValidatorContext.disableDefaultConstraintViolation();
+        constraintValidatorContext.buildConstraintViolationWithTemplate(
+            constraintValidatorContext.getDefaultConstraintMessageTemplate())
+            .addPropertyNode(RegisterEmployeeRequest.Fields.doctorNumber)
+            .addConstraintViolation();
         return false;
       }
       return true;
