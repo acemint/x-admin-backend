@@ -1,4 +1,4 @@
-package com.clinic.xadmin.dto.response.exception;
+package com.clinic.xadmin.dto.response;
 
 
 import lombok.AllArgsConstructor;
