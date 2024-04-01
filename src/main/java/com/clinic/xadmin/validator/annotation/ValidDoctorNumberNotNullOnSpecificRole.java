@@ -1,6 +1,6 @@
 package com.clinic.xadmin.validator.annotation;
 
-import com.clinic.xadmin.constant.EmployeeType;
+import com.clinic.xadmin.constant.employee.EmployeeType;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;

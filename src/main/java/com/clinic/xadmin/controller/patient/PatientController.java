@@ -38,6 +38,7 @@ public class PatientController {
     this.patientService = patientService;
   }
 
+  // TODO: Add integration test for this class
   @Operation(
       summary = PatientControllerDocs.GET_PATIENTS_SUMMARY,
       description = PatientControllerDocs.GET_PATIENTS_DESCRIPTION)

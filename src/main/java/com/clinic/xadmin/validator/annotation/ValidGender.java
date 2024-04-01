@@ -1,11 +1,10 @@
 package com.clinic.xadmin.validator.annotation;
 
-import com.clinic.xadmin.constant.Gender;
+import com.clinic.xadmin.constant.experimental.Gender;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
-import jakarta.validation.constraints.NotNull;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

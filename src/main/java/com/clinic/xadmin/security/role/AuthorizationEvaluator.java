@@ -1,6 +1,6 @@
 package com.clinic.xadmin.security.role;
 
-import com.clinic.xadmin.constant.EmployeeRole;
+import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.controller.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Employee;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 @Component(value = AuthorizationEvaluator.BEAN_NAME)

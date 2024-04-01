@@ -1,7 +1,6 @@
-package com.clinic.xadmin.constant;
+package com.clinic.xadmin.constant.experimental;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 

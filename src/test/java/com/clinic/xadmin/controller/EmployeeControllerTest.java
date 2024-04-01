@@ -1,7 +1,7 @@
 package com.clinic.xadmin.controller;
 
-import com.clinic.xadmin.constant.EmployeeRole;
-import com.clinic.xadmin.constant.EmployeeType;
+import com.clinic.xadmin.constant.employee.EmployeeRole;
+import com.clinic.xadmin.constant.employee.EmployeeType;
 import com.clinic.xadmin.controller.employee.EmployeeControllerPath;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.response.employee.EmployeeResponse;

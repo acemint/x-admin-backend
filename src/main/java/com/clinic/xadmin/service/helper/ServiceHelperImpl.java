@@ -1,6 +1,6 @@
 package com.clinic.xadmin.service.helper;
 
-import com.clinic.xadmin.constant.EmployeeRole;
+import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;

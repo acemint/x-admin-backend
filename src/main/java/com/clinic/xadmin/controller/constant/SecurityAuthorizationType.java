@@ -1,6 +1,6 @@
 package com.clinic.xadmin.controller.constant;
 
-import com.clinic.xadmin.constant.EmployeeRole;
+import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.security.role.AuthorizationEvaluator;
 
 public class SecurityAuthorizationType {
