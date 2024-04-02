@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class ServiceHelperImpl implements ServiceHelper {
 
@@ -26,7 +28,7 @@ public class ServiceHelperImpl implements ServiceHelper {
       while the controller already blocks that the non-developer employee should have clinic in AuthorizationEvaluator,
       this place will check again, even though it might be impossible
     */
-    if (!employee.getRole().equals(EmployeeRole.ROLE_DEVELOPER)) {
+    if (!employee.getRole().equals(EmployeeRole.ROLE_DEVELOPER) && Objects.isNull(employee.getClinic())) {
       throw new IllegalStateException("Unable to get valid clinic from employee: " + employee.getEmailAddress() + " from role " + employee.getRole());
     }
     return employee.getClinic();

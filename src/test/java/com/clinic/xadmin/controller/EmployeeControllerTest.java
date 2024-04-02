@@ -181,21 +181,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
 
 
   @Test
-  @WithMockCustomUser(clinicId = "234")
-  public void filter_EmployeeCannotAccessOtherClinic_IsOk() throws Exception {
-    Clinic clinic = this.constructBasicClinic();
-    this.clinicRepository.save(clinic);
-    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
-    this.employeeRepository.saveAll(employees);
-
-    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
-            .contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(0)));
-  }
-
-  @Test
-  @WithMockCustomUser(clinicId = "123")
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
   public void filter_EmployeeAccessOwnClinicData_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -209,7 +195,35 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123")
+  @WithMockCustomUser(clinicId = "234", roles = { EmployeeRole.ROLE_ADMIN })
+  public void filter_EmployeeCannotAccessOtherClinic_IsOk() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    this.employeeRepository.saveAll(employees);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(0)));
+  }
+
+
+  @Test
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_REGULAR_EMPLOYEE })
+  public void filter_EmployeeIsNotAdmin_IsForbidden() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    this.employeeRepository.saveAll(employees);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()));
+  }
+
+  @Test
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
   public void filter_RequestParameterNameIsNotEmpty_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -228,7 +242,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123")
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
   public void filter_SortByName_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -241,7 +255,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
         .andExpect(MockMvcResultMatchers.jsonPath("$.content[*].emailAddress",
-            Matchers.containsInAnyOrder(
+            Matchers.containsInRelativeOrder(
                 employees.get(0).getEmailAddress(),
                 employees.get(1).getEmailAddress(),
                 employees.get(2).getEmailAddress())
@@ -249,7 +263,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123")
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
   public void filter_SortByType_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -262,7 +276,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
         .andExpect(MockMvcResultMatchers.jsonPath("$.content[*].emailAddress",
-            Matchers.containsInAnyOrder(
+            Matchers.containsInRelativeOrder(
                 employees.get(0).getEmailAddress(),
                 employees.get(2).getEmailAddress(),
                 employees.get(1).getEmailAddress())
@@ -270,7 +284,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123")
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
   public void filter_SortByStatus_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -279,11 +293,11 @@ public class EmployeeControllerTest extends BaseControllerTest {
 
     this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
             .param("name", "user")
-            .param("sortBy", "type")
+            .param("sortBy", "status")
             .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
         .andExpect(MockMvcResultMatchers.jsonPath("$.content[*].emailAddress",
-            Matchers.containsInAnyOrder(
+            Matchers.containsInRelativeOrder(
                 employees.get(0).getEmailAddress(),
                 employees.get(1).getEmailAddress(),
                 employees.get(2).getEmailAddress())
@@ -291,7 +305,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123")
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
   public void filter_PageNumberIsNotDefaultAndPageSizeIsNotDefault_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
