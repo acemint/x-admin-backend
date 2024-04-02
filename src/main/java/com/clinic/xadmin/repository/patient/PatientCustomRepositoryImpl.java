@@ -52,14 +52,12 @@ public class PatientCustomRepositoryImpl implements PatientCustomRepository {
     BooleanExpression booleanExpression = qPatient.id.isNotNull();
     if (StringUtils.hasText(filter.getName())) {
       String nameWithPercentSign = "%" + Optional.ofNullable(filter.getName()).orElse("") + "%";
-      booleanExpression.and(
-          booleanExpression = booleanExpression.and(
-              qPatient.firstName.likeIgnoreCase(nameWithPercentSign).or(qPatient.lastName.likeIgnoreCase(nameWithPercentSign)))
+      booleanExpression = booleanExpression.and(
+          qPatient.firstName.likeIgnoreCase(nameWithPercentSign).or(qPatient.lastName.likeIgnoreCase(nameWithPercentSign))
       );
     }
     if (StringUtils.hasText(filter.getClinicId())) {
-      booleanExpression = booleanExpression.and(
-          booleanExpression.and(qPatient.clinic.id.eq(filter.getClinicId())));
+      booleanExpression = booleanExpression.and(qPatient.clinic.id.eq(filter.getClinicId()));
     }
     return booleanExpression;
   }

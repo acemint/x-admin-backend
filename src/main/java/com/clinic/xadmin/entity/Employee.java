@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -24,16 +25,11 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "xa_employee")
-public class Employee {
-
-  @Id
-  @Builder.Default
-  @Column(name = "id")
-  private String id = UUID.randomUUID().toString();
+public class Employee extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name ="clinic_id")

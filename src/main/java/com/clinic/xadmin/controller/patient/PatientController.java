@@ -44,14 +44,15 @@ public class PatientController {
   @GetMapping(value = PatientControllerPath.FILTER, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_ADMIN_OR_DEVELOPER)
   public ResponseEntity<StandardizedResponse<List<PatientResponse>>> getPatient(
-      @RequestParam(required = false) String name,
-      @RequestParam(required = false) String[] sortBy,
-      @RequestParam(defaultValue = EmployeeControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
-      @RequestParam(defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
-      @RequestParam(defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_SIZE) Integer pageSize) {
+      @RequestParam(name = "name", required = false) String name,
+      @RequestParam(name = "sortBy", required = false) String[] sortBy,
+      @RequestParam(name = "sortDirection", defaultValue = EmployeeControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
+      @RequestParam(name = "pageNumber", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
+      @RequestParam(name = "pageSize", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_SIZE) Integer pageSize) {
     PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
     if (!Objects.isNull(sortBy)) {
-      pageRequest.withSort(Sort.Direction.valueOf(sortDirection), sortBy);
+      Sort sort = Sort.by(Sort.Direction.valueOf(sortDirection), sortBy);
+      pageRequest = pageRequest.withSort(sort);
     }
     PatientFilter filter = PatientFilter.builder()
         .name(name)

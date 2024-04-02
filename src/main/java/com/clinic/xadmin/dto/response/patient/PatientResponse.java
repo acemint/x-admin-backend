@@ -18,7 +18,7 @@ public class PatientResponse {
   private String lastName;
   private Integer age;
   private String gender;
-  private String email;
+  private String emailAddress;
   private String address;
   private String phoneNumber;
 

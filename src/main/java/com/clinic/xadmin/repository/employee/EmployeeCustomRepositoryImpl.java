@@ -73,14 +73,13 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
     BooleanExpression booleanExpression = qEmployee.id.isNotNull();
     if (StringUtils.hasText(filter.getName())) {
       String nameWithPercentSign = "%" + Optional.ofNullable(filter.getName()).orElse("") + "%";
-      booleanExpression.and(
-          booleanExpression = booleanExpression.and(
-              qEmployee.firstName.likeIgnoreCase(nameWithPercentSign).or(qEmployee.lastName.likeIgnoreCase(nameWithPercentSign)))
+      booleanExpression = booleanExpression.and(
+              qEmployee.firstName.likeIgnoreCase(nameWithPercentSign).or(qEmployee.lastName.likeIgnoreCase(nameWithPercentSign))
       );
     }
     if (StringUtils.hasText(filter.getClinicId())) {
       booleanExpression = booleanExpression.and(
-          booleanExpression.and(qEmployee.clinic.id.eq(filter.getClinicId())));
+          qEmployee.clinic.id.eq(filter.getClinicId()));
     }
     return booleanExpression;
   }
@@ -94,8 +93,9 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
     List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
     // TODO: Change the field sort to "name" instead of specific "firstName"
     for (String property : sort.stream().map(Sort.Order::getProperty).toList()) {
-      if (property.equals(Employee.Fields.firstName)) {
+      if (property.equals("name")) {
         orderSpecifiers.add(new OrderSpecifier<>(order, qEmployee.firstName));
+        orderSpecifiers.add(new OrderSpecifier<>(order, qEmployee.lastName));
         continue;
       }
       if (property.equals(Employee.Fields.type)) {

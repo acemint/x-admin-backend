@@ -1,6 +1,7 @@
 package com.clinic.xadmin.controller;
 
 import com.clinic.xadmin.constant.employee.EmployeeRole;
+import com.clinic.xadmin.constant.employee.EmployeeStatus;
 import com.clinic.xadmin.constant.employee.EmployeeType;
 import com.clinic.xadmin.controller.employee.EmployeeControllerPath;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
@@ -28,8 +29,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class EmployeeControllerTest extends BaseControllerTest {
 
@@ -71,30 +72,55 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .build();
   }
 
-  private Set<Employee> constructBasicEmployeesFromClinic(Clinic clinic) {
-    return Set.of(
-        Employee.builder()
-            .firstName("user1")
-            .emailAddress("user1@gmail.com")
-            .password(this.passwordEncoder.encode("Test123:>"))
-            .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
-            .clinic(clinic)
-            .build(),
-        Employee.builder()
-            .firstName("user2")
-            .emailAddress("user2@gmail.com")
-            .password(this.passwordEncoder.encode("Test123:>"))
-            .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
-            .clinic(clinic)
-            .build(),
-        Employee.builder()
-            .firstName("user3")
-            .emailAddress("user3@gmail.com")
-            .password(this.passwordEncoder.encode("Test123:>"))
-            .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
-            .clinic(clinic)
-            .build()
-    );
+  private ArrayList<Employee> constructBasicEmployeesFromClinic(Clinic clinic) {
+    ArrayList<Employee> employees = new ArrayList<>();
+    employees.add(Employee.builder()
+        .firstName("user1")
+        .emailAddress("user1@gmail.com")
+        .password(this.passwordEncoder.encode("Test123:>"))
+        .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
+        .type(EmployeeType.DOCTOR)
+        .status(EmployeeStatus.ACTIVE)
+        .clinic(clinic)
+        .build());
+    employees.add(Employee.builder()
+        .firstName("user2")
+        .emailAddress("user2@gmail.com")
+        .password(this.passwordEncoder.encode("Test123:>"))
+        .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
+        .type(EmployeeType.NURSE)
+        .status(EmployeeStatus.ACTIVE)
+        .clinic(clinic)
+        .build());
+    employees.add(Employee.builder()
+        .firstName("user3")
+        .emailAddress("user3@gmail.com")
+        .password(this.passwordEncoder.encode("Test123:>"))
+        .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
+        .type(EmployeeType.INTERN_NURSE)
+        .status(EmployeeStatus.INACTIVE)
+        .clinic(clinic)
+        .build());
+    employees.add(Employee.builder()
+        .firstName("mysterious")
+        .emailAddress("mysterious@gmail.com")
+        .password(this.passwordEncoder.encode("Mysterious2:>"))
+        .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
+        .type(EmployeeType.DOCTOR)
+        .status(EmployeeStatus.ACTIVE)
+        .clinic(clinic)
+        .build());
+    employees.add(Employee.builder()
+        .firstName("another")
+        .lastName("mysterious")
+        .emailAddress("anotherMysteriousUser@gmail.com")
+        .password(this.passwordEncoder.encode("Mysterious1:>"))
+        .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
+        .type(EmployeeType.DOCTOR)
+        .status(EmployeeStatus.ACTIVE)
+        .clinic(clinic)
+        .build());
+    return employees;
   }
 
   @Test
@@ -130,6 +156,8 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()));
   }
 
+
+
   @Test
   @WithMockCustomUser()
   public void getSelf_EmployeeHasLoggedIn_IsOk() throws Exception {
@@ -150,12 +178,28 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()));
   }
 
+
+
   @Test
-  @WithMockCustomUser(clinicId = "234")
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  public void filter_EmployeeAccessOwnClinicData_IsOk() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    this.employeeRepository.saveAll(employees);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(5)));
+  }
+
+  @Test
+  @WithMockCustomUser(clinicId = "234", roles = { EmployeeRole.ROLE_ADMIN })
   public void filter_EmployeeCannotAccessOtherClinic_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
-    Set<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
     this.employeeRepository.saveAll(employees);
 
     this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
@@ -164,19 +208,121 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(0)));
   }
 
+
   @Test
-  @WithMockCustomUser(clinicId = "123")
-  public void filter_EmployeeAccessOwnClinicData_IsOk() throws Exception {
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_REGULAR_EMPLOYEE })
+  public void filter_EmployeeIsNotAdmin_IsForbidden() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
-    Set<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
     this.employeeRepository.saveAll(employees);
 
     this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(3)));
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()));
   }
+
+  @Test
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  public void filter_RequestParameterNameIsNotEmpty_IsOk() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    this.employeeRepository.saveAll(employees);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .param("name", "teri")
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content[*].emailAddress",
+            Matchers.hasItems(
+                employees.get(3).getEmailAddress(),
+                employees.get(4).getEmailAddress())
+        ));
+  }
+
+  @Test
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  public void filter_SortByName_IsOk() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    this.employeeRepository.saveAll(employees);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .param("name", "user")
+            .param("sortBy", "name")
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content[*].emailAddress",
+            Matchers.containsInRelativeOrder(
+                employees.get(0).getEmailAddress(),
+                employees.get(1).getEmailAddress(),
+                employees.get(2).getEmailAddress())
+        ));
+  }
+
+  @Test
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  public void filter_SortByType_IsOk() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    this.employeeRepository.saveAll(employees);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .param("name", "user")
+            .param("sortBy", "type")
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content[*].emailAddress",
+            Matchers.containsInRelativeOrder(
+                employees.get(0).getEmailAddress(),
+                employees.get(2).getEmailAddress(),
+                employees.get(1).getEmailAddress())
+        ));
+  }
+
+  @Test
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  public void filter_SortByStatus_IsOk() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    this.employeeRepository.saveAll(employees);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .param("name", "user")
+            .param("sortBy", "status")
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content[*].emailAddress",
+            Matchers.containsInRelativeOrder(
+                employees.get(0).getEmailAddress(),
+                employees.get(1).getEmailAddress(),
+                employees.get(2).getEmailAddress())
+        ));
+  }
+
+  @Test
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  public void filter_PageNumberIsNotDefaultAndPageSizeIsNotDefault_IsOk() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    this.employeeRepository.saveAll(employees);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .param("pageNumber", "1")
+            .param("pageSize", "3")
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(2)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.paginationMetadata.totalPages", Matchers.equalTo(2)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.paginationMetadata.currentElementSize", Matchers.equalTo(2)));
+  }
+
+
 
   @Test
   @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
