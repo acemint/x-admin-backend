@@ -9,6 +9,12 @@ public interface PatientControllerDocs {
 
   String GET_PATIENTS_SUMMARY = "Get the list of patients in its' own clinic";
   String GET_PATIENTS_DESCRIPTION = "Returns list of patients in the clinic that the current authenticated user is at."
-      + "The user of this API must at least be ADMIN";
+      + "The user of this API must at least be ADMIN.<br><br>"
+      + "Request Parameters: <br>"
+      + "name: to filter by `firstName` or `lastName`<br>"
+      + "sortBy: to sort the result in a certain way, support multiple sort fields<br>"
+      + "sortDirection: to sort the result in a given direction (1 sort direction will apply to all sort by fields)<br>"
+      + "pageNumber: returns the pageNumber, the index starts from 0<br>"
+      + "pageSize: the size of data requested per page";
 
 }
