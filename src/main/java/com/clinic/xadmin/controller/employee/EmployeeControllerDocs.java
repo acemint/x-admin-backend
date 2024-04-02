@@ -18,10 +18,10 @@ public interface EmployeeControllerDocs {
   String GET_EMPLOYEES_DESCRIPTION = "Returns list of employees in the clinic that the authenticated user is at."
       + "The user of this API must at least be ADMIN.<br><br>"
       + "Request Parameters: <br>"
-      + "name: to filter by `firstName` or `lastName`<br>"
-      + "sortBy: to sort the result in a certain way, support multiple sort fields<br>"
-      + "sortDirection: to sort the result in a given direction (1 sort direction will apply to all sort by fields)<br>"
-      + "pageNumber: returns the pageNumber, the index starts from 0<br>"
-      + "pageSize: the size of data requested per page";;
+      + "`name`: to filter by \"firstName\" or \"lastName\"<br>"
+      + "`sortBy`: to sort the result in a certain way, support multiple sort fields<br>"
+      + "`sortDirection`: to sort the result in a given direction (1 sort direction will apply to all sort by fields)<br>"
+      + "`pageNumber`: returns the pageNumber, the index starts from 0<br>"
+      + "`pageSize`: the size of data requested per page";
 
 }
