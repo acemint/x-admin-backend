@@ -24,13 +24,6 @@ public class ServiceHelperImpl implements ServiceHelper {
   public Clinic getClinicFromAuthentication() {
     Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
     Employee employee = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
-    /*
-      while the controller already blocks that the non-developer employee should have clinic in AuthorizationEvaluator,
-      this place will check again, even though it might be impossible
-    */
-    if (!employee.getRole().equals(EmployeeRole.ROLE_DEVELOPER) && Objects.isNull(employee.getClinic())) {
-      throw new IllegalStateException("Unable to get valid clinic from employee: " + employee.getEmailAddress() + " from role " + employee.getRole());
-    }
     return employee.getClinic();
   }
 

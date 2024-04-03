@@ -29,6 +29,18 @@ public class PatientCustomRepositoryImpl implements PatientCustomRepository {
   private EntityManager entityManager;
 
   @Override
+  public Patient findByClinicIdAndEmailAddress(String clinicId, String emailAddress) {
+    QPatient qPatient = QPatient.patient;
+    JPAQuery<?> query = new JPAQuery<>(entityManager);
+
+    return query.select(qPatient)
+        .from(qPatient)
+        .where(qPatient.emailAddress.eq(emailAddress)
+            .and(qPatient.clinic.id.eq(clinicId)))
+        .fetchOne();
+  }
+
+  @Override
   public Page<Patient> findByFilter(PatientFilter filter) {
     QPatient qPatient = QPatient.patient;
     JPAQuery<?> query = new JPAQuery<>(entityManager);

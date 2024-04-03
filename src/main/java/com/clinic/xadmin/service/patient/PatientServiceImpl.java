@@ -1,7 +1,10 @@
 package com.clinic.xadmin.service.patient;
 
+import com.clinic.xadmin.dto.request.patient.RegisterPatientRequest;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Patient;
+import com.clinic.xadmin.exception.XAdminBadRequestException;
+import com.clinic.xadmin.mapper.PatientMapper;
 import com.clinic.xadmin.model.patient.PatientFilter;
 import com.clinic.xadmin.repository.patient.PatientRepository;
 import com.clinic.xadmin.service.helper.ServiceHelper;
@@ -22,6 +25,18 @@ public class PatientServiceImpl implements PatientService {
       ServiceHelper serviceHelper) {
     this.patientRepository = patientRepository;
     this.serviceHelper = serviceHelper;
+  }
+
+  @Override
+  public Patient createPatient(RegisterPatientRequest request) {
+    Clinic clinic = this.serviceHelper.getClinicFromAuthentication();
+    Patient existingPatient = this.patientRepository.findByClinicIdAndEmailAddress(clinic.getId(), request.getEmailAddress());
+    if (Objects.nonNull(existingPatient)) {
+      throw new XAdminBadRequestException("this user has existed");
+    }
+    Patient patient = PatientMapper.INSTANCE.createFrom(request);
+    patient.setClinic(clinic);
+    return this.patientRepository.save(patient);
   }
 
   @Override

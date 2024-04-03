@@ -28,7 +28,7 @@ import java.util.Set;
 public class Treatment extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name ="clinic_id")
+  @JoinColumn(name ="clinic_id", nullable = false)
   private Clinic clinic;
 
   @Column(name = "code")

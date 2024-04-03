@@ -32,7 +32,7 @@ import java.util.UUID;
 public class Employee extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name ="clinic_id")
+  @JoinColumn(name ="clinic_id", nullable = false)
   private Clinic clinic;
 
   @Column(name = "code")
