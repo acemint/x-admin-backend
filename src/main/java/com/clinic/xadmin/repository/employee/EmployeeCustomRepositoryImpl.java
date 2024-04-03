@@ -30,7 +30,7 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
   public static final LinkedHashSet<String> AVAILABLE_SORTED_BY = new LinkedHashSet<>();
 
   static {
-    AVAILABLE_SORTED_BY.add(Employee.Fields.firstName);
+    AVAILABLE_SORTED_BY.add("name");
     AVAILABLE_SORTED_BY.add(Employee.Fields.type);
     AVAILABLE_SORTED_BY.add(Employee.Fields.status);
   }
@@ -39,13 +39,14 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
   private EntityManager entityManager;
 
   @Override
-  public Employee findEmployeeByEmailAddress(String emailAddress) {
+  public Employee findEmployeeByEmailAddress(String clinicId, String emailAddress) {
     QEmployee qEmployee = QEmployee.employee;
     JPAQuery<?> query = new JPAQuery<>(entityManager);
 
     return query.select(qEmployee)
         .from(qEmployee)
-        .where(qEmployee.emailAddress.eq(emailAddress))
+        .where(qEmployee.emailAddress.eq(emailAddress)
+            .and(qEmployee.clinic.id.eq(clinicId)))
         .fetchOne();
   }
 
@@ -91,7 +92,6 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
         .orElse(Order.ASC);
 
     List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
-    // TODO: Change the field sort to "name" instead of specific "firstName"
     for (String property : sort.stream().map(Sort.Order::getProperty).toList()) {
       if (property.equals("name")) {
         orderSpecifiers.add(new OrderSpecifier<>(order, qEmployee.firstName));
