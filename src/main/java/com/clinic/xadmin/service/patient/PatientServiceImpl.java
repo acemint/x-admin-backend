@@ -42,9 +42,8 @@ public class PatientServiceImpl implements PatientService {
   @Override
   public Page<Patient> getPatients(PatientFilter patientFilter) {
     Clinic clinic = this.serviceHelper.getClinicFromAuthentication();
-    if (Objects.nonNull(clinic)) {
-      patientFilter.setClinicId(clinic.getId());
-    }
+    patientFilter.setClinicId(clinic.getId());
+
     return this.patientRepository.findByFilter(patientFilter);
   }
 

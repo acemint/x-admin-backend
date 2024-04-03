@@ -41,14 +41,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public Employee createEmployee(RegisterEmployeeRequest request) {
-    Employee existingEmployee = this.employeeRepository.findEmployeeByEmailAddress(request.getEmailAddress());
+    Clinic clinic = this.serviceHelper.getClinicFromAuthentication();
+    Employee existingEmployee = this.employeeRepository.findEmployeeByEmailAddress(clinic.getId(), request.getEmailAddress());
     if (!Objects.isNull(existingEmployee)) {
       throw new XAdminBadRequestException("Email has been taken");
-    }
-
-    Clinic clinic = this.findClinicFromAuth();
-    if (Objects.isNull(clinic)) {
-      throw new XAdminInternalException("Clinic not found from authentication object");
     }
 
     Employee employee = Employee.builder()
@@ -67,18 +63,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public Page<Employee> getEmployees(EmployeeFilter employeeFilter) {
-    Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
-    Employee employee = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
+    Clinic clinic = this.serviceHelper.getClinicFromAuthentication();
+    employeeFilter.setClinicId(clinic.getId());
 
-    if (!employee.getRole().equals(EmployeeRole.ROLE_DEVELOPER)) {
-      employeeFilter.setClinicId(employee.getClinic().getId());
-    }
     return this.employeeRepository.findByFilter(employeeFilter);
   }
 
   @Override
   public Employee resetPassword(ResetPasswordRequest request) {
-    Employee existingEmployee = this.employeeRepository.findEmployeeByEmailAddress(request.getEmailAddress());
+    Clinic clinic = this.serviceHelper.getClinicFromAuthentication();
+    Employee existingEmployee = this.employeeRepository.findEmployeeByEmailAddress(clinic.getId(), request.getEmailAddress());
+
     if (Objects.isNull(existingEmployee)) {
       throw new XAdminBadRequestException("User not found");
     }
@@ -89,12 +84,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     existingEmployee.setPassword(this.passwordEncoder.encode(request.getNewPassword()));
     return this.employeeRepository.save(existingEmployee);
-  }
-
-  private Clinic findClinicFromAuth() {
-    Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
-    Employee employee = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
-    return employee.getClinic();
   }
 
 }
