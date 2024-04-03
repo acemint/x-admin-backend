@@ -1,13 +1,14 @@
 package com.clinic.xadmin.controller.patient;
 
 
+import com.clinic.xadmin.dto.request.patient.RegisterPatientRequest;
+import com.clinic.xadmin.mapper.PatientMapper;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.controller.employee.EmployeeControllerDefaultValue;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.patient.PatientResponse;
 import com.clinic.xadmin.entity.Patient;
 import com.clinic.xadmin.mapper.PaginationMapper;
-import com.clinic.xadmin.mapper.PatientResponseMapper;
 import com.clinic.xadmin.model.patient.PatientFilter;
 import com.clinic.xadmin.service.patient.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +40,21 @@ public class PatientController {
     this.patientService = patientService;
   }
 
-  // TODO: Add integration test for this class
+  @Operation(
+      summary = PatientControllerDocs.REGISTER_SUMMARY,
+      description = PatientControllerDocs.REGISTER_DESCRIPTION)
+  @PostMapping(value = PatientControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize(SecurityAuthorizationType.IS_ADMIN_OR_DEVELOPER)
+  public ResponseEntity<StandardizedResponse<PatientResponse>> registerPatient(
+      @RequestBody RegisterPatientRequest registerPatientRequest) {
+    Patient patient = this.patientService.createPatient(registerPatientRequest);
+    return ResponseEntity.ok().body(
+        StandardizedResponse.<PatientResponse>builder()
+            .content(PatientMapper.INSTANCE.createFrom(patient))
+            .build());
+  }
+
+
   @Operation(
       summary = PatientControllerDocs.GET_PATIENTS_SUMMARY,
       description = PatientControllerDocs.GET_PATIENTS_DESCRIPTION)
@@ -62,7 +79,7 @@ public class PatientController {
     Page<Patient> patients = patientService.getPatients(filter);
     return ResponseEntity.ok().body(
         StandardizedResponse.<List<PatientResponse>>builder()
-            .content(PatientResponseMapper.INSTANCE.createFrom(patients.getContent()))
+            .content(PatientMapper.INSTANCE.createFrom(patients.getContent()))
             .paginationMetadata(PaginationMapper.INSTANCE.createFrom(patients))
             .build());
   }
