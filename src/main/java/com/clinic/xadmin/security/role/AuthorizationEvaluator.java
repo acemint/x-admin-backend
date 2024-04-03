@@ -44,9 +44,6 @@ public class AuthorizationEvaluator  {
 
     // non developer role require specific clinic
     Clinic clinic = employee.getClinic();
-    if (Objects.isNull(clinic)) {
-      throw new IllegalStateException("Non developer requires valid clinic");
-    }
     // TODO: set clinic subscription to a certain timeframe, now will bypass all clinic
     if (!Objects.isNull(clinic.getSubscriptionValidTo())) {
       if (clinic.getSubscriptionValidTo().isBefore(LocalDateTime.now())) {
