@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 
 public interface EmployeeCustomRepository {
 
-  Employee findEmployeeByEmailAddress(String emailAddress);
+  Employee findEmployeeByEmailAddress(String clinicId, String emailAddress);
   Page<Employee> findByFilter(EmployeeFilter filter);
 
 }

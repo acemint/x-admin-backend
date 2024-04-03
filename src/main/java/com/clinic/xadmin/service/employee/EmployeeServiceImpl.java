@@ -5,13 +5,13 @@ import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.ResetPasswordRequest;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Employee;
+import com.clinic.xadmin.exception.XAdminBadRequestException;
+import com.clinic.xadmin.exception.XAdminInternalException;
 import com.clinic.xadmin.model.employee.EmployeeFilter;
 import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
-import com.clinic.xadmin.security.context.AppSecurityContextHolder;
-import com.clinic.xadmin.exception.XAdminBadRequestException;
-import com.clinic.xadmin.exception.XAdminInternalException;
+import com.clinic.xadmin.service.helper.ServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -25,17 +25,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   private final EmployeeRepository employeeRepository;
   private final PasswordEncoder passwordEncoder;
-  private final AppSecurityContextHolder appSecurityContextHolder;
+  private final ServiceHelper serviceHelper;
   private final ClinicRepository clinicRepository;
 
   @Autowired
   private EmployeeServiceImpl(EmployeeRepository employeeRepository,
       PasswordEncoder passwordEncoder,
-      AppSecurityContextHolder appSecurityContextHolder,
+      ServiceHelper serviceHelper,
       ClinicRepository clinicRepository) {
     this.employeeRepository = employeeRepository;
     this.passwordEncoder = passwordEncoder;
-    this.appSecurityContextHolder = appSecurityContextHolder;
+    this.serviceHelper = serviceHelper;
     this.clinicRepository = clinicRepository;
   }
 
@@ -49,11 +49,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     Clinic clinic = this.findClinicFromAuth();
     if (Objects.isNull(clinic)) {
       throw new XAdminInternalException("Clinic not found from authentication object");
-    }
-
-    // TODO: Move to Jakarta Bean Validation
-    if (request.getRole().equals(EmployeeRole.ROLE_REGULAR_EMPLOYEE)) {
-      throw new XAdminBadRequestException("Unsupported role");
     }
 
     Employee employee = Employee.builder()
