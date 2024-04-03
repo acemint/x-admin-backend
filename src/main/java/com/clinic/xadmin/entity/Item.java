@@ -30,19 +30,19 @@ public class Item extends BaseEntity {
   @JoinColumn(name ="clinic_id", nullable = false)
   private Clinic clinic;
 
-  @Column(name = "code")
+  @Column(name = "code", nullable = false)
   private String code;
 
-  @Column(name = "name")
+  @Column(name = "name", nullable = false)
   private String name;
 
-  @Column(name = "quantity")
+  @Column(name = "quantity", nullable = false)
   private BigDecimal quantity;
 
-  @Column(name = "status")
+  @Column(name = "status", nullable = false)
   private String status;
 
-  @Column(name = "unit_of_measurement")
+  @Column(name = "unit_of_measurement", nullable = false)
   private String unitOfMeasurement;
 
   @Column(name = "expiry_date")

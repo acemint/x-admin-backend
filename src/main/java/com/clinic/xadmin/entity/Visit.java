@@ -27,23 +27,20 @@ import java.time.LocalDateTime;
 public class Visit extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name ="patient_id")
+  @JoinColumn(name ="patient_id", nullable = false)
   private Patient patient;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name ="employee_id")
+  @JoinColumn(name ="employee_id", nullable = false)
   private Employee employee;
 
-  @Column(name = "cancelled")
+  @Column(name = "cancelled", nullable = false)
   private Boolean cancelled;
 
-  @Column(name = "startTime")
+  @Column(name = "startTime", nullable = false)
   private LocalDateTime startTime;
 
-  @Column(name = "endTIme")
+  @Column(name = "endTIme", nullable = false)
   private LocalDateTime endTime;
-
-  @OneToOne(mappedBy = "visit")
-  private VisitTreatment visitTreatment;
 
 }

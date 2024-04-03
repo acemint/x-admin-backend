@@ -23,20 +23,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "xa_attendance")
-public class Attendance {
-
-  @Id
-  @Column(name = "id")
-  private String id;
+public class Attendance extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name ="employee_id")
+  @JoinColumn(name ="employee_id", nullable = false)
   private Employee employee;
 
-  @Column(name = "clock_in")
+  @Column(name = "clock_in", nullable = false)
   private LocalDateTime clockIn;
 
-  @Column(name = "clock_out")
+  @Column(name = "clock_out", nullable = false)
   private LocalDateTime clockOut;
 
 }
