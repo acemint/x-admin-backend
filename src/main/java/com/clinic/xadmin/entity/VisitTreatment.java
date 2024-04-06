@@ -26,15 +26,15 @@ import java.time.LocalDateTime;
 public class VisitTreatment extends BaseEntity {
 
   @ManyToOne
-  @JoinColumn(name = "treatment_id")
+  @JoinColumn(name = "treatment_id", nullable = false)
   private Treatment treatment;
+
+  @OneToOne
+  @JoinColumn(name ="visit_id", nullable = false)
+  private Visit visit;
 
   @Column(name = "description")
   private String description;
-
-  @OneToOne
-  @JoinColumn(name ="visit_id")
-  private Visit visit;
 
 
 }

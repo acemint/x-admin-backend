@@ -2,8 +2,6 @@ package com.clinic.xadmin.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -24,8 +21,11 @@ import java.util.Set;
 @Table(name = "xa_clinic")
 public class Clinic extends BaseEntity {
 
-  @Column(name = "code")
+  @Column(name = "code", nullable = false)
   private String code;
+
+  @Column(name = "name", nullable = false)
+  private String name;
 
   @Column(name = "commission_fee")
   private BigDecimal commissionFee;
@@ -44,17 +44,5 @@ public class Clinic extends BaseEntity {
 
   @Column(name = "subscription_tier")
   private int subscriptionTier;
-
-  @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY)
-  private Set<Employee> employees;
-
-  @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY)
-  private Set<Item> items;
-
-  @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY)
-  private Set<Patient> patients;
-
-  @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY)
-  private Set<Treatment> treatments;
 
 }

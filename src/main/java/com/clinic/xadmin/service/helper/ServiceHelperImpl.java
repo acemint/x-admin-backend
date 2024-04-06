@@ -24,6 +24,9 @@ public class ServiceHelperImpl implements ServiceHelper {
   public Clinic getClinicFromAuthentication() {
     Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
     Employee employee = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
+    if (!EmployeeRole.LIST_ROLE_WITHOUT_CLINIC_IDS.containsKey(employee.getRole()) && Objects.isNull(employee.getClinic())) {
+      throw new IllegalStateException("Unable to get user role " + employee.getRole() + " without clinic id");
+    }
     return employee.getClinic();
   }
 

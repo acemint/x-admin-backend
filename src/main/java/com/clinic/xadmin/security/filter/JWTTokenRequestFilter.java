@@ -60,7 +60,7 @@ public class JWTTokenRequestFilter extends OncePerRequestFilter {
     }
 
     // Create authentication object and insert it into SecurityContext
-    Employee employee = employeeRepository.findEmployeeByEmailAddress(claims.getSubject());
+    Employee employee = employeeRepository.findEmployeeByUsername(claims.getSubject());
     CustomUserDetails customUserDetails = CustomUserDetailsFactory.createFrom(employee);
     UsernamePasswordAuthenticationToken authentication =
         new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities()

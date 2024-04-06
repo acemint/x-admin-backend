@@ -3,20 +3,16 @@ package com.clinic.xadmin.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -31,16 +27,13 @@ public class Treatment extends BaseEntity {
   @JoinColumn(name ="clinic_id", nullable = false)
   private Clinic clinic;
 
-  @Column(name = "code")
+  @Column(name = "code", nullable = false)
   private String code;
 
-  @Column(name = "name")
+  @Column(name = "name", nullable = false)
   private String name;
 
-  @Column(name = "price")
+  @Column(name = "price", nullable = false)
   private BigDecimal price;
-
-  @OneToMany(mappedBy = "treatment", fetch = FetchType.LAZY)
-  private Set<VisitTreatment> visitTreatments;
 
 }

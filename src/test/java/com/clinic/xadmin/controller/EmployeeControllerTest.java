@@ -3,9 +3,10 @@ package com.clinic.xadmin.controller;
 import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.constant.employee.EmployeeStatus;
 import com.clinic.xadmin.constant.employee.EmployeeType;
+import com.clinic.xadmin.constant.experimental.Gender;
 import com.clinic.xadmin.controller.employee.EmployeeControllerPath;
+import com.clinic.xadmin.dto.request.employee.LoginEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
-import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.helper.IntegrationTestHelper;
@@ -60,15 +61,24 @@ public class EmployeeControllerTest extends BaseControllerTest {
 
   private Employee constructBasicEmployee() {
     return Employee.builder()
+        .username("user.clc001")
+        .firstName("user")
         .emailAddress("user@gmail.com")
+        .code("123")
         .password(this.passwordEncoder.encode("Test123:>"))
-        .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
+        .phoneNumber("0896")
+        .address("jl. random")
+        .gender(Gender.MALE)
+        .age(18)
+        .role(EmployeeRole.ROLE_DEVELOPER)
+        .status(EmployeeStatus.ACTIVE)
         .build();
   }
 
   private Clinic constructBasicClinic() {
     return Clinic.builder()
         .id("123")
+        .code("123")
         .build();
   }
 
@@ -79,7 +89,8 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .emailAddress("user1@gmail.com")
         .password(this.passwordEncoder.encode("Test123:>"))
         .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
-        .type(EmployeeType.DOCTOR)
+        .age(18)
+        .type(EmployeeType.SPECIALIST_DOCTOR)
         .status(EmployeeStatus.ACTIVE)
         .clinic(clinic)
         .build());
@@ -88,6 +99,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .emailAddress("user2@gmail.com")
         .password(this.passwordEncoder.encode("Test123:>"))
         .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
+        .age(18)
         .type(EmployeeType.NURSE)
         .status(EmployeeStatus.ACTIVE)
         .clinic(clinic)
@@ -96,6 +108,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .firstName("user3")
         .emailAddress("user3@gmail.com")
         .password(this.passwordEncoder.encode("Test123:>"))
+        .age(18)
         .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
         .type(EmployeeType.INTERN_NURSE)
         .status(EmployeeStatus.INACTIVE)
@@ -105,8 +118,9 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .firstName("mysterious")
         .emailAddress("mysterious@gmail.com")
         .password(this.passwordEncoder.encode("Mysterious2:>"))
+        .age(18)
         .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
-        .type(EmployeeType.DOCTOR)
+        .type(EmployeeType.SPECIALIST_DOCTOR)
         .status(EmployeeStatus.ACTIVE)
         .clinic(clinic)
         .build());
@@ -116,7 +130,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .emailAddress("anotherMysteriousUser@gmail.com")
         .password(this.passwordEncoder.encode("Mysterious1:>"))
         .role(EmployeeRole.ROLE_REGULAR_EMPLOYEE)
-        .type(EmployeeType.DOCTOR)
+        .type(EmployeeType.SPECIALIST_DOCTOR)
         .status(EmployeeStatus.ACTIVE)
         .clinic(clinic)
         .build());
@@ -131,15 +145,12 @@ public class EmployeeControllerTest extends BaseControllerTest {
     byte[] requestBody = IntegrationTestHelper
         .readJsonAsBytes("employee_login_normalUser.json", "json", "request");
 
-    EmployeeResponse expectedResponseBody = IntegrationTestHelper
-        .readJsonFile("employee_login.json", EmployeeResponse.class,  "json", "response");
-
     this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.LOGIN)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .content(requestBody))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.content.emailAddress").value(expectedResponseBody.getEmailAddress()));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content.emailAddress").value(employee.getEmailAddress()));
   }
 
   @Test
@@ -147,15 +158,15 @@ public class EmployeeControllerTest extends BaseControllerTest {
     Employee employee = this.constructBasicEmployee();
     this.employeeRepository.save(employee);
 
-    byte[] requestBody = IntegrationTestHelper
-        .readJsonAsBytes("employee_login_normalUserWrongPassword.json", "json", "request");
+    LoginEmployeeRequest requestBody = IntegrationTestHelper
+        .readJsonFile("employee_login_normalUser.json", LoginEmployeeRequest.class, "json", "request");
+    requestBody.setPassword("random123:>");
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.LOGIN)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(requestBody))
+            .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()));
   }
-
 
 
   @Test
@@ -167,7 +178,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
     this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.SELF)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.content.emailAddress").value(customUserDetails.getEmployee().getEmailAddress()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content.username").value(customUserDetails.getEmployee().getUsername()))
         .andExpect(MockMvcResultMatchers.jsonPath("$.content.role").value(customUserDetails.getEmployee().getRole()));
   }
 
@@ -181,7 +192,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
 
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_EmployeeAccessOwnClinicData_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -195,7 +206,27 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "234", roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(clinicId = "", roles = { EmployeeRole.ROLE_DEVELOPER})
+  public void filter_EmployeeRoleIsDeveloperAndAccessAllClinic_IsOk() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
+    this.employeeRepository.saveAll(employees);
+
+    Clinic clinic2 = this.constructBasicClinic();
+    clinic2.setId("345");
+    this.clinicRepository.save(clinic2);
+    ArrayList<Employee> employees2 = this.constructBasicEmployeesFromClinic(clinic2);
+    this.employeeRepository.saveAll(employees2);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(10)));
+  }
+
+  @Test
+  @WithMockCustomUser(clinicId = "234", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_EmployeeCannotAccessOtherClinic_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -208,22 +239,8 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(0)));
   }
 
-
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_REGULAR_EMPLOYEE })
-  public void filter_EmployeeIsNotAdmin_IsForbidden() throws Exception {
-    Clinic clinic = this.constructBasicClinic();
-    this.clinicRepository.save(clinic);
-    ArrayList<Employee> employees = this.constructBasicEmployeesFromClinic(clinic);
-    this.employeeRepository.saveAll(employees);
-
-    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
-            .contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()));
-  }
-
-  @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_RequestParameterNameIsNotEmpty_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -242,7 +259,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_SortByName_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -263,7 +280,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_SortByType_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -284,7 +301,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_SortByStatus_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -305,7 +322,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_PageNumberIsNotDefaultAndPageSizeIsNotDefault_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -325,12 +342,31 @@ public class EmployeeControllerTest extends BaseControllerTest {
 
 
   @Test
-  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
-  public void register_EmployeeRoleIsNotRegularEmployee_IsOk() throws Exception {
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  public void register_EmployeeRoleIsClinicAdmin_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
     byte[] requestBody = IntegrationTestHelper
         .readJsonAsBytes("employee_register_normalUser.json", "json", "request");
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.notNullValue()));
+    List<Employee> savedEmployees = this.employeeRepository.findAll();
+    Assertions.assertEquals(savedEmployees.size(), 1);
+    Assertions.assertEquals(savedEmployees.get(0).getClinic().getId(), "123");
+    Assertions.assertEquals(savedEmployees.get(0).getEmailAddress(), "master@gmail.com");
+  }
+
+  @Test
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  public void register_EmployeeRoleIsClinicAdminAndRegisteredEmployeeTypeIsDoctor_IsOk() throws Exception {
+    Clinic clinic = this.constructBasicClinic();
+    this.clinicRepository.save(clinic);
+    byte[] requestBody = IntegrationTestHelper
+        .readJsonAsBytes("employee_register_normalUserTypeIsDoctor.json", "json", "request");
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -356,7 +392,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void register_RequestBodyEmailAddressIsInvalid_IsBadRequest() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -374,7 +410,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void register_RequestBodyPasswordIsInvalid_IsBadRequest() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -391,7 +427,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void register_RequestBodyFirstNameIsNull_IsBadRequest() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -408,7 +444,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void register_RequestBodyGenderIsInvalid_IsBadRequest() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -425,7 +461,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void register_RequestBodyAgeIsInvalid_IsBadRequest() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -442,7 +478,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void register_AddressIsNull_IsBadRequest() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -460,7 +496,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
 
 
   @Test
-  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void register_PhoneNumberIsNull_IsBadRequest() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -477,7 +513,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void register_EmployeeRoleCreationIsInvalid_IsBadRequest() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -493,22 +529,25 @@ public class EmployeeControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.role)));
   }
 
+
   @Test
-  @WithMockCustomUser(roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void register_EmployeeTypeDoctorHasNoDoctorNumber_IsBadRequest() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
 
     RegisterEmployeeRequest requestBody = IntegrationTestHelper
-        .readJsonFile("employee_register_normalUser.json", RegisterEmployeeRequest.class, "json", "request");
-    requestBody.setType(EmployeeType.DOCTOR);
+        .readJsonFile("employee_register_normalUserTypeIsDoctor.json", RegisterEmployeeRequest.class, "json", "request");
+    requestBody.setType(EmployeeType.SPECIALIST_DOCTOR);
     requestBody.setDoctorNumber(null);
+    requestBody.setPracticeLicense(null);
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.doctorNumber)));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.doctorNumber)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.practiceLicense)));
   }
 
 

@@ -44,7 +44,7 @@ public class PatientController {
       summary = PatientControllerDocs.REGISTER_SUMMARY,
       description = PatientControllerDocs.REGISTER_DESCRIPTION)
   @PostMapping(value = PatientControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize(SecurityAuthorizationType.IS_ADMIN_OR_DEVELOPER)
+  @PreAuthorize(SecurityAuthorizationType.IS_CLINID_ADMIN_OR_DEVELOPER)
   public ResponseEntity<StandardizedResponse<PatientResponse>> registerPatient(
       @RequestBody RegisterPatientRequest registerPatientRequest) {
     Patient patient = this.patientService.createPatient(registerPatientRequest);
@@ -59,7 +59,7 @@ public class PatientController {
       summary = PatientControllerDocs.GET_PATIENTS_SUMMARY,
       description = PatientControllerDocs.GET_PATIENTS_DESCRIPTION)
   @GetMapping(value = PatientControllerPath.FILTER, produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize(SecurityAuthorizationType.IS_ADMIN_OR_DEVELOPER)
+  @PreAuthorize(SecurityAuthorizationType.IS_CLINID_ADMIN_OR_DEVELOPER)
   public ResponseEntity<StandardizedResponse<List<PatientResponse>>> getPatient(
       @RequestParam(name = "name", required = false) String name,
       @RequestParam(name = "sortBy", required = false) String[] sortBy,
