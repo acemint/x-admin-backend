@@ -83,8 +83,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public Employee resetPassword(ResetPasswordRequest request) {
-    Clinic clinic = this.serviceHelper.getClinicFromAuthentication();
-    Employee existingEmployee = this.employeeRepository.findEmployeeByClinicIdAndEmailAddress(clinic.getId(), request.getEmailAddress());
+    Employee existingEmployee = this.employeeRepository.findEmployeeByUsername(request.getUsername());
 
     if (Objects.isNull(existingEmployee)) {
       throw new XAdminBadRequestException("User not found");

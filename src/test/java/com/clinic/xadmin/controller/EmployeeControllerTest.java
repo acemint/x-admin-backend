@@ -78,6 +78,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
   private Clinic constructBasicClinic() {
     return Clinic.builder()
         .id("123")
+        .name("Dental")
         .code("123")
         .build();
   }

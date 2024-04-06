@@ -9,7 +9,7 @@ import lombok.Data;
 @Builder
 public class ResetPasswordRequest {
 
-  private String emailAddress;
+  private String username;
   private String previousPassword;
   private String newPassword;
 
