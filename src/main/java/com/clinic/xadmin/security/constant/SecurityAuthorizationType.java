@@ -11,10 +11,10 @@ public class SecurityAuthorizationType {
   public static final String IS_DEVELOPER =
       HAS_PERMISSION_FUNCTION_PREFIX +
           EmployeeRole.ROLE_DEVELOPER + "')";
-  public static final String IS_ADMIN_OR_DEVELOPER =
+  public static final String IS_CLINID_ADMIN_OR_DEVELOPER =
       HAS_PERMISSION_FUNCTION_PREFIX +
-          EmployeeRole.ROLE_DEVELOPER +
+          EmployeeRole.ROLE_CLINIC_ADMIN +
           ROLE_SPLITTER +
-          EmployeeRole.ROLE_ADMIN + "')";
+          EmployeeRole.ROLE_DEVELOPER +"')";
 
 }

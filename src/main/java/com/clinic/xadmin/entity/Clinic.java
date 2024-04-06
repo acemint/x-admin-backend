@@ -24,6 +24,9 @@ public class Clinic extends BaseEntity {
   @Column(name = "code", nullable = false)
   private String code;
 
+  @Column(name = "name", nullable = false)
+  private String name;
+
   @Column(name = "commission_fee")
   private BigDecimal commissionFee;
 

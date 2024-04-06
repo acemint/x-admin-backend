@@ -26,11 +26,14 @@ import java.math.BigDecimal;
 public class Employee extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name ="clinic_id", nullable = false)
+  @JoinColumn(name ="clinic_id")
   private Clinic clinic;
 
   @Column(name = "code", nullable = false)
   private String code;
+
+  @Column(name = "username", nullable = false)
+  private String username;
 
   @Column(name = "first_name", nullable = false)
   private String firstName;
@@ -56,7 +59,7 @@ public class Employee extends BaseEntity {
   @Column(name = "password", nullable = false)
   private String password;
 
-  @Column(name = "type", nullable = false)
+  @Column(name = "type")
   private String type;
 
   @Column(name = "role", nullable = false)
@@ -64,6 +67,12 @@ public class Employee extends BaseEntity {
 
   @Column(name = "status", nullable = false)
   private String status;
+
+  @Column(name = "doctor_number")
+  private String doctorNumber;
+
+  @Column(name = "practice_license")
+  private String practiceLicense;
 
   @Column(name = "salary")
   private BigDecimal salary;

@@ -1,6 +1,7 @@
 CREATE TABLE public.xa_clinic (
     id varchar(255) NOT NULL,
     code varchar(255) NOT NULL,
+    name varchar(255) NOT NULL,
     subscription_tier int4 NULL,
     subscription_valid_from timestamp(6) NULL,
     subscription_valid_to timestamp(6) NULL,
@@ -9,6 +10,8 @@ CREATE TABLE public.xa_clinic (
 	sitting_fee numeric(38, 2) NULL,
 	PRIMARY KEY (id)
 );
+
+CREATE SEQUENCE public.clinic_sequence AS bigint;
 
 
 CREATE TABLE public.xa_employee (
@@ -31,6 +34,8 @@ CREATE TABLE public.xa_employee (
 	PRIMARY KEY (id),
 	FOREIGN KEY (clinic_id) REFERENCES public.xa_clinic(id)
 );
+
+CREATE SEQUENCE public.employee_sequence AS bigint;
 
 
 CREATE TABLE public.xa_item (
@@ -62,6 +67,7 @@ CREATE TABLE public.xa_patient (
 	FOREIGN KEY (clinic_id) REFERENCES public.xa_clinic(id)
 );
 
+CREATE SEQUENCE public.patient_sequence AS bigint;
 
 CREATE TABLE public.xa_visit (
 	id varchar(255) NOT NULL,

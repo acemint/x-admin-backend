@@ -35,7 +35,7 @@ public @interface ValidRoleToRegister {
 
     private static final String[] VALID_ROLE_TO_REGISTER = {
         EmployeeRole.ROLE_REGULAR_EMPLOYEE,
-        EmployeeRole.ROLE_ADMIN
+        EmployeeRole.ROLE_CLINIC_ADMIN
     };
 
     @Override

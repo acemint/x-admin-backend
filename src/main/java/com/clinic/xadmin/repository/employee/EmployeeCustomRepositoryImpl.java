@@ -39,7 +39,18 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
   private EntityManager entityManager;
 
   @Override
-  public Employee findEmployeeByEmailAddress(String clinicId, String emailAddress) {
+  public Employee findEmployeeByUsername(String username) {
+    QEmployee qEmployee = QEmployee.employee;
+    JPAQuery<?> query = new JPAQuery<>(entityManager);
+
+    return query.select(qEmployee)
+        .from(qEmployee)
+        .where(qEmployee.username.eq(username))
+        .fetchOne();
+  }
+
+  @Override
+  public Employee findEmployeeByClinicIdAndEmailAddress(String clinicId, String emailAddress) {
     QEmployee qEmployee = QEmployee.employee;
     JPAQuery<?> query = new JPAQuery<>(entityManager);
 

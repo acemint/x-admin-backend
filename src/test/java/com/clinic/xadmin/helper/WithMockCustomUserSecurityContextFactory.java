@@ -1,5 +1,6 @@
 package com.clinic.xadmin.helper;
 
+import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
@@ -9,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
+
+import java.util.Objects;
 
 public class WithMockCustomUserSecurityContextFactory implements WithSecurityContextFactory<WithMockCustomUser> {
 
@@ -20,10 +23,15 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
         Employee.builder()
             .emailAddress(customUser.username())
             .role(customUser.roles()[0])
-            .clinic(Clinic.builder()
-                .id(customUser.clinicId())
-                .build())
             .build());
+
+    if (!EmployeeRole.LIST_ROLE_WITHOUT_CLINIC_IDS.containsKey(principal.getEmployee().getRole()) && Objects.isNull(customUser.clinicId())) {
+      throw new IllegalStateException("Unable to create user role " + principal.getEmployee().getRole() + " without clinic id");
+    } else {
+      principal.getEmployee().setClinic(Clinic.builder()
+          .id(customUser.clinicId())
+          .build());
+    }
 
     Authentication auth = UsernamePasswordAuthenticationToken.authenticated(principal, "password", principal.getAuthorities());
     context.setAuthentication(auth);

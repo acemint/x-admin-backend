@@ -1,13 +1,13 @@
 package com.clinic.xadmin.controller.employee;
 
 
+import com.clinic.xadmin.mapper.EmployeeMapper;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.dto.request.employee.LoginEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
 import com.clinic.xadmin.entity.Employee;
-import com.clinic.xadmin.mapper.EmployeeResponseMapper;
 import com.clinic.xadmin.mapper.PaginationMapper;
 import com.clinic.xadmin.model.employee.EmployeeFilter;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
@@ -68,7 +68,7 @@ public class EmployeeController {
       description = EmployeeControllerDocs.LOGIN_DESCRIPTION)
   @PostMapping(value = EmployeeControllerPath.LOGIN, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<StandardizedResponse<EmployeeResponse>> login(@RequestBody LoginEmployeeRequest request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-    Authentication authenticationResponse = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmailAddress(), request.getPassword()));
+    Authentication authenticationResponse = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
     SecurityContext context = this.appSecurityContextHolder.createEmptyContext();
     context.setAuthentication(authenticationResponse);
@@ -78,7 +78,7 @@ public class EmployeeController {
     CustomUserDetails userDetails = (CustomUserDetails) authenticationResponse.getPrincipal();
     return ResponseEntity.ok().body(
         StandardizedResponse.<EmployeeResponse>builder()
-            .content(EmployeeResponseMapper.INSTANCE.createFrom(userDetails.getEmployee()))
+            .content(EmployeeMapper.INSTANCE.createFrom(userDetails.getEmployee()))
             .build());
   }
 
@@ -86,12 +86,12 @@ public class EmployeeController {
       summary = EmployeeControllerDocs.REGISTER_SUMMARY,
       description = EmployeeControllerDocs.REGISTER_DESCRIPTION)
   @PostMapping(value = EmployeeControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize(SecurityAuthorizationType.IS_ADMIN_OR_DEVELOPER)
+  @PreAuthorize(SecurityAuthorizationType.IS_CLINID_ADMIN_OR_DEVELOPER)
   public ResponseEntity<StandardizedResponse<EmployeeResponse>> register(@RequestBody @Valid RegisterEmployeeRequest request) {
     Employee employee = this.employeeService.createEmployee(request);
     return ResponseEntity.ok().body(
         StandardizedResponse.<EmployeeResponse>builder()
-            .content(EmployeeResponseMapper.INSTANCE.createFrom(employee))
+            .content(EmployeeMapper.INSTANCE.createFrom(employee))
             .build());
   }
 
@@ -103,7 +103,7 @@ public class EmployeeController {
     CustomUserDetails userDetails = (CustomUserDetails) this.appSecurityContextHolder.getCurrentContext().getAuthentication().getPrincipal();
     return ResponseEntity.ok().body(
         StandardizedResponse.<EmployeeResponse>builder()
-            .content(EmployeeResponseMapper.INSTANCE.createFrom(userDetails.getEmployee()))
+            .content(EmployeeMapper.INSTANCE.createFrom(userDetails.getEmployee()))
             .build());
   }
 
@@ -111,7 +111,7 @@ public class EmployeeController {
       summary = EmployeeControllerDocs.GET_EMPLOYEES_SUMMARY,
       description = EmployeeControllerDocs.GET_EMPLOYEES_DESCRIPTION)
   @GetMapping(value = EmployeeControllerPath.FILTER, produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize(SecurityAuthorizationType.IS_ADMIN_OR_DEVELOPER)
+  @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
   public ResponseEntity<StandardizedResponse<List<EmployeeResponse>>> filter(
       @RequestParam(name = "name", required = false) String name,
       @RequestParam(name = "sortBy", required = false) String[] sortBy,
@@ -132,7 +132,7 @@ public class EmployeeController {
 
     return ResponseEntity.ok().body(StandardizedResponse
         .<List<EmployeeResponse>>builder()
-        .content(EmployeeResponseMapper.INSTANCE.createFrom(employees.getContent()))
+        .content(EmployeeMapper.INSTANCE.createFrom(employees.getContent()))
         .paginationMetadata(PaginationMapper.INSTANCE.createFrom(employees))
         .build());
   }

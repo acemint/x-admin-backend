@@ -1,2 +1,2 @@
-INSERT INTO xa_clinic(id, code)
-VALUES (GEN_RANDOM_UUID(), '1')
+INSERT INTO xa_clinic(id, code, subscription_valid_from, subscription_valid_to)
+VALUES (GEN_RANDOM_UUID(), CONCAT('CLC-', nextval('clinic_sequence'), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '10' YEAR);

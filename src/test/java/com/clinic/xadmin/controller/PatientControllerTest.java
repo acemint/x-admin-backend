@@ -45,6 +45,7 @@ public class PatientControllerTest extends BaseControllerTest {
         .firstName("madara")
         .lastName("uchiha")
         .lastName("madara.uchiha@gmail.com")
+        .code("123")
         .age(24)
         .gender(Gender.MALE)
         .clinic(clinic)
@@ -53,6 +54,7 @@ public class PatientControllerTest extends BaseControllerTest {
         .firstName("sasuke")
         .lastName("uchiha")
         .lastName("sasuke.uchiha@gmail.com")
+        .code("123")
         .age(18)
         .gender(Gender.MALE)
         .clinic(clinic)
@@ -61,6 +63,7 @@ public class PatientControllerTest extends BaseControllerTest {
         .firstName("naruto")
         .lastName("uzumaki")
         .emailAddress("naruto.uzumaki@gmail.com")
+        .code("123")
         .age(18)
         .gender(Gender.MALE)
         .clinic(clinic)
@@ -75,7 +78,7 @@ public class PatientControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_Valid_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -102,7 +105,7 @@ public class PatientControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "234", roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(clinicId = "234", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_EmployeeCannotAccessOtherClinic_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -116,7 +119,7 @@ public class PatientControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_RequestParameterNameIsNotNull_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -131,7 +134,7 @@ public class PatientControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_SortByName_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);
@@ -152,7 +155,7 @@ public class PatientControllerTest extends BaseControllerTest {
 
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_ADMIN })
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_PageNumberIsNotDefaultAndPageSizeIsNotDefault_IsOk() throws Exception {
     Clinic clinic = this.constructBasicClinic();
     this.clinicRepository.save(clinic);

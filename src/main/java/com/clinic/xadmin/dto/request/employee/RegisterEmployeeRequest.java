@@ -1,6 +1,6 @@
 package com.clinic.xadmin.dto.request.employee;
 
-import com.clinic.xadmin.validator.annotation.ValidDoctorNumberNotNullOnSpecificRole;
+import com.clinic.xadmin.validator.annotation.ValidateFieldsForDoctorType;
 import com.clinic.xadmin.validator.annotation.ValidEmail;
 import com.clinic.xadmin.validator.annotation.ValidGender;
 import com.clinic.xadmin.validator.annotation.ValidPassword;
@@ -20,7 +20,7 @@ import lombok.experimental.FieldNameConstants;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldNameConstants
-@ValidDoctorNumberNotNullOnSpecificRole
+@ValidateFieldsForDoctorType
 public class RegisterEmployeeRequest {
 
   @NotNull
@@ -34,8 +34,6 @@ public class RegisterEmployeeRequest {
   @ValidGender
   private String gender;
 
-  private String doctorNumber;
-
   @ValidEmail
   private String emailAddress;
 
@@ -44,6 +42,7 @@ public class RegisterEmployeeRequest {
 
   @ValidRoleToRegister
   private String role;
+
   private String type;
 
   @NotNull
@@ -54,5 +53,9 @@ public class RegisterEmployeeRequest {
 
   @ValidPassword
   private String password;
+
+  private String doctorNumber;
+
+  private String practiceLicense;
 
 }
