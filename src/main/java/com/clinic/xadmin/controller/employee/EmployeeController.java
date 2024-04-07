@@ -10,6 +10,7 @@ import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.mapper.EmployeeMapper;
 import com.clinic.xadmin.mapper.PaginationMapper;
 import com.clinic.xadmin.model.employee.EmployeeFilter;
+import com.clinic.xadmin.model.employee.RegisterEmployee;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
@@ -56,11 +57,16 @@ public class EmployeeController {
       description = EmployeeControllerDocs.REGISTER_DESCRIPTION)
   @PostMapping(value = EmployeeControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
-  public ResponseEntity<StandardizedResponse<EmployeeResponse>> register(@RequestBody @Valid RegisterEmployeeRequest request) {
-    Clinic clinic = controllerHelper.getInjectableClinicFromAuthentication(request.getClinicCode());
-    request.setClinicCode(clinic.getCode());
+  public ResponseEntity<StandardizedResponse<EmployeeResponse>> register(
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
+      @RequestBody @Valid RegisterEmployeeRequest request) {
+    Clinic clinic = controllerHelper.getInjectableClinicFromAuthentication(clinicCode);
+    clinicCode = clinic.getCode();
 
-    Employee employee = this.employeeService.createEmployee(request);
+    RegisterEmployee registerEmployee = EmployeeMapper.INSTANCE.convertFromDtoToModel(request);
+    registerEmployee.setClinicCode(clinicCode);
+
+    Employee employee = this.employeeService.createEmployee(registerEmployee);
     return ResponseEntity.ok().body(
         StandardizedResponse.<EmployeeResponse>builder()
             .content(EmployeeMapper.INSTANCE.createFrom(employee))
