@@ -39,4 +39,7 @@ public class RegisterPatientRequest {
   @NotNull
   private String phoneNumber;
 
+  @NotNull
+  private String clinicCode;
+
 }

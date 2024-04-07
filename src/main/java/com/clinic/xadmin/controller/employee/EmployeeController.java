@@ -1,9 +1,11 @@
 package com.clinic.xadmin.controller.employee;
 
 
+import com.clinic.xadmin.controller.helper.ControllerHelper;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
+import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.mapper.EmployeeMapper;
 import com.clinic.xadmin.mapper.PaginationMapper;
@@ -35,13 +37,16 @@ import java.util.Objects;
 @RequestMapping(value = EmployeeControllerPath.BASE)
 public class EmployeeController {
 
+  private final ControllerHelper controllerHelper;
   private final EmployeeService employeeService;
   private final AppSecurityContextHolder appSecurityContextHolder;
 
   @Autowired
   public EmployeeController(
+      ControllerHelper controllerHelper,
       EmployeeService employeeService,
       AppSecurityContextHolder appSecurityContextHolder) {
+    this.controllerHelper = controllerHelper;
     this.employeeService = employeeService;
     this.appSecurityContextHolder = appSecurityContextHolder;
   }
@@ -52,6 +57,9 @@ public class EmployeeController {
   @PostMapping(value = EmployeeControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<EmployeeResponse>> register(@RequestBody @Valid RegisterEmployeeRequest request) {
+    Clinic clinic = controllerHelper.getInjectableClinicFromAuthentication(request.getClinicCode());
+    request.setClinicCode(clinic.getCode());
+
     Employee employee = this.employeeService.createEmployee(request);
     return ResponseEntity.ok().body(
         StandardizedResponse.<EmployeeResponse>builder()
@@ -83,6 +91,9 @@ public class EmployeeController {
       @RequestParam(name = "sortDirection", defaultValue = EmployeeControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
       @RequestParam(name = "pageNumber", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
       @RequestParam(name = "pageSize", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_SIZE) Integer pageSize) {
+    Clinic clinic = controllerHelper.getInjectableClinicFromAuthentication(clinicCode);
+    clinicCode = clinic.getCode();
+
     PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
     if (!Objects.isNull(sortBy)) {
       Sort sort = Sort.by(Sort.Direction.valueOf(sortDirection), sortBy);

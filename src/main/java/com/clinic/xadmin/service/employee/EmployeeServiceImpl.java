@@ -9,7 +9,6 @@ import com.clinic.xadmin.mapper.EmployeeMapper;
 import com.clinic.xadmin.model.employee.EmployeeFilter;
 import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
-import com.clinic.xadmin.service.helper.ServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,27 +23,24 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   private final EmployeeRepository employeeRepository;
   private final PasswordEncoder passwordEncoder;
-  private final ServiceHelper serviceHelper;
   private final ClinicRepository clinicRepository;
 
   @Autowired
   private EmployeeServiceImpl(EmployeeRepository employeeRepository,
       PasswordEncoder passwordEncoder,
-      ServiceHelper serviceHelper,
       ClinicRepository clinicRepository) {
     this.employeeRepository = employeeRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.serviceHelper = serviceHelper;
+    this.passwordEncoder = passwordEncoder;;
     this.clinicRepository = clinicRepository;
   }
 
   @Override
   public Employee createEmployee(RegisterEmployeeRequest request) {
-    Clinic clinic = this.serviceHelper.getInjectableClinicFromAuthentication(request.getClinicCode());
-    Employee existingEmployee = this.employeeRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
+    Employee existingEmployee = this.employeeRepository.searchByClinicCodeAndEmailAddress(request.getClinicCode(), request.getEmailAddress());
     if (Objects.nonNull(existingEmployee)) {
       throw new XAdminBadRequestException("Email has been taken");
     }
+    Clinic clinic = this.clinicRepository.searchByCode(request.getClinicCode());
 
     Employee employee = EmployeeMapper.INSTANCE.createFrom(request);
     employee.setPassword(this.passwordEncoder.encode(request.getPassword()));
@@ -73,8 +69,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public Page<Employee> getEmployees(EmployeeFilter employeeFilter) {
-    Clinic clinic = this.serviceHelper.getInjectableClinicFromAuthentication(employeeFilter.getClinicCode());
-    employeeFilter.setClinicCode(clinic.getCode());
+    employeeFilter.setClinicCode(employeeFilter.getClinicCode());
 
     return this.employeeRepository.searchByFilter(employeeFilter);
   }

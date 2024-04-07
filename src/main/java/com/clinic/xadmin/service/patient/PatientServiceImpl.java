@@ -6,8 +6,8 @@ import com.clinic.xadmin.entity.Patient;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
 import com.clinic.xadmin.mapper.PatientMapper;
 import com.clinic.xadmin.model.patient.PatientFilter;
+import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.repository.patient.PatientRepository;
-import com.clinic.xadmin.service.helper.ServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -18,22 +18,22 @@ import java.util.Objects;
 public class PatientServiceImpl implements PatientService {
 
   private final PatientRepository patientRepository;
-  private final ServiceHelper serviceHelper;
+  private final ClinicRepository clinicRepository;
 
   @Autowired
-  private PatientServiceImpl(PatientRepository patientRepository,
-      ServiceHelper serviceHelper) {
+  private PatientServiceImpl(PatientRepository patientRepository, ClinicRepository clinicRepository) {
     this.patientRepository = patientRepository;
-    this.serviceHelper = serviceHelper;
+    this.clinicRepository = clinicRepository;
   }
 
   @Override
   public Patient createPatient(RegisterPatientRequest request) {
-    Clinic clinic = this.serviceHelper.getInjectableClinicFromAuthentication(null);
-    Patient existingPatient = this.patientRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
+    Patient existingPatient = this.patientRepository.searchByClinicCodeAndEmailAddress(request.getClinicCode(), request.getEmailAddress());
     if (Objects.nonNull(existingPatient)) {
       throw new XAdminBadRequestException("this user has existed");
     }
+    Clinic clinic = this.clinicRepository.searchByCode(request.getClinicCode());
+
     Patient patient = PatientMapper.INSTANCE.createFrom(request);
     patient.setClinic(clinic);
     return this.patientRepository.save(patient);
@@ -41,8 +41,7 @@ public class PatientServiceImpl implements PatientService {
 
   @Override
   public Page<Patient> getPatients(PatientFilter patientFilter) {
-    Clinic clinic = this.serviceHelper.getInjectableClinicFromAuthentication(patientFilter.getClinicCode());
-    patientFilter.setClinicCode(clinic.getCode());
+    patientFilter.setClinicCode(patientFilter.getClinicCode());
 
     return this.patientRepository.searchByFilter(patientFilter);
   }

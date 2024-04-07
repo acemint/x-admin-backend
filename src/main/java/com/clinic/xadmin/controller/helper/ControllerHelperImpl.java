@@ -1,4 +1,4 @@
-package com.clinic.xadmin.service.helper;
+package com.clinic.xadmin.controller.helper;
 
 import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.entity.Clinic;
@@ -17,13 +17,13 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public class ServiceHelperImpl implements ServiceHelper {
+public class ControllerHelperImpl implements ControllerHelper {
 
   private final AppSecurityContextHolder appSecurityContextHolder;
   private final ClinicRepository clinicRepository;
 
   @Autowired
-  public ServiceHelperImpl(AppSecurityContextHolder appSecurityContextHolder, ClinicRepository clinicRepository) {
+  public ControllerHelperImpl(AppSecurityContextHolder appSecurityContextHolder, ClinicRepository clinicRepository) {
     this.appSecurityContextHolder = appSecurityContextHolder;
     this.clinicRepository = clinicRepository;
   }

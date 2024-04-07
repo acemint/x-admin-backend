@@ -1,6 +1,7 @@
 package com.clinic.xadmin.controller.patient;
 
 
+import com.clinic.xadmin.controller.helper.ControllerHelper;
 import com.clinic.xadmin.dto.request.patient.RegisterPatientRequest;
 import com.clinic.xadmin.mapper.PatientMapper;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
@@ -33,10 +34,12 @@ import java.util.Objects;
 @RequestMapping(value = PatientControllerPath.BASE)
 public class PatientController {
 
+  private final ControllerHelper controllerHelper;
   private final PatientService patientService;
 
   @Autowired
-  public PatientController(PatientService patientService) {
+  public PatientController(ControllerHelper controllerHelper, PatientService patientService) {
+    this.controllerHelper = controllerHelper;
     this.patientService = patientService;
   }
 
