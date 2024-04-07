@@ -52,7 +52,7 @@ public class XAdminControllerAdvice {
 
   @ExceptionHandler(value = { BadCredentialsException.class,
       AccessDeniedException.class,
-      UsernameNotFoundException.class
+      UsernameNotFoundException.class,
       XAdminForbiddenException.class
   })
   public ResponseEntity<StandardizedErrorResponse> forbiddenAuthentication(Exception exception) {
