@@ -38,7 +38,7 @@ public class AuthorizationEvaluator  {
 
     // developer will have all access to the clinics
     Employee employee = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
-    if (employee.getRole().equals(EmployeeRole.ROLE_DEVELOPER)) {
+    if (EmployeeRole.FIREFIGHTER_ROLES.containsKey(employee.getRole())) {
       return true;
     }
 
