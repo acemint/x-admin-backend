@@ -10,7 +10,7 @@ import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.mapper.EmployeeMapper;
 import com.clinic.xadmin.mapper.PaginationMapper;
 import com.clinic.xadmin.model.employee.EmployeeFilter;
-import com.clinic.xadmin.model.employee.RegisterEmployee;
+import com.clinic.xadmin.model.employee.RegisterEmployeeData;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
@@ -63,10 +63,10 @@ public class EmployeeController {
     Clinic clinic = controllerHelper.getInjectableClinicFromAuthentication(clinicCode);
     clinicCode = clinic.getCode();
 
-    RegisterEmployee registerEmployee = EmployeeMapper.INSTANCE.convertFromDtoToModel(request);
-    registerEmployee.setClinicCode(clinicCode);
+    RegisterEmployeeData registerEmployeeData = EmployeeMapper.INSTANCE.convertFromDtoToModel(request);
+    registerEmployeeData.setClinicCode(clinicCode);
 
-    Employee employee = this.employeeService.createEmployee(registerEmployee);
+    Employee employee = this.employeeService.createEmployee(registerEmployeeData);
     return ResponseEntity.ok().body(
         StandardizedResponse.<EmployeeResponse>builder()
             .content(EmployeeMapper.INSTANCE.createFrom(employee))

@@ -1,16 +1,18 @@
 package com.clinic.xadmin.controller.patient;
 
 
+import com.clinic.xadmin.controller.employee.EmployeeControllerDefaultValue;
 import com.clinic.xadmin.controller.helper.ControllerHelper;
 import com.clinic.xadmin.dto.request.patient.RegisterPatientRequest;
-import com.clinic.xadmin.mapper.PatientMapper;
-import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
-import com.clinic.xadmin.controller.employee.EmployeeControllerDefaultValue;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.patient.PatientResponse;
+import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Patient;
 import com.clinic.xadmin.mapper.PaginationMapper;
+import com.clinic.xadmin.mapper.PatientMapper;
 import com.clinic.xadmin.model.patient.PatientFilter;
+import com.clinic.xadmin.model.patient.RegisterPatientData;
+import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.service.patient.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +51,14 @@ public class PatientController {
   @PostMapping(value = PatientControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<PatientResponse>> registerPatient(
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestBody RegisterPatientRequest registerPatientRequest) {
+    Clinic clinic = controllerHelper.getInjectableClinicFromAuthentication(clinicCode);
+    clinicCode = clinic.getCode();
+
+    RegisterPatientData registerPatientData = PatientMapper.INSTANCE.convertFromDtoToModel(registerPatientRequest);
+    registerPatientData.setClinicCode(clinicCode);
+
     Patient patient = this.patientService.createPatient(registerPatientRequest);
     return ResponseEntity.ok().body(
         StandardizedResponse.<PatientResponse>builder()
@@ -70,6 +79,9 @@ public class PatientController {
       @RequestParam(name = "sortDirection", defaultValue = EmployeeControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
       @RequestParam(name = "pageNumber", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
       @RequestParam(name = "pageSize", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_SIZE) Integer pageSize) {
+    Clinic clinic = controllerHelper.getInjectableClinicFromAuthentication(clinicCode);
+    clinicCode = clinic.getCode();
+
     PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
     if (!Objects.isNull(sortBy)) {
       Sort sort = Sort.by(Sort.Direction.valueOf(sortDirection), sortBy);

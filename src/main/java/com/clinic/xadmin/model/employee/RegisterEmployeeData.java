@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterEmployee {
+public class RegisterEmployeeData {
 
   private String firstName;
   private String lastName;
