@@ -4,7 +4,7 @@ import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.constant.employee.EmployeeStatus;
 import com.clinic.xadmin.constant.employee.EmployeeType;
 import com.clinic.xadmin.constant.experimental.Gender;
-import com.clinic.xadmin.controller.openpublic.employee.EmployeeControllerPath;
+import com.clinic.xadmin.controller.employee.EmployeeControllerPath;
 import com.clinic.xadmin.dto.request.employee.LoginEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.entity.Clinic;

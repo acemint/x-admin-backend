@@ -1,4 +1,4 @@
-package com.clinic.xadmin.controller.openpublic.employee;
+package com.clinic.xadmin.controller.employee;
 
 import com.clinic.xadmin.repository.employee.EmployeeCustomRepositoryImpl;
 

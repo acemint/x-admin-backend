@@ -1,10 +1,10 @@
-package com.clinic.xadmin.controller.openpublic.patient;
+package com.clinic.xadmin.controller.patient;
 
 
 import com.clinic.xadmin.dto.request.patient.RegisterPatientRequest;
 import com.clinic.xadmin.mapper.PatientMapper;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
-import com.clinic.xadmin.controller.openpublic.employee.EmployeeControllerDefaultValue;
+import com.clinic.xadmin.controller.employee.EmployeeControllerDefaultValue;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.patient.PatientResponse;
 import com.clinic.xadmin.entity.Patient;

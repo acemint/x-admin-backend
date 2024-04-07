@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppSecurityContextHolder {
 
+  // Current thread which holds Security Context
+
   private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
 
   public SecurityContext createEmptyContext() {

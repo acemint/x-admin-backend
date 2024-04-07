@@ -2,7 +2,7 @@ package com.clinic.xadmin.controller;
 
 import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.constant.experimental.Gender;
-import com.clinic.xadmin.controller.openpublic.patient.PatientControllerPath;
+import com.clinic.xadmin.controller.patient.PatientControllerPath;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Patient;
 import com.clinic.xadmin.helper.WithMockCustomUser;

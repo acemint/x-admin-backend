@@ -1,8 +1,8 @@
-package com.clinic.xadmin.controller.openpublic.patient;
+package com.clinic.xadmin.controller.patient;
 
 public interface PatientControllerPath {
 
-  String BASE = "/public/patient";
+  String BASE = "/patient";
   String REGISTER = "/register";
   String FILTER = "/filter";
 

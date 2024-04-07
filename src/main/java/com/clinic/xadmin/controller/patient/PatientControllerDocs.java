@@ -1,4 +1,4 @@
-package com.clinic.xadmin.controller.openpublic.patient;
+package com.clinic.xadmin.controller.patient;
 
 public interface PatientControllerDocs {
 

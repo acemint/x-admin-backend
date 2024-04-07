@@ -14,9 +14,13 @@ import org.springframework.data.domain.Pageable;
 @Builder
 @Data
 public class EmployeeFilter {
-  
-  private String clinicId;
+
+  @Nullable
+  private String clinicCode;
+
+  @Nullable
   private String name;
+
   private Pageable pageable;
 
 }

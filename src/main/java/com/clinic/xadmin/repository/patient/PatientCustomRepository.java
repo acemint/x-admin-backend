@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 
 public interface PatientCustomRepository {
 
-  Patient findByClinicIdAndEmailAddress(String clinicId, String emailAddress);
-  Page<Patient> findByFilter(PatientFilter filter);
+  Patient searchByClinicCodeAndEmailAddress(String clinicCode, String emailAddress);
+  Page<Patient> searchByFilter(PatientFilter filter);
 
 }
