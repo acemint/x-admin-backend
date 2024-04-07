@@ -63,7 +63,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     if (Objects.nonNull(additionalIndex)) {
       username.append(additionalIndex);
     }
-    username.append("@").append(clinic.getCode().toLowerCase());
+    username.append("@").append(clinic.getCode().toLowerCase().split("-")[1]);
 
     if (Objects.nonNull(this.employeeRepository.findEmployeeByUsername(username.toString()))) {
       return this.getValidUsername(request, clinic, Optional.ofNullable(additionalIndex).map(i -> i + 1).orElse(1));
@@ -74,9 +74,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   @Override
   public Page<Employee> getEmployees(EmployeeFilter employeeFilter) {
     Clinic clinic = this.serviceHelper.getClinicFromAuthentication();
-    if (Objects.nonNull(clinic)) {
-      employeeFilter.setClinicId(clinic.getId());
-    }
+    employeeFilter.setClinicId(clinic.getId());
 
     return this.employeeRepository.findByFilter(employeeFilter);
   }

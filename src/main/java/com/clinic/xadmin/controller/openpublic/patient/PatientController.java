@@ -1,10 +1,10 @@
-package com.clinic.xadmin.controller.patient;
+package com.clinic.xadmin.controller.openpublic.patient;
 
 
 import com.clinic.xadmin.dto.request.patient.RegisterPatientRequest;
 import com.clinic.xadmin.mapper.PatientMapper;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
-import com.clinic.xadmin.controller.employee.EmployeeControllerDefaultValue;
+import com.clinic.xadmin.controller.openpublic.employee.EmployeeControllerDefaultValue;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.patient.PatientResponse;
 import com.clinic.xadmin.entity.Patient;
@@ -44,7 +44,7 @@ public class PatientController {
       summary = PatientControllerDocs.REGISTER_SUMMARY,
       description = PatientControllerDocs.REGISTER_DESCRIPTION)
   @PostMapping(value = PatientControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize(SecurityAuthorizationType.IS_CLINID_ADMIN_OR_DEVELOPER)
+  @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<PatientResponse>> registerPatient(
       @RequestBody RegisterPatientRequest registerPatientRequest) {
     Patient patient = this.patientService.createPatient(registerPatientRequest);
@@ -59,7 +59,7 @@ public class PatientController {
       summary = PatientControllerDocs.GET_PATIENTS_SUMMARY,
       description = PatientControllerDocs.GET_PATIENTS_DESCRIPTION)
   @GetMapping(value = PatientControllerPath.FILTER, produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize(SecurityAuthorizationType.IS_CLINID_ADMIN_OR_DEVELOPER)
+  @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<List<PatientResponse>>> getPatient(
       @RequestParam(name = "name", required = false) String name,
       @RequestParam(name = "sortBy", required = false) String[] sortBy,

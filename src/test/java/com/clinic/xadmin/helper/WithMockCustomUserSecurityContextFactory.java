@@ -30,6 +30,7 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
     } else {
       principal.getEmployee().setClinic(Clinic.builder()
           .id(customUser.clinicId())
+          .code("CLC-" + customUser.clinicId())
           .build());
     }
 

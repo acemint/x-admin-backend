@@ -5,7 +5,6 @@ import jakarta.annotation.Nullable;
 
 public interface ServiceHelper {
 
-  @Nullable
   Clinic getClinicFromAuthentication();
 
 }

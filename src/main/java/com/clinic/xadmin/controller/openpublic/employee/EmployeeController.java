@@ -1,18 +1,18 @@
-package com.clinic.xadmin.controller.employee;
+package com.clinic.xadmin.controller.openpublic.employee;
 
 
-import com.clinic.xadmin.mapper.EmployeeMapper;
-import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.dto.request.employee.LoginEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
 import com.clinic.xadmin.entity.Employee;
+import com.clinic.xadmin.mapper.EmployeeMapper;
 import com.clinic.xadmin.mapper.PaginationMapper;
 import com.clinic.xadmin.model.employee.EmployeeFilter;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.configuration.AuthenticationManagerConfiguration;
 import com.clinic.xadmin.security.configuration.SessionManagementConfiguration;
+import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
 import com.clinic.xadmin.service.employee.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -86,7 +86,7 @@ public class EmployeeController {
       summary = EmployeeControllerDocs.REGISTER_SUMMARY,
       description = EmployeeControllerDocs.REGISTER_DESCRIPTION)
   @PostMapping(value = EmployeeControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize(SecurityAuthorizationType.IS_CLINID_ADMIN_OR_DEVELOPER)
+  @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<EmployeeResponse>> register(@RequestBody @Valid RegisterEmployeeRequest request) {
     Employee employee = this.employeeService.createEmployee(request);
     return ResponseEntity.ok().body(

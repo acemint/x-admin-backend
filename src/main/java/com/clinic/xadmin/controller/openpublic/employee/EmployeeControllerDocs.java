@@ -1,4 +1,4 @@
-package com.clinic.xadmin.controller.employee;
+package com.clinic.xadmin.controller.openpublic.employee;
 
 public interface EmployeeControllerDocs {
 

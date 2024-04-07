@@ -1,8 +1,8 @@
-package com.clinic.xadmin.controller.employee;
+package com.clinic.xadmin.controller.openpublic.employee;
 
 public interface EmployeeControllerPath {
 
-  String BASE = "/employee";
+  String BASE = "/public/employee";
   String REGISTER = "/register";
   String SELF = "/self";
   String FILTER = "/filter";
