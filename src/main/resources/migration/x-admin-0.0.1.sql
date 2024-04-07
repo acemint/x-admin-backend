@@ -1,7 +1,7 @@
 CREATE TABLE public.xa_clinic (
     id varchar(255) NOT NULL,
     code varchar(255) NOT NULL,
-    name varchar(255) NOT NULL,
+    "name" varchar(255) NOT NULL,
     subscription_tier int4 NULL,
     subscription_valid_from timestamp(6) NULL,
     subscription_valid_to timestamp(6) NULL,
@@ -26,10 +26,12 @@ CREATE TABLE public.xa_employee (
 	gender varchar(255) NOT NULL,
 	"password" varchar(255) NOT NULL,
 	"role" varchar(255) NOT NULL,
-	"type" varchar(255) NOT NULL,
+	"type" varchar(255) NOT,
     status varchar(255) NOT NULL,
 	salary numeric(38, 2) NULL,
 	tax_percentage numeric(38, 2) NULL,
+	doctor_number varchar(255),
+	practice_license varchar(255),
 	clinic_id varchar(255) NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (clinic_id) REFERENCES public.xa_clinic(id)

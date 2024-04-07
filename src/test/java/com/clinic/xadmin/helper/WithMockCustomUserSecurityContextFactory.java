@@ -25,11 +25,12 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
             .role(customUser.roles()[0])
             .build());
 
-    if (!EmployeeRole.LIST_ROLE_WITHOUT_CLINIC_IDS.containsKey(principal.getEmployee().getRole()) && Objects.isNull(customUser.clinicId())) {
+    if (!EmployeeRole.FIREFIGHTER_ROLES.containsKey(principal.getEmployee().getRole()) && Objects.isNull(customUser.clinicId())) {
       throw new IllegalStateException("Unable to create user role " + principal.getEmployee().getRole() + " without clinic id");
     } else {
       principal.getEmployee().setClinic(Clinic.builder()
           .id(customUser.clinicId())
+          .code("CLC-" + customUser.clinicId())
           .build());
     }
 

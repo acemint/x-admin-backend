@@ -29,19 +29,19 @@ public class PatientCustomRepositoryImpl implements PatientCustomRepository {
   private EntityManager entityManager;
 
   @Override
-  public Patient findByClinicIdAndEmailAddress(String clinicId, String emailAddress) {
+  public Patient searchByClinicCodeAndEmailAddress(String clinicCode, String emailAddress) {
     QPatient qPatient = QPatient.patient;
     JPAQuery<?> query = new JPAQuery<>(entityManager);
 
     return query.select(qPatient)
         .from(qPatient)
         .where(qPatient.emailAddress.eq(emailAddress)
-            .and(qPatient.clinic.id.eq(clinicId)))
+            .and(qPatient.clinic.code.eq(clinicCode)))
         .fetchOne();
   }
 
   @Override
-  public Page<Patient> findByFilter(PatientFilter filter) {
+  public Page<Patient> searchByFilter(PatientFilter filter) {
     QPatient qPatient = QPatient.patient;
     JPAQuery<?> query = new JPAQuery<>(entityManager);
 
@@ -68,8 +68,8 @@ public class PatientCustomRepositoryImpl implements PatientCustomRepository {
           qPatient.firstName.likeIgnoreCase(nameWithPercentSign).or(qPatient.lastName.likeIgnoreCase(nameWithPercentSign))
       );
     }
-    if (StringUtils.hasText(filter.getClinicId())) {
-      booleanExpression = booleanExpression.and(qPatient.clinic.id.eq(filter.getClinicId()));
+    if (StringUtils.hasText(filter.getClinicCode())) {
+      booleanExpression = booleanExpression.and(qPatient.clinic.code.eq(filter.getClinicCode()));
     }
     return booleanExpression;
   }

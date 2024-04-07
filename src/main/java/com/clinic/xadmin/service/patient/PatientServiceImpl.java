@@ -29,8 +29,8 @@ public class PatientServiceImpl implements PatientService {
 
   @Override
   public Patient createPatient(RegisterPatientRequest request) {
-    Clinic clinic = this.serviceHelper.getClinicFromAuthentication();
-    Patient existingPatient = this.patientRepository.findByClinicIdAndEmailAddress(clinic.getId(), request.getEmailAddress());
+    Clinic clinic = this.serviceHelper.getInjectableClinicFromAuthentication(null);
+    Patient existingPatient = this.patientRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
     if (Objects.nonNull(existingPatient)) {
       throw new XAdminBadRequestException("this user has existed");
     }
@@ -41,10 +41,10 @@ public class PatientServiceImpl implements PatientService {
 
   @Override
   public Page<Patient> getPatients(PatientFilter patientFilter) {
-    Clinic clinic = this.serviceHelper.getClinicFromAuthentication();
-    patientFilter.setClinicId(clinic.getId());
+    Clinic clinic = this.serviceHelper.getInjectableClinicFromAuthentication(patientFilter.getClinicCode());
+    patientFilter.setClinicCode(clinic.getCode());
 
-    return this.patientRepository.findByFilter(patientFilter);
+    return this.patientRepository.searchByFilter(patientFilter);
   }
 
 }

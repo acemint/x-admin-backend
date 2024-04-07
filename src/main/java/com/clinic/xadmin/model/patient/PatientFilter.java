@@ -16,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 public class PatientFilter {
 
   @Nullable
-  private String clinicId;
+  private String clinicCode;
 
   @Nullable
   private String name;

@@ -39,7 +39,7 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
   private EntityManager entityManager;
 
   @Override
-  public Employee findEmployeeByUsername(String username) {
+  public Employee searchByUsername(String username) {
     QEmployee qEmployee = QEmployee.employee;
     JPAQuery<?> query = new JPAQuery<>(entityManager);
 
@@ -50,19 +50,19 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
   }
 
   @Override
-  public Employee findEmployeeByClinicIdAndEmailAddress(String clinicId, String emailAddress) {
+  public Employee searchByClinicCodeAndEmailAddress(String clinicCode, String emailAddress) {
     QEmployee qEmployee = QEmployee.employee;
     JPAQuery<?> query = new JPAQuery<>(entityManager);
 
     return query.select(qEmployee)
         .from(qEmployee)
         .where(qEmployee.emailAddress.eq(emailAddress)
-            .and(qEmployee.clinic.id.eq(clinicId)))
+            .and(qEmployee.clinic.code.eq(clinicCode)))
         .fetchOne();
   }
 
   @Override
-  public Page<Employee> findByFilter(EmployeeFilter filter) {
+  public Page<Employee> searchByFilter(EmployeeFilter filter) {
     QEmployee qEmployee = QEmployee.employee;
     JPAQuery<?> query = new JPAQuery<>(entityManager);
 
@@ -89,9 +89,9 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
               qEmployee.firstName.likeIgnoreCase(nameWithPercentSign).or(qEmployee.lastName.likeIgnoreCase(nameWithPercentSign))
       );
     }
-    if (StringUtils.hasText(filter.getClinicId())) {
+    if (StringUtils.hasText(filter.getClinicCode())) {
       booleanExpression = booleanExpression.and(
-          qEmployee.clinic.id.eq(filter.getClinicId()));
+          qEmployee.clinic.code.eq(filter.getClinicCode()));
     }
     return booleanExpression;
   }

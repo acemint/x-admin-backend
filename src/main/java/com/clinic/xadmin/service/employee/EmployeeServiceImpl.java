@@ -40,8 +40,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public Employee createEmployee(RegisterEmployeeRequest request) {
-    Clinic clinic = this.serviceHelper.getClinicFromAuthentication();
-    Employee existingEmployee = this.employeeRepository.findEmployeeByClinicIdAndEmailAddress(clinic.getId(), request.getEmailAddress());
+    Clinic clinic = this.serviceHelper.getInjectableClinicFromAuthentication(request.getClinicCode());
+    Employee existingEmployee = this.employeeRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
     if (Objects.nonNull(existingEmployee)) {
       throw new XAdminBadRequestException("Email has been taken");
     }
@@ -63,9 +63,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     if (Objects.nonNull(additionalIndex)) {
       username.append(additionalIndex);
     }
-    username.append("@").append(clinic.getCode().toLowerCase());
+    username.append("@").append(clinic.getCode().toLowerCase().split("-")[1]);
 
-    if (Objects.nonNull(this.employeeRepository.findEmployeeByUsername(username.toString()))) {
+    if (Objects.nonNull(this.employeeRepository.searchByUsername(username.toString()))) {
       return this.getValidUsername(request, clinic, Optional.ofNullable(additionalIndex).map(i -> i + 1).orElse(1));
     }
     return username.toString();
@@ -73,18 +73,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   @Override
   public Page<Employee> getEmployees(EmployeeFilter employeeFilter) {
-    Clinic clinic = this.serviceHelper.getClinicFromAuthentication();
-    if (Objects.nonNull(clinic)) {
-      employeeFilter.setClinicId(clinic.getId());
-    }
+    Clinic clinic = this.serviceHelper.getInjectableClinicFromAuthentication(employeeFilter.getClinicCode());
+    employeeFilter.setClinicCode(clinic.getId());
 
-    return this.employeeRepository.findByFilter(employeeFilter);
+    return this.employeeRepository.searchByFilter(employeeFilter);
   }
 
   @Override
   public Employee resetPassword(ResetPasswordRequest request) {
-    Clinic clinic = this.serviceHelper.getClinicFromAuthentication();
-    Employee existingEmployee = this.employeeRepository.findEmployeeByClinicIdAndEmailAddress(clinic.getId(), request.getEmailAddress());
+    Employee existingEmployee = this.employeeRepository.searchByUsername(request.getUsername());
 
     if (Objects.isNull(existingEmployee)) {
       throw new XAdminBadRequestException("User not found");
