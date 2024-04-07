@@ -74,7 +74,7 @@ public class EmployeeServiceImpl implements EmployeeService {
   @Override
   public Page<Employee> getEmployees(EmployeeFilter employeeFilter) {
     Clinic clinic = this.serviceHelper.getInjectableClinicFromAuthentication(employeeFilter.getClinicCode());
-    employeeFilter.setClinicCode(clinic.getId());
+    employeeFilter.setClinicCode(clinic.getCode());
 
     return this.employeeRepository.searchByFilter(employeeFilter);
   }

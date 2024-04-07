@@ -62,6 +62,7 @@ public class PatientController {
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<List<PatientResponse>>> getPatient(
       @RequestParam(name = "name", required = false) String name,
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestParam(name = "sortBy", required = false) String[] sortBy,
       @RequestParam(name = "sortDirection", defaultValue = EmployeeControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
       @RequestParam(name = "pageNumber", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
@@ -73,6 +74,7 @@ public class PatientController {
     }
     PatientFilter filter = PatientFilter.builder()
         .name(name)
+        .clinicCode(clinicCode)
         .pageable(pageRequest)
         .build();
 

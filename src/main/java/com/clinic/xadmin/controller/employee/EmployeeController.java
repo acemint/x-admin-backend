@@ -78,6 +78,7 @@ public class EmployeeController {
   @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
   public ResponseEntity<StandardizedResponse<List<EmployeeResponse>>> filter(
       @RequestParam(name = "name", required = false) String name,
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestParam(name = "sortBy", required = false) String[] sortBy,
       @RequestParam(name = "sortDirection", defaultValue = EmployeeControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
       @RequestParam(name = "pageNumber", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
@@ -90,6 +91,7 @@ public class EmployeeController {
 
     EmployeeFilter employeeFilter = EmployeeFilter.builder()
         .name(name)
+        .clinicCode(clinicCode)
         .pageable(pageRequest)
         .build();
     Page<Employee> employees = this.employeeService.getEmployees(employeeFilter);
