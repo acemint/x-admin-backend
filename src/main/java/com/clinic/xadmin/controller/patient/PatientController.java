@@ -59,7 +59,7 @@ public class PatientController {
     RegisterPatientData registerPatientData = PatientMapper.INSTANCE.convertFromDtoToModel(registerPatientRequest);
     registerPatientData.setClinicCode(clinicCode);
 
-    Patient patient = this.patientService.createPatient(registerPatientRequest);
+    Patient patient = this.patientService.createPatient(registerPatientData);
     return ResponseEntity.ok().body(
         StandardizedResponse.<PatientResponse>builder()
             .content(PatientMapper.INSTANCE.createFrom(patient))
