@@ -1,6 +1,7 @@
 package com.clinic.xadmin.controller.advice;
 
 import com.clinic.xadmin.dto.response.StandardizedErrorResponse;
+import com.clinic.xadmin.exception.XAdminForbiddenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +53,7 @@ public class XAdminControllerAdvice {
   @ExceptionHandler(value = { BadCredentialsException.class,
       AccessDeniedException.class,
       UsernameNotFoundException.class
+      XAdminForbiddenException.class
   })
   public ResponseEntity<StandardizedErrorResponse> forbiddenAuthentication(Exception exception) {
     String error = "forbidden access";
