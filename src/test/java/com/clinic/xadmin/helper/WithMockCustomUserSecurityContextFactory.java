@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
+import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -25,14 +26,14 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
             .role(customUser.roles()[0])
             .build());
 
-    if (!EmployeeRole.FIREFIGHTER_ROLES.containsKey(principal.getEmployee().getRole()) && Objects.isNull(customUser.clinicId())) {
+    if (!EmployeeRole.isFirefighterRoles(principal.getEmployee()) &&
+        !StringUtils.hasText(customUser.clinicId())) {
       throw new IllegalStateException("Unable to create user role " + principal.getEmployee().getRole() + " without clinic id");
-    } else {
-      principal.getEmployee().setClinic(Clinic.builder()
-          .id(customUser.clinicId())
-          .code("CLC-" + customUser.clinicId())
-          .build());
     }
+    principal.getEmployee().setClinic(Clinic.builder()
+        .id(customUser.clinicId())
+        .code("CLC-" + customUser.clinicId())
+        .build());
 
     Authentication auth = UsernamePasswordAuthenticationToken.authenticated(principal, "password", principal.getAuthorities());
     context.setAuthentication(auth);

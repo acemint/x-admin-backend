@@ -53,7 +53,7 @@ public class PatientController {
   public ResponseEntity<StandardizedResponse<PatientResponse>> registerPatient(
       @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestBody RegisterPatientRequest registerPatientRequest) {
-    Clinic clinic = controllerHelper.getInjectableClinicFromAuthentication(clinicCode);
+    Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     clinicCode = clinic.getCode();
 
     RegisterPatientData registerPatientData = PatientMapper.INSTANCE.convertFromDtoToModel(registerPatientRequest);
@@ -79,7 +79,7 @@ public class PatientController {
       @RequestParam(name = "sortDirection", defaultValue = EmployeeControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
       @RequestParam(name = "pageNumber", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
       @RequestParam(name = "pageSize", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_SIZE) Integer pageSize) {
-    Clinic clinic = controllerHelper.getInjectableClinicFromAuthentication(clinicCode);
+    Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     clinicCode = clinic.getCode();
 
     PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
