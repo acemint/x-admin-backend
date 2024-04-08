@@ -3,7 +3,7 @@ package com.clinic.xadmin.controller.employee;
 public interface EmployeeControllerDocs {
 
   String REGISTER_SUMMARY = "Registers an employee within its' own clinic";
-  String REGISTER_DESCRIPTION = "The user of this API must have at least the role of ADMIN";
+  String REGISTER_DESCRIPTION = "Role Allowed: ROLE_CLINIC_ADMIN";
 
   String GET_SELF_SUMMARY = "Get the data of current logged-in employee";
   String GET_EMPLOYEES_SUMMARY = "Get the list of employees in own's clinic";
@@ -14,6 +14,7 @@ public interface EmployeeControllerDocs {
       + "`sortBy`: to sort the result in a certain way, support multiple sort fields<br>"
       + "`sortDirection`: to sort the result in a given direction (1 sort direction will apply to all sort by fields)<br>"
       + "`pageNumber`: returns the pageNumber, the index starts from 0<br>"
-      + "`pageSize`: the size of data requested per page";
+      + "`pageSize`: the size of data requested per page<br><br>"
+      + "Role Allowed: All Authenticated User";
 
 }

@@ -1,10 +1,10 @@
-package com.clinic.xadmin.service.helper;
+package com.clinic.xadmin.controller.helper;
 
 import com.clinic.xadmin.entity.Clinic;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
-public interface ServiceHelper {
+public interface ControllerHelper {
 
   /*
     This method will get Clinic ID from Authentication.

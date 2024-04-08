@@ -1,15 +1,18 @@
 package com.clinic.xadmin.controller.patient;
 
 
-import com.clinic.xadmin.dto.request.patient.RegisterPatientRequest;
-import com.clinic.xadmin.mapper.PatientMapper;
-import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.controller.employee.EmployeeControllerDefaultValue;
+import com.clinic.xadmin.controller.helper.ControllerHelper;
+import com.clinic.xadmin.dto.request.patient.RegisterPatientRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.patient.PatientResponse;
+import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Patient;
 import com.clinic.xadmin.mapper.PaginationMapper;
+import com.clinic.xadmin.mapper.PatientMapper;
 import com.clinic.xadmin.model.patient.PatientFilter;
+import com.clinic.xadmin.model.patient.RegisterPatientData;
+import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.service.patient.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +36,12 @@ import java.util.Objects;
 @RequestMapping(value = PatientControllerPath.BASE)
 public class PatientController {
 
+  private final ControllerHelper controllerHelper;
   private final PatientService patientService;
 
   @Autowired
-  public PatientController(PatientService patientService) {
+  public PatientController(ControllerHelper controllerHelper, PatientService patientService) {
+    this.controllerHelper = controllerHelper;
     this.patientService = patientService;
   }
 
@@ -46,8 +51,15 @@ public class PatientController {
   @PostMapping(value = PatientControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<PatientResponse>> registerPatient(
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestBody RegisterPatientRequest registerPatientRequest) {
-    Patient patient = this.patientService.createPatient(registerPatientRequest);
+    Clinic clinic = controllerHelper.getInjectableClinicFromAuthentication(clinicCode);
+    clinicCode = clinic.getCode();
+
+    RegisterPatientData registerPatientData = PatientMapper.INSTANCE.convertFromDtoToModel(registerPatientRequest);
+    registerPatientData.setClinicCode(clinicCode);
+
+    Patient patient = this.patientService.createPatient(registerPatientData);
     return ResponseEntity.ok().body(
         StandardizedResponse.<PatientResponse>builder()
             .content(PatientMapper.INSTANCE.createFrom(patient))
@@ -59,13 +71,17 @@ public class PatientController {
       summary = PatientControllerDocs.GET_PATIENTS_SUMMARY,
       description = PatientControllerDocs.GET_PATIENTS_DESCRIPTION)
   @GetMapping(value = PatientControllerPath.FILTER, produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
+  @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
   public ResponseEntity<StandardizedResponse<List<PatientResponse>>> getPatient(
       @RequestParam(name = "name", required = false) String name,
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestParam(name = "sortBy", required = false) String[] sortBy,
       @RequestParam(name = "sortDirection", defaultValue = EmployeeControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
       @RequestParam(name = "pageNumber", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
       @RequestParam(name = "pageSize", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_SIZE) Integer pageSize) {
+    Clinic clinic = controllerHelper.getInjectableClinicFromAuthentication(clinicCode);
+    clinicCode = clinic.getCode();
+
     PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
     if (!Objects.isNull(sortBy)) {
       Sort sort = Sort.by(Sort.Direction.valueOf(sortDirection), sortBy);
@@ -73,6 +89,7 @@ public class PatientController {
     }
     PatientFilter filter = PatientFilter.builder()
         .name(name)
+        .clinicCode(clinicCode)
         .pageable(pageRequest)
         .build();
 

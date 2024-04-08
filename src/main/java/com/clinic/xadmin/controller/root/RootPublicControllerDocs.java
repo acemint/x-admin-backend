@@ -8,6 +8,7 @@ public interface RootPublicControllerDocs {
       + "https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html<br>"
       + "https://security.stackexchange.com/questions/166724/should-i-use-csrf-protection-on-rest-api-endpoints/166798#166798.<br><br>"
       + "When a given session expires, the API which requires authentication will return 403 error (Forbidden) and therefore requires re-authentication."
-      + "This will be a responsibility of the Front-End to redirect user to /login page";
+      + "This will be a responsibility of the Front-End to redirect user to /login page<br><br>"
+      + "Role Allowed: Unauthenticated User";
 
 }

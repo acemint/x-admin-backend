@@ -12,7 +12,7 @@ CREATE TABLE public.xa_clinic (
 );
 
 CREATE SEQUENCE public.clinic_sequence AS bigint;
-
+ALTER TABLE xa_clinic ADD UNIQUE(code);
 
 CREATE TABLE public.xa_employee (
     id varchar(255) NOT NULL,
@@ -38,6 +38,8 @@ CREATE TABLE public.xa_employee (
 );
 
 CREATE SEQUENCE public.employee_sequence AS bigint;
+ALTER TABLE xa_employee ADD UNIQUE(code);
+ALTER TABLE xa_employee ADD UNIQUE(username);
 
 
 CREATE TABLE public.xa_item (
@@ -52,6 +54,8 @@ CREATE TABLE public.xa_item (
 	PRIMARY KEY (id),
 	FOREIGN KEY (clinic_id) REFERENCES public.xa_clinic(id)
 );
+
+ALTER TABLE xa_item ADD UNIQUE(code);
 
 
 CREATE TABLE public.xa_patient (
@@ -70,6 +74,8 @@ CREATE TABLE public.xa_patient (
 );
 
 CREATE SEQUENCE public.patient_sequence AS bigint;
+ALTER TABLE xa_patient ADD UNIQUE(code);
+
 
 CREATE TABLE public.xa_visit (
 	id varchar(255) NOT NULL,
@@ -93,6 +99,8 @@ CREATE TABLE public.xa_treatment (
 	PRIMARY KEY (id),
 	FOREIGN KEY (clinic_id) REFERENCES public.xa_clinic(id)
 );
+
+ALTER TABLE xa_treatment ADD UNIQUE(code);
 
 
 CREATE TABLE public.xa_visit_treatment (

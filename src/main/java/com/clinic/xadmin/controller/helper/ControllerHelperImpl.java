@@ -1,9 +1,10 @@
-package com.clinic.xadmin.service.helper;
+package com.clinic.xadmin.controller.helper;
 
 import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
+import com.clinic.xadmin.exception.XAdminForbiddenException;
 import com.clinic.xadmin.exception.XAdminIllegalStateException;
 import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
@@ -13,17 +14,18 @@ import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
 @Service
-public class ServiceHelperImpl implements ServiceHelper {
+public class ControllerHelperImpl implements ControllerHelper {
 
   private final AppSecurityContextHolder appSecurityContextHolder;
   private final ClinicRepository clinicRepository;
 
   @Autowired
-  public ServiceHelperImpl(AppSecurityContextHolder appSecurityContextHolder, ClinicRepository clinicRepository) {
+  public ControllerHelperImpl(AppSecurityContextHolder appSecurityContextHolder, ClinicRepository clinicRepository) {
     this.appSecurityContextHolder = appSecurityContextHolder;
     this.clinicRepository = clinicRepository;
   }
@@ -33,14 +35,17 @@ public class ServiceHelperImpl implements ServiceHelper {
     Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
     Employee employee = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
     if (!isFirefighterRoles(employee)) {
-      return this.getClinicFromNonFireFighterRoles(employee);
+      return this.getClinicFromNonFireFighterRoles(employee, clinicCode);
     }
     else {
       return this.getClinicFromFireFighterRoles(clinicCode);
     }
   }
 
-  private Clinic getClinicFromNonFireFighterRoles(Employee employee) {
+  private Clinic getClinicFromNonFireFighterRoles(Employee employee, String clinicCode) {
+    if (StringUtils.hasText(clinicCode)) {
+      throw new XAdminForbiddenException("Clinic code request param cannot be passed for user role " + employee.getRole());
+    }
     if (Objects.isNull(employee.getClinic())) {
       throw new XAdminIllegalStateException("Unable to get user role " + employee.getRole() + " without clinic id");
     }

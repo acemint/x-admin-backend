@@ -6,7 +6,6 @@ public interface EmployeeControllerPath {
   String REGISTER = "/register";
   String SELF = "/self";
   String FILTER = "/filter";
-  String LOGIN = "/login";
   String RESET_PASSWORD = "/reset-password";
 
 }

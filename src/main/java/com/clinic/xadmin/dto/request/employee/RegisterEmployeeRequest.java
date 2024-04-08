@@ -59,7 +59,4 @@ public class RegisterEmployeeRequest {
 
   private String practiceLicense;
 
-  @Nullable
-  private String clinicCode;
-
 }

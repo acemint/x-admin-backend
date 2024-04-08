@@ -1,15 +1,14 @@
 package com.clinic.xadmin.service.employee;
 
-import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
 import com.clinic.xadmin.dto.request.employee.ResetPasswordRequest;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Employee;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
 import com.clinic.xadmin.mapper.EmployeeMapper;
 import com.clinic.xadmin.model.employee.EmployeeFilter;
+import com.clinic.xadmin.model.employee.RegisterEmployeeData;
 import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.repository.employee.EmployeeRepository;
-import com.clinic.xadmin.service.helper.ServiceHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,41 +23,39 @@ public class EmployeeServiceImpl implements EmployeeService {
 
   private final EmployeeRepository employeeRepository;
   private final PasswordEncoder passwordEncoder;
-  private final ServiceHelper serviceHelper;
   private final ClinicRepository clinicRepository;
 
   @Autowired
   private EmployeeServiceImpl(EmployeeRepository employeeRepository,
       PasswordEncoder passwordEncoder,
-      ServiceHelper serviceHelper,
       ClinicRepository clinicRepository) {
     this.employeeRepository = employeeRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.serviceHelper = serviceHelper;
+    this.passwordEncoder = passwordEncoder;;
     this.clinicRepository = clinicRepository;
   }
 
   @Override
-  public Employee createEmployee(RegisterEmployeeRequest request) {
-    Clinic clinic = this.serviceHelper.getInjectableClinicFromAuthentication(request.getClinicCode());
-    Employee existingEmployee = this.employeeRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
+  public Employee createEmployee(RegisterEmployeeData registerEmployeeData) {
+    Employee existingEmployee = this.employeeRepository.searchByClinicCodeAndEmailAddress(
+        registerEmployeeData.getClinicCode(), registerEmployeeData.getEmailAddress());
     if (Objects.nonNull(existingEmployee)) {
       throw new XAdminBadRequestException("Email has been taken");
     }
+    Clinic clinic = this.clinicRepository.searchByCode(registerEmployeeData.getClinicCode());
 
-    Employee employee = EmployeeMapper.INSTANCE.createFrom(request);
-    employee.setPassword(this.passwordEncoder.encode(request.getPassword()));
-    employee.setUsername(this.getValidUsername(request, clinic, null));
+    Employee employee = EmployeeMapper.INSTANCE.createFrom(registerEmployeeData);
+    employee.setPassword(this.passwordEncoder.encode(registerEmployeeData.getPassword()));
+    employee.setUsername(this.getValidUsername(registerEmployeeData, clinic, null));
     employee.setCode(this.employeeRepository.getNextCode());
     employee.setClinic(clinic);
 
     return this.employeeRepository.save(employee);
   }
 
-  private String getValidUsername(RegisterEmployeeRequest request, Clinic clinic, Integer additionalIndex) {
-    StringBuilder username = new StringBuilder().append(request.getFirstName().toLowerCase());
-    if (!StringUtils.hasText(request.getLastName())) {
-      username.append(".").append(request.getFirstName().toLowerCase());
+  private String getValidUsername(RegisterEmployeeData registerEmployeeData, Clinic clinic, Integer additionalIndex) {
+    StringBuilder username = new StringBuilder().append(registerEmployeeData.getFirstName().toLowerCase());
+    if (!StringUtils.hasText(registerEmployeeData.getLastName())) {
+      username.append(".").append(registerEmployeeData.getFirstName().toLowerCase());
     }
     if (Objects.nonNull(additionalIndex)) {
       username.append(additionalIndex);
@@ -66,15 +63,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     username.append("@").append(clinic.getCode().toLowerCase().split("-")[1]);
 
     if (Objects.nonNull(this.employeeRepository.searchByUsername(username.toString()))) {
-      return this.getValidUsername(request, clinic, Optional.ofNullable(additionalIndex).map(i -> i + 1).orElse(1));
+      return this.getValidUsername(registerEmployeeData, clinic, Optional.ofNullable(additionalIndex).map(i -> i + 1).orElse(1));
     }
     return username.toString();
   }
 
   @Override
   public Page<Employee> getEmployees(EmployeeFilter employeeFilter) {
-    Clinic clinic = this.serviceHelper.getInjectableClinicFromAuthentication(employeeFilter.getClinicCode());
-    employeeFilter.setClinicCode(clinic.getId());
+    employeeFilter.setClinicCode(employeeFilter.getClinicCode());
 
     return this.employeeRepository.searchByFilter(employeeFilter);
   }
