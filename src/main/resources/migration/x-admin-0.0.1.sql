@@ -79,6 +79,7 @@ ALTER TABLE xa_patient ADD UNIQUE(code);
 
 CREATE TABLE public.xa_visit (
 	id varchar(255) NOT NULL,
+	code varchar(255) NOT NULL,
 	cancelled bool NOT NULL,
 	start_time timestamp(6) NOT NULL,
 	end_time timestamp(6) NOT NULL,
@@ -88,6 +89,8 @@ CREATE TABLE public.xa_visit (
 	FOREIGN KEY (patient_id) REFERENCES public.xa_patient(id),
 	FOREIGN KEY (employee_id) REFERENCES public.xa_employee(id)
 );
+
+CREATE SEQUENCE public.visit_sequence AS bigint;
 
 
 CREATE TABLE public.xa_treatment (

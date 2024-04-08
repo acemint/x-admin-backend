@@ -34,6 +34,9 @@ public class Visit extends BaseEntity {
   @JoinColumn(name ="employee_id", nullable = false)
   private Employee employee;
 
+  @Column(name = "code", nullable = false)
+  private String code;
+
   @Column(name = "cancelled", nullable = false)
   private Boolean cancelled;
 
