@@ -2,6 +2,7 @@ package com.clinic.xadmin.controller;
 
 import com.clinic.xadmin.constant.employee.EmployeeRole;
 import com.clinic.xadmin.controller.patient.PatientControllerPath;
+import com.clinic.xadmin.dto.request.patient.RegisterPatientRequest;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Patient;
 import com.clinic.xadmin.helper.IntegrationTestHelper;
@@ -11,6 +12,7 @@ import com.clinic.xadmin.repository.patient.PatientRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,15 @@ public class PatientControllerTest extends BaseControllerTest {
   public void afterEach() {
     this.patientRepository.deleteAll();
     this.clinicRepository.deleteAll();
+  }
+
+  private void register_ConstructClinic(String specificFilePath) {
+    String filePath = "patient_register.json";
+    if (Objects.nonNull(specificFilePath)) {
+      filePath = specificFilePath;
+    }
+    Clinic clinic = IntegrationTestHelper.readJsonFile(filePath, Clinic.class, IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.ENTITY_HINT);
+    this.clinicRepository.save(clinic);
   }
 
 
@@ -138,8 +149,6 @@ public class PatientControllerTest extends BaseControllerTest {
   @Test
   @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_CurrentUserIsNonDeveloper_ClinicCodeRequestParameterIsNotNull_IsForbidden() throws Exception {
-    this.filter_constructEmployees(null);
-
     this.mockMvc.perform(MockMvcRequestBuilders.get(PatientControllerPath.BASE + PatientControllerPath.FILTER)
             .param("clinicCode", "CLC-123")
             .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -147,14 +156,36 @@ public class PatientControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_REGULAR_EMPLOYEE })
-  public void filter_EmployeeRoleIsNotAdmin_IsForbidden() throws Exception {
-    this.filter_constructEmployees(null);
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  public void register_Valid_Success() throws Exception {
+    this.register_ConstructClinic(null);
+    RegisterPatientRequest request = IntegrationTestHelper
+        .readJsonFile("patient_register_normalUser.json", RegisterPatientRequest.class, IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
 
-    this.mockMvc.perform(MockMvcRequestBuilders.get(PatientControllerPath.BASE + PatientControllerPath.FILTER)
+    this.mockMvc.perform(MockMvcRequestBuilders.post(PatientControllerPath.BASE + PatientControllerPath.REGISTER)
+            .content(IntegrationTestHelper.convertToByte(request))
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content.emailAddress").value("master@gmail.com"));
+  }
+
+
+  @Test
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  public void register_CurrentUserIsNonDeveloper_ClinicCodeRequestParameterIsNotNull_IsForbidden() throws Exception {
+    this.register_ConstructClinic(null);
+    RegisterPatientRequest request = IntegrationTestHelper
+        .readJsonFile("patient_register_normalUser.json", RegisterPatientRequest.class, IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(PatientControllerPath.BASE + PatientControllerPath.REGISTER)
+            .content(IntegrationTestHelper.convertToByte(request))
+            .param("clinicCode", "CLC-123")
             .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()));
+
   }
+
+
 
 
 }

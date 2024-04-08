@@ -231,7 +231,7 @@ public class EmployeeControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
-  public void filter_CurrentUserIsNotDeveloper_ClinicCodeParameterIsIgnored_IsForbidden() throws Exception {
+  public void filter_CurrentUserIsNotDeveloper_ClinicCodeRequestParameterIsIgnored_IsForbidden() throws Exception {
     this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
             .param("clinicCode", "CLC-123")
             .contentType(MediaType.APPLICATION_JSON_VALUE))
