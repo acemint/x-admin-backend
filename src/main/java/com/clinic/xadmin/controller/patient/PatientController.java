@@ -71,7 +71,7 @@ public class PatientController {
       summary = PatientControllerDocs.GET_PATIENTS_SUMMARY,
       description = PatientControllerDocs.GET_PATIENTS_DESCRIPTION)
   @GetMapping(value = PatientControllerPath.FILTER, produces = MediaType.APPLICATION_JSON_VALUE)
-  @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
+  @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
   public ResponseEntity<StandardizedResponse<List<PatientResponse>>> getPatient(
       @RequestParam(name = "name", required = false) String name,
       @RequestParam(name = "clinicCode", required = false) String clinicCode,
