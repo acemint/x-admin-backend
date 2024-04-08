@@ -26,7 +26,7 @@ import java.time.LocalDate;
 @Table(name = "xa_item")
 public class Item extends BaseEntity {
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name ="clinic_id", nullable = false)
   private Clinic clinic;
 

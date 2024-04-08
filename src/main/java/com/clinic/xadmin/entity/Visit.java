@@ -26,11 +26,11 @@ import java.time.LocalDateTime;
 @Table(name = "xa_visit")
 public class Visit extends BaseEntity {
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name ="patient_id", nullable = false)
   private Patient patient;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name ="employee_id", nullable = false)
   private Employee employee;
 

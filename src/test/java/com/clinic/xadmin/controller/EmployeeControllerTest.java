@@ -124,6 +124,30 @@ public class EmployeeControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  public void filter_CurrentUserIsNotDeveloper_ClinicCodeParameterIsIgnored_IsForbidden() throws Exception {
+    ArrayList<Employee> employees = this.filter_SaveClinicAndEmployees(null);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .param("clinicCode", "CLC-123")
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()))
+    ;
+  }
+
+  @Test
+  @WithMockCustomUser(clinicId = "", roles = { EmployeeRole.ROLE_DEVELOPER})
+  public void filter_CurrentUserIsDeveloper_EmployeeAccessOwnClinicData_IsOk() throws Exception {
+    ArrayList<Employee> employees = this.filter_SaveClinicAndEmployees(null);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(EmployeeControllerPath.BASE + EmployeeControllerPath.FILTER)
+            .param("clinicCode", "CLC-123")
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(5)));
+  }
+
+  @Test
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
   public void filter_RequestParameterNameIsNotEmpty_IsOk() throws Exception {
     ArrayList<Employee> employees = this.filter_SaveClinicAndEmployees(null);
 
@@ -231,6 +255,41 @@ public class EmployeeControllerTest extends BaseControllerTest {
     Assertions.assertEquals(savedEmployees.size(), 1);
     Assertions.assertEquals(savedEmployees.get(0).getClinic().getId(), "123");
     Assertions.assertEquals(savedEmployees.get(0).getEmailAddress(), "master@gmail.com");
+  }
+
+  @Test
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_DEVELOPER})
+  public void register_CurrentUserIsDeveloper_EmployeeRoleIsClinicAdmin_IsOk() throws Exception {
+    Clinic clinic = this.register_ConstructClinic(null);
+    this.clinicRepository.save(clinic);
+    byte[] requestBody = IntegrationTestHelper
+        .readJsonAsBytes("employee_register_normalUser.json", IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .param("clinicCode", "CLC-123")
+            .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.notNullValue()));
+    List<Employee> savedEmployees = this.employeeRepository.findAll();
+    Assertions.assertEquals(savedEmployees.size(), 1);
+    Assertions.assertEquals(savedEmployees.get(0).getClinic().getCode(), "CLC-123");
+    Assertions.assertEquals(savedEmployees.get(0).getEmailAddress(), "master@gmail.com");
+  }
+
+  @Test
+  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  public void register_CurrentUserIsNonDeveloper_ClinicCodeRequestParameterIsNotNull_IsForbidden() throws Exception {
+    Clinic clinic = this.register_ConstructClinic(null);
+    this.clinicRepository.save(clinic);
+    byte[] requestBody = IntegrationTestHelper
+        .readJsonAsBytes("employee_register_normalUserTypeIsDoctor.json", IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .param("clinicCode", "CLC-123")
+            .content(requestBody))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()));
   }
 
   @Test

@@ -23,7 +23,7 @@ import lombok.experimental.SuperBuilder;
 @FieldNameConstants
 public class Patient extends BaseEntity {
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name ="clinic_id", nullable = false)
   private Clinic clinic;
 

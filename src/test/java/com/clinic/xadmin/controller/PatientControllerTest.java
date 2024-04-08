@@ -70,6 +70,17 @@ public class PatientControllerTest extends BaseControllerTest {
   }
 
   @Test
+  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  public void filter_CurrentUserIsNonDeveloper_ClinicCodeRequestParameterIsNotNull_IsForbidden() throws Exception {
+    this.filter_constructEmployees(null);
+
+    this.mockMvc.perform(MockMvcRequestBuilders.get(PatientControllerPath.BASE + PatientControllerPath.FILTER)
+            .param("clinicCode", "CLC-123")
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()));
+  }
+
+  @Test
   @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_REGULAR_EMPLOYEE })
   public void filter_EmployeeRoleIsNotAdmin_IsForbidden() throws Exception {
     this.filter_constructEmployees(null);

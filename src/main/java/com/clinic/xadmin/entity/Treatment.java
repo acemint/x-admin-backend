@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 @Table(name = "xa_treatment")
 public class Treatment extends BaseEntity {
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name ="clinic_id", nullable = false)
   private Clinic clinic;
 
