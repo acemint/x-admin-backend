@@ -1,5 +1,9 @@
 CREATE TABLE public.xa_clinic (
     id varchar(255) NOT NULL,
+    createdDate timestamp(6) null,
+    createdBy varchar(255) null,
+    lastModifiedDate timestamp(6) null,
+    lastModifiedBy varchar(255) null,
     code varchar(255) NOT NULL,
     "name" varchar(255) NOT NULL,
     subscription_tier int4 NULL,
@@ -16,6 +20,10 @@ ALTER TABLE xa_clinic ADD UNIQUE(code);
 
 CREATE TABLE public.xa_employee (
     id varchar(255) NOT NULL,
+    createdDate timestamp(6) null,
+    createdBy varchar(255) null,
+    lastModifiedDate timestamp(6) null,
+    lastModifiedBy varchar(255) null,
     code varchar(255) NOT NULL,
     first_name varchar(255) NOT NULL,
     last_name varchar(255) NULL,
@@ -44,6 +52,10 @@ ALTER TABLE xa_employee ADD UNIQUE(username);
 
 CREATE TABLE public.xa_item (
     id varchar(255) NOT NULL,
+    createdDate timestamp(6) null,
+    createdBy varchar(255) null,
+    lastModifiedDate timestamp(6) null,
+    lastModifiedBy varchar(255) null,
     code varchar(255) NOT NULL,
     "name" varchar(255) NOT NULL,
 	expiry_date date NULL,
@@ -60,6 +72,10 @@ ALTER TABLE xa_item ADD UNIQUE(code);
 
 CREATE TABLE public.xa_patient (
     id varchar(255) NOT NULL,
+    createdDate timestamp(6) null,
+    createdBy varchar(255) null,
+    lastModifiedDate timestamp(6) null,
+    lastModifiedBy varchar(255) null,
 	code varchar(255) NOT NULL,
 	first_name varchar(255) NOT NULL,
 	last_name varchar(255) NULL,
@@ -79,7 +95,12 @@ ALTER TABLE xa_patient ADD UNIQUE(code);
 
 CREATE TABLE public.xa_visit (
 	id varchar(255) NOT NULL,
-	cancelled bool NOT NULL,
+	createdDate timestamp(6) null,
+    createdBy varchar(255) null,
+    lastModifiedDate timestamp(6) null,
+    lastModifiedBy varchar(255) null,
+	code varchar(255) NOT NULL,
+	status varchar(50) NOT NULL,
 	start_time timestamp(6) NOT NULL,
 	end_time timestamp(6) NOT NULL,
 	employee_id varchar(255) NOT NULL,
@@ -89,9 +110,15 @@ CREATE TABLE public.xa_visit (
 	FOREIGN KEY (employee_id) REFERENCES public.xa_employee(id)
 );
 
+CREATE SEQUENCE public.visit_sequence AS bigint;
+
 
 CREATE TABLE public.xa_treatment (
 	id varchar(255) NOT NULL,
+	createdDate timestamp(6) null,
+    createdBy varchar(255) null,
+    lastModifiedDate timestamp(6) null,
+    lastModifiedBy varchar(255) null,
 	code varchar(255) NOT NULL,
 	"name" varchar(255) NOT NULL,
 	price numeric(38, 2) NOT NULL,
@@ -105,6 +132,10 @@ ALTER TABLE xa_treatment ADD UNIQUE(code);
 
 CREATE TABLE public.xa_visit_treatment (
     id varchar(255) NOT NULL,
+    createdDate timestamp(6) null,
+    createdBy varchar(255) null,
+    lastModifiedDate timestamp(6) null,
+    lastModifiedBy varchar(255) null,
 	description text NULL,
 	treatment_id varchar(255) NOT NULL,
 	visit_id varchar(255) NOT NULL,
@@ -117,6 +148,10 @@ CREATE TABLE public.xa_visit_treatment (
 
 CREATE TABLE public.xa_attendance (
     id varchar(255) NOT NULL,
+    createdDate timestamp(6) null,
+    createdBy varchar(255) null,
+    lastModifiedDate timestamp(6) null,
+    lastModifiedBy varchar(255) null,
 	clock_in timestamp(6) NOT NULL,
 	clock_out timestamp(6) NOT NULL,
 	employee_id varchar(255) NOT NULL,
