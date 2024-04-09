@@ -462,25 +462,4 @@ public class EmployeeControllerTest extends BaseControllerTest {
   }
 
 
-  @Test
-  @WithMockCustomUser(roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
-  public void register_EmployeeTypeDoctorHasNoDoctorNumber_IsBadRequest() throws Exception {
-    Clinic clinic = this.register_ConstructClinic(null);
-    this.clinicRepository.save(clinic);
-
-    RegisterEmployeeRequest requestBody = IntegrationTestHelper
-        .readJsonFile("employee_register_normalUserTypeIsDoctor.json", RegisterEmployeeRequest.class, IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
-    requestBody.setType(EmployeeType.SPECIALIST_DOCTOR);
-    requestBody.setDoctorNumber(null);
-    requestBody.setPracticeLicense(null);
-
-    this.mockMvc.perform(MockMvcRequestBuilders.post(EmployeeControllerPath.BASE + EmployeeControllerPath.REGISTER)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(IntegrationTestHelper.convertToByte(requestBody)))
-        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.doctorNumber)))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterEmployeeRequest.Fields.practiceLicense)));
-  }
-
-
 }

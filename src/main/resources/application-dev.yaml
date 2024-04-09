@@ -3,6 +3,20 @@ spring.datasource:
   username: postgres
   password: admin123
 
+spring.application.name: x-admin
+
+spring.cloud.vault:
+  host: localhost
+  port: 8200
+  scheme: https
+  uri: https://localhost:8200
+  connection-timeout: 5000
+  read-timeout: 15000
+  authentication: TOKEN
+  kv:
+    enable: true
+    backend: secret
+
 # DEPRECATED
 # xadmin.jwt:
 #   secret-key: 12ij3oi1mwodmkaosimfoaismodim29034i2190i310ijwdokasmldkamslkmodmasokmdk1lmwe9u12h0ed91n2ndm
