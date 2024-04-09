@@ -4,8 +4,8 @@ import com.clinic.xadmin.dto.request.clinic.RegisterClinicRequest;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.ClinicSatuSehatCredential;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
-import com.clinic.xadmin.repository.ClinicSatuSehatCredentialRepository;
 import com.clinic.xadmin.repository.clinic.ClinicRepository;
+import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

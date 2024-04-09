@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.vault.repository.configuration.EnableVaultRepositories;
 
 @Configuration
-@EnableVaultRepositories
+@EnableVaultRepositories(value = "com.clinic.xadmin.repository")
 public class VaultConfiguration {
 
 }

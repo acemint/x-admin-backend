@@ -1,4 +1,4 @@
-package com.clinic.xadmin.repository;
+package com.clinic.xadmin.repository.clinic;
 
 import com.clinic.xadmin.entity.ClinicSatuSehatCredential;
 import org.springframework.data.repository.CrudRepository;
