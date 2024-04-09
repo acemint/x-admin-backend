@@ -9,11 +9,12 @@ are the corresponding columns created and last changed. These columns are:
 ```mermaid
 erDiagram
     XA_CLINIC ||--o{ XA_EMPLOYEE : have
-    XA_EMPLOYEE ||--o{ XA_VISIT : confirms
+    XA_PRACTITIONER ||--o{ XA_VISIT : confirms
     XA_EMPLOYEE ||--o{ XA_ATTENDANCE : creates
     XA_PATIENT ||--o{ XA_VISIT : confirms
     XA_VISIT ||--o| XA_VISIT_TREATMENT : performs
     XA_VISIT_TREATMENT }|--|| XA_TREATMENT : details
+    XA_VISIT_TREATMENT }|--|| XA_CAUSE : details
     
     XA_CLINIC { 
         uuid id PK
@@ -48,6 +49,11 @@ erDiagram
         decimal salary
         double taxPercentage
     }
+    XA_PRACTITIONER {
+        uuid id PK
+        string reference_id "IHS ID from SatuSehat, e.g.: P02478375538"
+        json satuSehatData
+    }
     XA_PATIENT {
         uuid id PK
         string reference_id "IHS ID from SatuSehat, e.g.: P02478375538"
@@ -75,6 +81,12 @@ erDiagram
         string name 
         double price
     }
+    XA_CAUSE {
+        uuid id PK
+        string code "unique"
+        uuid clinidId FK
+        string name 
+    }
     XA_ITEM {
         uuid id PK 
         string code "unique"
@@ -88,6 +100,7 @@ erDiagram
     XA_VISIT_TREATMENT {
         uuid id PK
         uuid visitId FK
+        uuid causeId FK
         uuid treatmentId FK
         text description
     }
