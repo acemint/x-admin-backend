@@ -1,5 +1,6 @@
 package com.clinic.xadmin.security.context;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
@@ -12,8 +13,10 @@ public class AppSecurityContextHolder {
 
   private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
 
-  public SecurityContext createEmptyContext() {
-    return this.securityContextHolderStrategy.createEmptyContext();
+  public SecurityContext createContext(Authentication authentication) {
+    SecurityContext context = this.securityContextHolderStrategy.createEmptyContext();
+    context.setAuthentication(authentication);
+    return context;
   }
 
   public void setContext(SecurityContext context) {

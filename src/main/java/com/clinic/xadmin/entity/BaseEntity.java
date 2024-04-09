@@ -6,7 +6,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,16 +34,20 @@ public class BaseEntity {
   private String id;
 
   @CreatedBy
+  @Column(name = "created_by")
   private String createdBy;
 
   @LastModifiedBy
-  private String updatedBy;
+  @Column(name = "last_modified_by")
+  private String lastModifiedBy;
 
   @CreatedDate
+  @Column(name = "created_date")
   private LocalDateTime createdDate;
 
   @LastModifiedDate
-  private LocalDateTime updatedDate;
+  @Column(name = "last_modified_date")
+  private LocalDateTime lastModifiedDate;
 
   @PrePersist
   protected void onCreate() {

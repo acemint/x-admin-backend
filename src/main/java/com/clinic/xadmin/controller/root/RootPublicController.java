@@ -52,8 +52,7 @@ public class RootPublicController {
     Authentication
         authenticationResponse = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-    SecurityContext context = this.appSecurityContextHolder.createEmptyContext();
-    context.setAuthentication(authenticationResponse);
+    SecurityContext context = this.appSecurityContextHolder.createContext(authenticationResponse);
     this.appSecurityContextHolder.setContext(context);
     this.securityContextRepository.saveContext(context, httpServletRequest, httpServletResponse);
 

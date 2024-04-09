@@ -43,6 +43,6 @@ public class Clinic extends BaseEntity {
   private LocalDateTime subscriptionValidTo;
 
   @Column(name = "subscription_tier")
-  private int subscriptionTier;
+  private Integer subscriptionTier;
 
 }
