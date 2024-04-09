@@ -24,6 +24,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Constraint(validatedBy = ValidateFieldsForDoctorType.Validator.class)
 @Documented
+@Deprecated
 public @interface ValidateFieldsForDoctorType {
 
   String message() default "";
@@ -49,14 +50,6 @@ public @interface ValidateFieldsForDoctorType {
       }
       if (!Arrays.asList(DOCTOR_ROLES).contains(registerEmployeeRequest.getType())) {
         return true;
-      }
-      if (!StringUtils.hasText(registerEmployeeRequest.getDoctorNumber())) {
-        isValid = false;
-        add(constraintValidatorContext, RegisterEmployeeRequest.Fields.doctorNumber);
-      }
-      if (!StringUtils.hasText(registerEmployeeRequest.getPracticeLicense())) {
-        isValid = false;
-        add(constraintValidatorContext, RegisterEmployeeRequest.Fields.practiceLicense);
       }
       return isValid;
     }

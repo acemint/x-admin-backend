@@ -13,6 +13,5 @@ public class SecurityAuthorizationType {
   private static final String HAS_PERMISSION_FUNCTION_SUFFIX = "')";
 
   public static final String IS_CLINIC_ADMIN = HAS_PERMISSION_FUNCTION_PREFIX + EmployeeRole.ROLE_CLINIC_ADMIN + HAS_PERMISSION_FUNCTION_SUFFIX;
-  public static final String IS_DOCTOR = HAS_PERMISSION_FUNCTION_PREFIX + EmployeeRole.ROLE_DOCTOR + HAS_PERMISSION_FUNCTION_SUFFIX;
 
 }

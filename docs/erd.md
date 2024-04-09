@@ -34,7 +34,6 @@ erDiagram
         uuid id PK
         string code "unique"
         string username
-        string nik
         uuid clinicId FK
         string firstName
         string lastName
