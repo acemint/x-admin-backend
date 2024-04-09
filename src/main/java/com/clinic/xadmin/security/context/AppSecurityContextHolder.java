@@ -16,11 +16,8 @@ public class AppSecurityContextHolder {
   public SecurityContext createContext(Authentication authentication) {
     SecurityContext context = this.securityContextHolderStrategy.createEmptyContext();
     context.setAuthentication(authentication);
+    securityContextHolderStrategy.setContext(context);
     return context;
-  }
-
-  public void setContext(SecurityContext context) {
-    this.securityContextHolderStrategy.setContext(context);
   }
 
   public SecurityContext getCurrentContext() {
