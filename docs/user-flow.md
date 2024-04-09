@@ -89,6 +89,10 @@ sequenceDiagram
         SS ->> BES: Return list of patients
         BES ->> UIS: Return names of patients
         UIS ->> C: Click one of the patients available
+
+        C ->> UIS: Input date visit & click submit
+        UIS ->> BES: Create visit data
+        BES ->> SS: Send visit data (a.k.a Encounter)
     end
 ```
 <br><br><br>
