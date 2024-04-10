@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.vault.repository.mapping.Secret;
 
+import java.io.Serializable;
+
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Secret
-public class ClinicSatuSehatCredential {
+@Secret(value = "satu.sehat.credential")
+public class ClinicSatuSehatCredential implements Serializable {
 
   @Id
   private String clinicId;
