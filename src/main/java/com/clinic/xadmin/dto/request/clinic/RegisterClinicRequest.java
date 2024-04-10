@@ -1,6 +1,7 @@
 package com.clinic.xadmin.dto.request.clinic;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
@@ -29,13 +31,21 @@ public class RegisterClinicRequest {
   @NotNull
   private String satuSehatSecretKey;
 
-  @PositiveOrZero
-  private BigInteger commissionFee;
+  private LocalDateTime subscriptionValidFrom;
+
+  @Future
+  private LocalDateTime subscriptionValidTo;
 
   @PositiveOrZero
-  private BigInteger sittingFee;
+  private Integer subscriptionTier = 0;
 
   @PositiveOrZero
-  private BigInteger medicalItemFee;
+  private BigInteger commissionFee = BigInteger.ZERO;
+
+  @PositiveOrZero
+  private BigInteger sittingFee = BigInteger.ZERO;
+
+  @PositiveOrZero
+  private BigInteger medicalItemFee = BigInteger.ZERO;
 
 }

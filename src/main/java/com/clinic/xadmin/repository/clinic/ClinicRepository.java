@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface ClinicRepository extends JpaRepository<Clinic, String>,
     ClinicCustomRepository {
 
-  @Query(value = "SELECT CONCAT('EMP-', nextval('clinic_sequence'))", nativeQuery = true)
+  @Query(value = "SELECT CONCAT('CLC-', nextval('clinic_sequence'))", nativeQuery = true)
   String getNextCode();
 
 }

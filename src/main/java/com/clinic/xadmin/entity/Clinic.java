@@ -46,16 +46,4 @@ public class Clinic extends BaseEntity {
   @Column(name = "subscription_tier")
   private Integer subscriptionTier;
 
-  @Column(name = "satu_sehat_organization_key")
-  private String satuSehatOrganizationKey;
-
-  @Column(name = "satu_sehat_client_key")
-  private String satuSehatClientKey;
-
-  @Column(name = "satu_sehat_secret_key")
-  private String satuSehatSecretKey;
-
-  @Column(name = "satu_sehat_access_token")
-  private String satuSehatAccessToken;
-
 }

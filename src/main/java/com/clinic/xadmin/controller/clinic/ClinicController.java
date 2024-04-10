@@ -2,6 +2,7 @@ package com.clinic.xadmin.controller.clinic;
 
 
 import com.clinic.xadmin.dto.request.clinic.RegisterClinicRequest;
+import com.clinic.xadmin.dto.request.clinic.UpdateClinicRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.clinic.ClinicResponse;
 import com.clinic.xadmin.entity.Clinic;
@@ -15,8 +16,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,6 +40,22 @@ public class ClinicController {
   @PreAuthorize(SecurityAuthorizationType.IS_DEVELOPER)
   public ResponseEntity<StandardizedResponse<ClinicResponse>> register(@RequestBody @Valid RegisterClinicRequest request) {
     Clinic clinic = this.clinicService.createClinic(request);
+
+    return ResponseEntity.ok().body(
+        StandardizedResponse.<ClinicResponse>builder()
+            .content(ClinicMapper.INSTANCE.createFrom(clinic))
+            .build());
+  }
+
+  @Operation(
+      summary = ClinicControllerDocs.EDIT_SUMMARY,
+      description = ClinicControllerDocs.EDIT_DESCRIPTION)
+  @PutMapping(value = ClinicControllerPath.EDIT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize(SecurityAuthorizationType.IS_DEVELOPER)
+  public ResponseEntity<StandardizedResponse<ClinicResponse>> edit(
+      @RequestParam(name = "clinicCode") String clinicCode,
+      @RequestBody @Valid UpdateClinicRequest request) {
+    Clinic clinic = this.clinicService.editClinic(clinicCode, request);
 
     return ResponseEntity.ok().body(
         StandardizedResponse.<ClinicResponse>builder()
