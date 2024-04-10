@@ -68,12 +68,6 @@ public class Employee extends BaseEntity {
   @Column(name = "status", nullable = false)
   private String status;
 
-  @Column(name = "doctor_number")
-  private String doctorNumber;
-
-  @Column(name = "practice_license")
-  private String practiceLicense;
-
   @Column(name = "salary")
   private BigDecimal salary;
 

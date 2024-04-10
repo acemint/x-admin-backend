@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,13 +29,13 @@ public class Clinic extends BaseEntity {
   private String name;
 
   @Column(name = "commission_fee")
-  private BigDecimal commissionFee;
+  private BigInteger commissionFee;
 
   @Column(name = "sitting_fee")
-  private BigDecimal sittingFee;
+  private BigInteger sittingFee;
 
   @Column(name = "medical_item_fee")
-  private BigDecimal medicalItemFee;
+  private BigInteger medicalItemFee;
 
   @Column(name = "subscription_valid_from")
   private LocalDateTime subscriptionValidFrom;
@@ -43,6 +44,6 @@ public class Clinic extends BaseEntity {
   private LocalDateTime subscriptionValidTo;
 
   @Column(name = "subscription_tier")
-  private int subscriptionTier;
+  private Integer subscriptionTier;
 
 }

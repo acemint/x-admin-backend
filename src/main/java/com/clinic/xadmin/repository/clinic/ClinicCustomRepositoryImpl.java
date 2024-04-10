@@ -15,6 +15,17 @@ public class ClinicCustomRepositoryImpl implements ClinicCustomRepository {
   private EntityManager entityManager;
 
   @Override
+  public Clinic searchByName(String name) {
+    QClinic qClinic = QClinic.clinic;
+    JPAQuery<?> query = new JPAQuery<>(entityManager);
+
+    return query.select(qClinic)
+        .from(qClinic)
+        .where(qClinic.name.eq(name))
+        .fetchOne();
+  }
+
+  @Override
   public Clinic searchByCode(String code) {
     QClinic qClinic = QClinic.clinic;
     JPAQuery<?> query = new JPAQuery<>(entityManager);
