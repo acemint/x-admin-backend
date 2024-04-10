@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,8 +22,8 @@ public class ClinicResponse {
   private BigInteger commissionFee;
   private BigInteger sittingFee;
   private BigInteger medicalItemFee;
-  private LocalDateTime subscriptionValidFrom;
-  private LocalDateTime subscriptionValidTo;
+  private Instant subscriptionValidFrom;
+  private Instant subscriptionValidTo;
   private Integer subscriptionTier;
 
 }

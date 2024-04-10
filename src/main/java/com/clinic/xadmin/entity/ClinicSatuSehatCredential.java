@@ -1,5 +1,6 @@
 package com.clinic.xadmin.entity;
 
+import com.clinic.xadmin.configuration.VaultConfiguration;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,8 +14,10 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Secret(value = "satu.sehat.credential")
+@Secret(value = ClinicSatuSehatCredential.KEY_SPACE, backend = VaultConfiguration.DEFAULT_SECRET_FOLDER_PATH)
 public class ClinicSatuSehatCredential implements Serializable {
+
+  public static final String KEY_SPACE = "satu.sehat.credential";
 
   @Id
   private String clinicId;
