@@ -7,4 +7,6 @@ import org.springframework.vault.repository.configuration.EnableVaultRepositorie
 @EnableVaultRepositories(value = "com.clinic.xadmin.repository")
 public class VaultConfiguration {
 
+  public static final String DEFAULT_SECRET_FOLDER_PATH = "secret";
+
 }

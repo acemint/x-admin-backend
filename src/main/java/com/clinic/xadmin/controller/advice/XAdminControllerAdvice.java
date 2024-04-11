@@ -1,6 +1,7 @@
 package com.clinic.xadmin.controller.advice;
 
 import com.clinic.xadmin.dto.response.StandardizedErrorResponse;
+import com.clinic.xadmin.exception.XAdminAPICallException;
 import com.clinic.xadmin.exception.XAdminForbiddenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,6 +62,16 @@ public class XAdminControllerAdvice {
 
     log.error(error, exception);
     return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        .body(StandardizedErrorResponse.builder()
+            .message(exception.getMessage())
+            .build());
+  }
+
+  @ExceptionHandler(value = {
+      XAdminAPICallException.class
+  })
+  public ResponseEntity<StandardizedErrorResponse> forwardErrorMessage(XAdminAPICallException exception) {
+    return ResponseEntity.status(exception.getResponseStatus())
         .body(StandardizedErrorResponse.builder()
             .message(exception.getMessage())
             .build());
