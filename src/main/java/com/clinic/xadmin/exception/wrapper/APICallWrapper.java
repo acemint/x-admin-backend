@@ -5,7 +5,7 @@ import com.clinic.xadmin.exception.XAdminBadRequestException;
 import com.clinic.xadmin.exception.XAdminInternalException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.function.Supplier;
 
@@ -21,7 +21,7 @@ public class APICallWrapper {
         throw new XAdminInternalException(result.getBody().toString());
       }
       return result;
-    } catch (WebClientResponseException e) {
+    } catch (HttpClientErrorException e) {
       throw new XAdminAPICallException(e);
     }
   }

@@ -32,7 +32,7 @@ public class SatuSehatOauthEndpoint
   @Override
   public ResponseEntity<OAuthResponse> getMethodCall() {
     RestClient restClient = RestClient.builder()
-        .baseUrl(this.satuSehatProperty.getBaseUrl())
+        .baseUrl(this.satuSehatProperty.getAuthUrl())
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .build();
 
