@@ -1,0 +1,12 @@
+version: '1'
+services:
+  postgresql:
+    image: docker.io/postgres:14-alpine
+    container_name: x-admin-db
+    restart: always
+    environment:
+      POSTGRES_DB: x-admin-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5433:5432"

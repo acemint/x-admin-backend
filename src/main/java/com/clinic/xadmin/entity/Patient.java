@@ -3,33 +3,52 @@ package com.clinic.xadmin.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
-import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.FieldNameConstants;
+import lombok.experimental.SuperBuilder;
 
 @Entity
+@Getter
+@Setter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "xa_patient")
-public class Patient {
+@FieldNameConstants
+public class Patient extends BaseEntity {
 
-  @Id
-  @Column(name = "id")
-  private String id;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name ="clinic_id")
+  @ManyToOne
+  @JoinColumn(name ="clinic_id", nullable = false)
   private Clinic clinic;
 
-  @Column(name = "code")
+  @Column(name = "code", nullable = false)
   private String code;
 
-  @Column(name = "name")
-  private String name;
+  @Column(name = "first_name", nullable = false)
+  private String firstName;
 
-  @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
-  private Set<Visit> visits;
+  @Column(name = "last_name")
+  private String lastName;
+
+  @Column(name = "age", nullable = false)
+  private Integer age;
+
+  @Column(name = "gender", nullable = false)
+  private String gender;
+
+  @Column(name = "email_address", nullable = false)
+  private String emailAddress;
+
+  @Column(name = "address", nullable = false)
+  private String address;
+
+  @Column(name = "phone_number", nullable = false)
+  private String phoneNumber;
 
 }

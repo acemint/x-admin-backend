@@ -5,3 +5,9 @@ springdoc:
     operationsSorter: method
     tagsSorter: alpha
 
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+xadmin.clinic:
+    name: x-admin-app

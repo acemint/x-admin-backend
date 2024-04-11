@@ -1,0 +1,4 @@
+satusehat.integration:
+  auth-url: https://api-satusehat-stg.dto.kemkes.go.id/oauth2/v1
+  base-url: https://api-satusehat-stg.dto.kemkes.go.id/fhir-r4/v1
+  nik-url: https://fhir.kemkes.go.id/id/nik|

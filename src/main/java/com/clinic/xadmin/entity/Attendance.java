@@ -7,25 +7,32 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "xa_attendance")
-public class Attendance {
+public class Attendance extends BaseEntity {
 
-  @Id
-  @Column(name = "id")
-  private String id;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name ="employee_id")
+  @ManyToOne
+  @JoinColumn(name ="employee_id", nullable = false)
   private Employee employee;
 
-  @Column(name = "clock_in")
+  @Column(name = "clock_in", nullable = false)
   private LocalDateTime clockIn;
 
-  @Column(name = "clock_out")
+  @Column(name = "clock_out", nullable = false)
   private LocalDateTime clockOut;
 
 }

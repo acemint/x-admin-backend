@@ -3,65 +3,69 @@ package com.clinic.xadmin.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldNameConstants;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
-import java.util.Set;
-import java.util.UUID;
 
+@FieldNameConstants
 @Entity
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "xa_employee")
-public class Employee {
+public class Employee extends BaseEntity {
 
-  @Id
-  @Builder.Default
-  @Column(name = "id")
-  private String id = UUID.randomUUID().toString();
-
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name ="clinic_id")
   private Clinic clinic;
 
-  @Column(name = "code")
+  @Column(name = "code", nullable = false)
   private String code;
 
-  @Column(name = "first_name")
+  @Column(name = "username", nullable = false)
+  private String username;
+
+  @Column(name = "first_name", nullable = false)
   private String firstName;
 
   @Column(name = "last_name")
   private String lastName;
 
-  @Column(name = "email_address")
+  @Column(name = "email_address", nullable = false)
   private String emailAddress;
 
-  @Column(name = "phone_number")
+  @Column(name = "phone_number", nullable = false)
   private String phoneNumber;
 
-  @Column(name = "password")
+  @Column(name = "address", nullable = false)
+  private String address;
+
+  @Column(name = "gender", nullable = false)
+  private String gender;
+
+  @Column(name = "age", nullable = false)
+  private Integer age;
+
+  @Column(name = "password", nullable = false)
   private String password;
 
   @Column(name = "type")
   private String type;
 
-  @Column(name = "role")
+  @Column(name = "role", nullable = false)
   private String role;
 
-  @Column(name = "status")
+  @Column(name = "status", nullable = false)
   private String status;
 
   @Column(name = "salary")
@@ -69,11 +73,5 @@ public class Employee {
 
   @Column(name = "tax_percentage")
   private BigDecimal taxPercentage;
-
-  @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
-  private Set<Attendance> attendances;
-
-  @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
-  private Set<Visit> visits;
 
 }

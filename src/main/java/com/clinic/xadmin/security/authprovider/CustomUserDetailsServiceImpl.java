@@ -15,7 +15,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
 
   public static final String BEAN_NAME = "CustomUserDetailsServiceImpl";
 
-  private EmployeeRepository employeeRepository;
+  private final EmployeeRepository employeeRepository;
 
   @Autowired
   public CustomUserDetailsServiceImpl(EmployeeRepository employeeRepository) {
@@ -24,7 +24,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Employee employee = this.employeeRepository.findEmployeeByEmailAddress(username);
+    Employee employee = this.employeeRepository.searchByUsername(username);
     if (Objects.isNull(employee)) {
       throw new UsernameNotFoundException("User not found with username: " + username);
     }

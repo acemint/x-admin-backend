@@ -2,34 +2,42 @@ package com.clinic.xadmin.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 @Table(name = "xa_clinic")
-public class Clinic {
+public class Clinic extends BaseEntity {
 
-  @Id
-  @Column(name = "id")
-  private String id;
-
-  @Column(name = "code")
+  @Column(name = "code", nullable = false)
   private String code;
 
+  @Column(name = "name", nullable = false)
+  private String name;
+
   @Column(name = "commission_fee")
-  private BigDecimal commissionFee;
+  private BigInteger commissionFee;
 
   @Column(name = "sitting_fee")
-  private BigDecimal sittingFee;
+  private BigInteger sittingFee;
 
   @Column(name = "medical_item_fee")
-  private BigDecimal medicalItemFee;
+  private BigInteger medicalItemFee;
 
   @Column(name = "subscription_valid_from")
   private LocalDateTime subscriptionValidFrom;
@@ -38,18 +46,6 @@ public class Clinic {
   private LocalDateTime subscriptionValidTo;
 
   @Column(name = "subscription_tier")
-  private int subscriptionTier;
-
-  @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY)
-  private Set<Employee> employees;
-
-  @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY)
-  private Set<Item> items;
-
-  @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY)
-  private Set<Patient> patients;
-
-  @OneToMany(mappedBy = "clinic", fetch = FetchType.LAZY)
-  private Set<Treatment> treatments;
+  private Integer subscriptionTier;
 
 }

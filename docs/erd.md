@@ -1,11 +1,15 @@
+### Overview 
+For every entities placed below, there are auditing columns. This will be used to make sure "who" and "when" 
+are the corresponding columns created and last changed. These columns are:
+- timestamp createdDate
+- string createdBy
+- timestamp lastUpdatedDate
+- string lastUpdatedBy
+<br><br><br>
 ```mermaid
 erDiagram
     XA_CLINIC ||--o{ XA_EMPLOYEE : have
-    XA_CLINIC ||--o{ XA_PATIENT : have
-    XA_CLINIC ||--o{ XA_CAUSE : have
-    XA_CLINIC ||--o{ XA_TREATMENT : have
-    XA_CLINIC ||--o{ XA_ITEM : have
-    XA_EMPLOYEE ||--o{ XA_VISIT : confirms
+    XA_PRACTITIONER ||--o{ XA_VISIT : confirms
     XA_EMPLOYEE ||--o{ XA_ATTENDANCE : creates
     XA_PATIENT ||--o{ XA_VISIT : confirms
     XA_VISIT ||--o| XA_VISIT_TREATMENT : performs
@@ -21,13 +25,18 @@ erDiagram
         date subscriptionValidFrom
         date subscriptionValidTo
         int subscriptionTier
+        string satuSehatOrganizationKey
+        string satuSehatClientKey
+        string satuSehatSecretKey "bcrypt required"
+        string satuSehatAccessToken
     }
     XA_EMPLOYEE {
         uuid id PK
         string code "unique"
+        string username
         uuid clinicId FK
-        string nameFirst
-        string nameLast
+        string firstName
+        string lastName
         date age
         string type
         string role
@@ -39,25 +48,24 @@ erDiagram
         decimal salary
         double taxPercentage
     }
+    XA_PRACTITIONER {
+        uuid id PK
+        string reference_id "IHS ID from SatuSehat, e.g.: P02478375538"
+        json satuSehatData
+    }
     XA_PATIENT {
         uuid id PK
-        string code "unique"
-        uuid clinicId FK
-        string nameFirst
-        string nameLast 
-        string phoneNumber
-        date age
-        string gender
-        string email
-        string address
+        string reference_id "IHS ID from SatuSehat, e.g.: P02478375538"
+        json satuSehatData
     }
     XA_VISIT {
         uuid id PK
         uuid patientId FK
         uuid employeeId FK
-        bool cancelled
+        string reference_id "ID of Encounter from SatuSehat"
+        string status
         datetime startTime
-        datetime endTime 
+        datetime endTime
     }
     XA_ATTENDANCE {
         uuid id PK
