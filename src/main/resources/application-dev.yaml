@@ -6,9 +6,6 @@ spring.datasource:
 spring.application.name: x-admin
 
 spring.cloud.vault:
-  host: localhost
-  port: 8200
-  scheme: https
   uri: https://localhost:8200
   connection-timeout: 5000
   read-timeout: 15000
@@ -26,3 +23,6 @@ xadmin.security:
   cors:
     allowed-hosts:
       - http://localhost:5173/
+
+xadmin.satusehat.integration:
+  environment: staging

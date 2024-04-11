@@ -3,6 +3,15 @@ spring.datasource:
   username: ${SPRING_DATASOURCE_USERNAME}
   password: ${SPRING_DATASOURCE_PASSWORD}
 
+spring.cloud.vault:
+  uri: ${SPRING_CLOUD_VAULT_URI}
+  connection-timeout: ${SPRING_CLOUD_VAULT_CONNECTION_TIMEOUT:5000}
+  read-timeout: ${SPRING_CLOUD_VAULT_READ_TIMEOUT:15000}
+  authentication: ${SPRING_CLOUD_VAULT_AUTHENTICATION:TOKEN}
+  kv:
+    enable: true
+    backend: secret
+
 # DEPRECATED
 # xadmin.jwt:
 #  secret-key: ${XADMIN_JWT_SECRET_KEY}
@@ -12,3 +21,6 @@ xadmin.security:
   cors:
     allowed-hosts:
       - ${XADMIN_CORS_ALLOWED_HOST_1}
+
+xadmin.satusehat.integration:
+  environment: production
