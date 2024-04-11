@@ -1,6 +1,7 @@
-package com.satusehat.endpoint;
+package com.satusehat.endpoint.oauth;
 
-import com.satusehat.dto.response.OAuthResponse;
+import com.satusehat.dto.response.oauth.OAuthResponse;
+import com.satusehat.endpoint.BaseSatuSehatEndpoint;
 import com.satusehat.property.SatuSehatProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
