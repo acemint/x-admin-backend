@@ -8,29 +8,36 @@ import com.clinic.xadmin.exception.XAdminIllegalStateException;
 import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
+import jakarta.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ControllerHelperImpl implements ControllerHelper {
 
   private final AppSecurityContextHolder appSecurityContextHolder;
+  private final ClinicRepository clinicRepository;
 
   @Autowired
   public ControllerHelperImpl(AppSecurityContextHolder appSecurityContextHolder, ClinicRepository clinicRepository) {
     this.appSecurityContextHolder = appSecurityContextHolder;
+    this.clinicRepository = clinicRepository;
   }
 
+  @Nonnull
   @Override
   public Clinic getClinicScope(String clinicCode) {
     Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
     Employee currentAuthenticatedUser = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
     this.validateAuthenticationToRequest(currentAuthenticatedUser, clinicCode);
-    return currentAuthenticatedUser.getClinic();
+    return Optional.ofNullable(clinicCode)
+        .map(this.clinicRepository::searchByCode)
+        .orElse(currentAuthenticatedUser.getClinic());
   }
 
   private void validateAuthenticationToRequest(Employee currentAuthenticatedUser, String clinicCode) {

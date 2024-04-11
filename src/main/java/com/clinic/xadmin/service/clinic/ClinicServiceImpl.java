@@ -5,9 +5,14 @@ import com.clinic.xadmin.dto.request.clinic.UpdateClinicRequest;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.ClinicSatuSehatCredential;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
+import com.clinic.xadmin.exception.wrapper.APICallWrapper;
 import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
+import com.satusehat.dto.response.oauth.OAuthResponse;
+import com.satusehat.endpoint.oauth.SatuSehatOauthEndpoint;
+import com.satusehat.property.SatuSehatProperty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +25,14 @@ public class ClinicServiceImpl implements ClinicService {
 
   private final ClinicRepository clinicRepository;
   private final ClinicSatuSehatCredentialRepository clinicSatuSehatCredentialRepository;
+  private final SatuSehatProperty satuSehatProperty;
 
   @Autowired
-  public ClinicServiceImpl(ClinicRepository clinicRepository, ClinicSatuSehatCredentialRepository clinicSatuSehatCredentialRepository) {
+  public ClinicServiceImpl(ClinicRepository clinicRepository, ClinicSatuSehatCredentialRepository clinicSatuSehatCredentialRepository,
+      SatuSehatProperty satuSehatProperty) {
     this.clinicRepository = clinicRepository;
     this.clinicSatuSehatCredentialRepository = clinicSatuSehatCredentialRepository;
+    this.satuSehatProperty = satuSehatProperty;
   }
 
   @Override
@@ -47,11 +55,12 @@ public class ClinicServiceImpl implements ClinicService {
 
     ClinicSatuSehatCredential clinicSatuSehatCredential = ClinicSatuSehatCredential
         .builder()
-        .clinicId(newClinic.getId())
+        .clinicCode(newClinic.getCode())
         .satuSehatClientKey(request.getSatuSehatClientKey())
         .satuSehatOrganizationKey(request.getSatuSehatOrganizationKey())
         .satuSehatSecretKey(request.getSatuSehatSecretKey())
         .build();
+    clinicSatuSehatCredential.setSatuSehatToken(this.fetchAccessToken(clinicSatuSehatCredential));
     this.clinicSatuSehatCredentialRepository.save(clinicSatuSehatCredential);
     return newClinic;
   }
@@ -62,25 +71,33 @@ public class ClinicServiceImpl implements ClinicService {
     if (Objects.isNull(existedClinic)) {
       throw new XAdminBadRequestException("Clinic code does not exist: " + clinicCode);
     }
-    existedClinic.setName(request.getName());
-    existedClinic.setCommissionFee(request.getCommissionFee());
-    existedClinic.setSittingFee(request.getSittingFee());
-    existedClinic.setMedicalItemFee(request.getMedicalItemFee());
-    existedClinic.setSubscriptionTier(request.getSubscriptionTier());
-    existedClinic.setSubscriptionValidFrom(request.getSubscriptionValidFrom());
-    existedClinic.setSubscriptionValidTo(request.getSubscriptionValidTo());
+    existedClinic.setName(request.getName())
+        .setCommissionFee(request.getCommissionFee())
+        .setSittingFee(request.getSittingFee())
+        .setMedicalItemFee(request.getMedicalItemFee())
+        .setSubscriptionTier(request.getSubscriptionTier())
+        .setSubscriptionValidFrom(request.getSubscriptionValidFrom())
+        .setSubscriptionValidTo(request.getSubscriptionValidTo());
     this.clinicRepository.save(existedClinic);
 
 
-    ClinicSatuSehatCredential clinicSatuSehatCredential = this.clinicSatuSehatCredentialRepository.findById(existedClinic.getId())
+    ClinicSatuSehatCredential clinicSatuSehatCredential = this.clinicSatuSehatCredentialRepository.findById(existedClinic.getCode())
         .orElse(ClinicSatuSehatCredential.builder().build());
-    clinicSatuSehatCredential.setClinicId(existedClinic.getId());
-    clinicSatuSehatCredential.setSatuSehatClientKey(request.getSatuSehatClientKey());
-    clinicSatuSehatCredential.setSatuSehatOrganizationKey(request.getSatuSehatOrganizationKey());
-    clinicSatuSehatCredential.setSatuSehatSecretKey(request.getSatuSehatSecretKey());
+    clinicSatuSehatCredential.setClinicCode(existedClinic.getCode())
+        .setSatuSehatClientKey(request.getSatuSehatClientKey())
+        .setSatuSehatOrganizationKey(request.getSatuSehatOrganizationKey())
+        .setSatuSehatSecretKey(request.getSatuSehatSecretKey());
+    clinicSatuSehatCredential.setSatuSehatToken(this.fetchAccessToken(clinicSatuSehatCredential));
     this.clinicSatuSehatCredentialRepository.save(clinicSatuSehatCredential);
     return existedClinic;
   }
 
+
+  private String fetchAccessToken(ClinicSatuSehatCredential clinicSatuSehatCredential) {
+    SatuSehatOauthEndpoint satuSehatOauthEndpoint = new SatuSehatOauthEndpoint(this.satuSehatProperty,
+        clinicSatuSehatCredential.getSatuSehatClientKey(), clinicSatuSehatCredential.getSatuSehatSecretKey());
+    ResponseEntity<OAuthResponse> oAuthResponse = APICallWrapper.wrapThrowableCall(satuSehatOauthEndpoint::getMethodCall);
+    return oAuthResponse.getBody().getAccessToken();
+  }
 
 }

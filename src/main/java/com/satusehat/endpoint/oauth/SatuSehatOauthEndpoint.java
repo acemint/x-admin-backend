@@ -1,6 +1,7 @@
-package com.satusehat.endpoint;
+package com.satusehat.endpoint.oauth;
 
-import com.satusehat.dto.response.OAuthResponse;
+import com.satusehat.dto.response.oauth.OAuthResponse;
+import com.satusehat.endpoint.BaseSatuSehatEndpoint;
 import com.satusehat.property.SatuSehatProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -32,7 +33,7 @@ public class SatuSehatOauthEndpoint
   @Override
   public ResponseEntity<OAuthResponse> getMethodCall() {
     RestClient restClient = RestClient.builder()
-        .baseUrl(this.satuSehatProperty.getBaseUrl())
+        .baseUrl(this.satuSehatProperty.getAuthUrl())
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .build();
 
