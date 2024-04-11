@@ -42,7 +42,7 @@ public class ClinicSatuSehatCredentialCustomRepositoryImpl implements ClinicSatu
       throw new XAdminInternalException("Clinic not found " + clinicProperty.getName());
     }
     VaultResponse vaultResponse = this.vaultOperations.opsForKeyValue(VaultConfiguration.DEFAULT_SECRET_FOLDER_PATH, VaultKeyValueOperationsSupport.KeyValueBackend.KV_2)
-        .get(ClinicSatuSehatCredential.KEY_SPACE + "/" + clinic.getId());
+        .get(ClinicSatuSehatCredential.KEY_SPACE + "/" + clinic.getCode());
     if (Objects.isNull(vaultResponse)) {
       throw new XAdminInternalException("Clinic auth not found " + clinicProperty.getName());
     }

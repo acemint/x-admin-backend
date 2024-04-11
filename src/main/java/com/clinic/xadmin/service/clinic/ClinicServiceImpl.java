@@ -8,8 +8,8 @@ import com.clinic.xadmin.exception.XAdminBadRequestException;
 import com.clinic.xadmin.exception.wrapper.APICallWrapper;
 import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
-import com.satusehat.dto.response.OAuthResponse;
-import com.satusehat.endpoint.SatuSehatOauthEndpoint;
+import com.satusehat.dto.response.oauth.OAuthResponse;
+import com.satusehat.endpoint.oauth.SatuSehatOauthEndpoint;
 import com.satusehat.property.SatuSehatProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +55,7 @@ public class ClinicServiceImpl implements ClinicService {
 
     ClinicSatuSehatCredential clinicSatuSehatCredential = ClinicSatuSehatCredential
         .builder()
-        .clinicId(newClinic.getId())
+        .clinicCode(newClinic.getCode())
         .satuSehatClientKey(request.getSatuSehatClientKey())
         .satuSehatOrganizationKey(request.getSatuSehatOrganizationKey())
         .satuSehatSecretKey(request.getSatuSehatSecretKey())
@@ -81,9 +81,9 @@ public class ClinicServiceImpl implements ClinicService {
     this.clinicRepository.save(existedClinic);
 
 
-    ClinicSatuSehatCredential clinicSatuSehatCredential = this.clinicSatuSehatCredentialRepository.findById(existedClinic.getId())
+    ClinicSatuSehatCredential clinicSatuSehatCredential = this.clinicSatuSehatCredentialRepository.findById(existedClinic.getCode())
         .orElse(ClinicSatuSehatCredential.builder().build());
-    clinicSatuSehatCredential.setClinicId(existedClinic.getId())
+    clinicSatuSehatCredential.setClinicCode(existedClinic.getCode())
         .setSatuSehatClientKey(request.getSatuSehatClientKey())
         .setSatuSehatOrganizationKey(request.getSatuSehatOrganizationKey())
         .setSatuSehatSecretKey(request.getSatuSehatSecretKey());

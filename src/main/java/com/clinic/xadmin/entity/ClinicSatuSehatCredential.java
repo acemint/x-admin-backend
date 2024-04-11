@@ -22,7 +22,7 @@ public class ClinicSatuSehatCredential implements Serializable {
   public static final String KEY_SPACE = "satu.sehat.credential";
 
   @Id
-  private String clinicId;
+  private String clinicCode;
   private String satuSehatOrganizationKey;
   private String satuSehatClientKey;
   private String satuSehatSecretKey;
