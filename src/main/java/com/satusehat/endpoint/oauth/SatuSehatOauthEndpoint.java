@@ -13,8 +13,7 @@ import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
-public class SatuSehatOauthEndpoint
-    implements BaseSatuSehatEndpoint<OAuthResponse> {
+public class SatuSehatOauthEndpoint implements BaseSatuSehatEndpoint<OAuthResponse> {
 
   private static final String PATH = "/accesstoken";
   private static final Map.Entry<String, Object> QUERY_PARAM_GRANT_TYPE = Map.entry("grant_type", "client_credentials");
@@ -44,6 +43,11 @@ public class SatuSehatOauthEndpoint
         .body(this.buildRequestBody())
         .retrieve()
         .toEntity(OAuthResponse.class);
+  }
+
+  @Override
+  public BaseSatuSehatEndpoint<OAuthResponse> setAuthToken(String authToken) {
+    return null;
   }
 
   private MultiValueMap<String, String> buildRequestBody() {

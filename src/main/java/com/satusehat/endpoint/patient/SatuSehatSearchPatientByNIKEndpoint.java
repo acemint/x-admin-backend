@@ -20,11 +20,10 @@ public class SatuSehatSearchPatientByNIKEndpoint implements BaseSatuSehatEndpoin
   private static final String HTTP_METHOD = "GET";
   private static final Map.Entry<String, String> AUTHORIZATION_HEADER = Map.entry("Authorization", "Bearer ");
 
-  private final String authToken;
+  private String authToken;
   private final String nik;
 
-  public SatuSehatSearchPatientByNIKEndpoint(String authToken, String nik) {
-    this.authToken = authToken;
+  public SatuSehatSearchPatientByNIKEndpoint(String nik) {
     this.nik = SatuSehatPropertyHolder.getInstance().getNikUrl() + nik;
   }
 
@@ -43,6 +42,12 @@ public class SatuSehatSearchPatientByNIKEndpoint implements BaseSatuSehatEndpoin
         .header(AUTHORIZATION_HEADER.getKey(), AUTHORIZATION_HEADER.getValue() + this.authToken)
         .retrieve()
         .toEntity(new ParameterizedTypeReference<>() {});
+  }
+
+  @Override
+  public BaseSatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> setAuthToken(String authToken) {
+    this.authToken = authToken;
+    return this;
   }
 
 }
