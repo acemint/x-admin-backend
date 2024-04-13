@@ -23,7 +23,7 @@ public class SatuSehatSearchPatientByNIKEndpoint implements BaseSatuSehatEndpoin
   private final String authToken;
   private final String nik;
 
-  public SatuSehatSearchPatientByNIKEndpoint(SatuSehatProperty satuSehatProperty, String authToken, String nik) {
+  public SatuSehatSearchPatientByNIKEndpoint(String authToken, String nik) {
     this.authToken = authToken;
     this.nik = SatuSehatPropertyHolder.getInstance().getNikUrl() + nik;
   }
