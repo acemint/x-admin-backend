@@ -18,4 +18,7 @@ public interface PatientControllerDocs {
       + "`pageSize`: the size of data requested per page<br><br>"
       + "Role Allowed: All Authenticated User";
 
+  String SEARCH_PATIENTS_SUMMARY = "Get the list of patients from Satu Sehat";
+  String SEARCH_PATIENTS_DESCRIPTION = "Role Allowed: All Authenticated User";
+
 }

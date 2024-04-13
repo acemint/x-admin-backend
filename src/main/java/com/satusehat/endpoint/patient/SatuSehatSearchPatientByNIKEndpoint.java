@@ -2,8 +2,8 @@ package com.satusehat.endpoint.patient;
 
 import com.satusehat.dto.response.StandardizedResourceResponse;
 import com.satusehat.dto.response.patient.PatientResourceResponse;
-import com.satusehat.endpoint.BaseSatuSehatEndpoint;
-import com.satusehat.property.SatuSehatProperty;
+import com.satusehat.endpoint.SatuSehatEndpoint;
+import com.satusehat.property.SatuSehatPropertyHolder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,26 +13,24 @@ import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
-public class SatuSehatSearchPatientByNIKEndpoint implements BaseSatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> {
+public class SatuSehatSearchPatientByNIKEndpoint implements
+    SatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> {
 
   private static final String PATH = "/Patient";
   private static final String HTTP_METHOD = "GET";
   private static final Map.Entry<String, String> AUTHORIZATION_HEADER = Map.entry("Authorization", "Bearer ");
 
-  private final SatuSehatProperty satuSehatProperty;
-  private final String authToken;
+  private String authToken;
   private final String nik;
 
-  public SatuSehatSearchPatientByNIKEndpoint(SatuSehatProperty satuSehatProperty, String authToken, String nik) {
-    this.satuSehatProperty = satuSehatProperty;
-    this.authToken = authToken;
-    this.nik = this.satuSehatProperty.getNikUrl() + nik;
+  public SatuSehatSearchPatientByNIKEndpoint(String nik) {
+    this.nik = SatuSehatPropertyHolder.getInstance().getNikUrl() + nik;
   }
 
   @Override
   public ResponseEntity<StandardizedResourceResponse<PatientResourceResponse>> getMethodCall() {
     RestClient restClient = RestClient.builder()
-        .baseUrl(this.satuSehatProperty.getBaseUrl())
+        .baseUrl(SatuSehatPropertyHolder.getInstance().getBaseUrl())
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .build();
 
@@ -44,6 +42,12 @@ public class SatuSehatSearchPatientByNIKEndpoint implements BaseSatuSehatEndpoin
         .header(AUTHORIZATION_HEADER.getKey(), AUTHORIZATION_HEADER.getValue() + this.authToken)
         .retrieve()
         .toEntity(new ParameterizedTypeReference<>() {});
+  }
+
+  @Override
+  public SatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> setAuthToken(String authToken) {
+    this.authToken = authToken;
+    return this;
   }
 
 }
