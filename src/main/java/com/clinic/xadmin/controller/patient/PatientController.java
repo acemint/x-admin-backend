@@ -46,6 +46,24 @@ public class PatientController {
   }
 
   @Operation(
+      summary = PatientControllerDocs.SEARCH_PATIENTS_SUMMARY,
+      description = PatientControllerDocs.SEARCH_PATIENTS_DESCRIPTION)
+  @GetMapping(value = PatientControllerPath.SEARCH_BY_NIK, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
+  public ResponseEntity<StandardizedResponse<PatientResponse>> searchPatientByNIK(
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
+      @RequestParam(name = "nik", required = false) String nik) {
+    Clinic clinic = controllerHelper.getClinicScope(clinicCode);
+
+    Patient patient = patientService.getPatient(clinic, nik);
+
+    return ResponseEntity.ok().body(
+        StandardizedResponse.<PatientResponse>builder()
+            .content(PatientMapper.INSTANCE.createFrom(patient))
+            .build());
+  }
+
+  @Operation(
       summary = PatientControllerDocs.REGISTER_SUMMARY,
       description = PatientControllerDocs.REGISTER_DESCRIPTION)
   @PostMapping(value = PatientControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

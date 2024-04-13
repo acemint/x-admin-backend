@@ -5,12 +5,11 @@ import com.clinic.xadmin.dto.request.clinic.UpdateClinicRequest;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.ClinicSatuSehatCredential;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
-import com.clinic.xadmin.exception.wrapper.APICallWrapper;
+import com.clinic.xadmin.outbound.SatuSehatAPICallWrapper;
 import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
 import com.satusehat.dto.response.oauth.OAuthResponse;
 import com.satusehat.endpoint.oauth.SatuSehatOauthEndpoint;
-import com.satusehat.property.SatuSehatProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,14 +24,13 @@ public class ClinicServiceImpl implements ClinicService {
 
   private final ClinicRepository clinicRepository;
   private final ClinicSatuSehatCredentialRepository clinicSatuSehatCredentialRepository;
-  private final SatuSehatProperty satuSehatProperty;
+  private final SatuSehatAPICallWrapper apiCallWrapper;
 
   @Autowired
-  public ClinicServiceImpl(ClinicRepository clinicRepository, ClinicSatuSehatCredentialRepository clinicSatuSehatCredentialRepository,
-      SatuSehatProperty satuSehatProperty) {
+  public ClinicServiceImpl(ClinicRepository clinicRepository, ClinicSatuSehatCredentialRepository clinicSatuSehatCredentialRepository, SatuSehatAPICallWrapper apiCallWrapper) {
     this.clinicRepository = clinicRepository;
     this.clinicSatuSehatCredentialRepository = clinicSatuSehatCredentialRepository;
-    this.satuSehatProperty = satuSehatProperty;
+    this.apiCallWrapper = apiCallWrapper;
   }
 
   @Override
@@ -93,10 +91,9 @@ public class ClinicServiceImpl implements ClinicService {
   }
 
 
-  private String fetchAccessToken(ClinicSatuSehatCredential clinicSatuSehatCredential) {
-    SatuSehatOauthEndpoint satuSehatOauthEndpoint = new SatuSehatOauthEndpoint(this.satuSehatProperty,
-        clinicSatuSehatCredential.getSatuSehatClientKey(), clinicSatuSehatCredential.getSatuSehatSecretKey());
-    ResponseEntity<OAuthResponse> oAuthResponse = APICallWrapper.wrapThrowableCall(satuSehatOauthEndpoint::getMethodCall);
+  private String fetchAccessToken(ClinicSatuSehatCredential credential) {
+    SatuSehatOauthEndpoint satuSehatOauthEndpoint = new SatuSehatOauthEndpoint(credential.getSatuSehatClientKey(), credential.getSatuSehatSecretKey());
+    ResponseEntity<OAuthResponse> oAuthResponse = this.apiCallWrapper.wrapThrowableCall(satuSehatOauthEndpoint, credential);
     return oAuthResponse.getBody().getAccessToken();
   }
 
