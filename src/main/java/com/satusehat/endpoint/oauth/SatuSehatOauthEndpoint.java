@@ -1,7 +1,7 @@
 package com.satusehat.endpoint.oauth;
 
 import com.satusehat.dto.response.oauth.OAuthResponse;
-import com.satusehat.endpoint.BaseSatuSehatEndpoint;
+import com.satusehat.endpoint.SatuSehatEndpoint;
 import com.satusehat.property.SatuSehatPropertyHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,7 +13,7 @@ import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
-public class SatuSehatOauthEndpoint implements BaseSatuSehatEndpoint<OAuthResponse> {
+public class SatuSehatOauthEndpoint implements SatuSehatEndpoint<OAuthResponse> {
 
   private static final String PATH = "/accesstoken";
   private static final Map.Entry<String, Object> QUERY_PARAM_GRANT_TYPE = Map.entry("grant_type", "client_credentials");
@@ -46,7 +46,7 @@ public class SatuSehatOauthEndpoint implements BaseSatuSehatEndpoint<OAuthRespon
   }
 
   @Override
-  public BaseSatuSehatEndpoint<OAuthResponse> setAuthToken(String authToken) {
+  public SatuSehatEndpoint<OAuthResponse> setAuthToken(String authToken) {
     return null;
   }
 

@@ -2,9 +2,9 @@ package com.satusehat.endpoint;
 
 import org.springframework.http.ResponseEntity;
 
-public interface BaseSatuSehatEndpoint<T> {
+public interface SatuSehatEndpoint<T> {
 
   ResponseEntity<T> getMethodCall();
-  BaseSatuSehatEndpoint<T> setAuthToken(String authToken);
+  SatuSehatEndpoint<T> setAuthToken(String authToken);
 
 }

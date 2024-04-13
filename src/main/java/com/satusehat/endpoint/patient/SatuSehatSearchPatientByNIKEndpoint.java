@@ -2,8 +2,7 @@ package com.satusehat.endpoint.patient;
 
 import com.satusehat.dto.response.StandardizedResourceResponse;
 import com.satusehat.dto.response.patient.PatientResourceResponse;
-import com.satusehat.endpoint.BaseSatuSehatEndpoint;
-import com.satusehat.property.SatuSehatProperty;
+import com.satusehat.endpoint.SatuSehatEndpoint;
 import com.satusehat.property.SatuSehatPropertyHolder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +13,8 @@ import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
-public class SatuSehatSearchPatientByNIKEndpoint implements BaseSatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> {
+public class SatuSehatSearchPatientByNIKEndpoint implements
+    SatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> {
 
   private static final String PATH = "/Patient";
   private static final String HTTP_METHOD = "GET";
@@ -45,7 +45,7 @@ public class SatuSehatSearchPatientByNIKEndpoint implements BaseSatuSehatEndpoin
   }
 
   @Override
-  public BaseSatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> setAuthToken(String authToken) {
+  public SatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> setAuthToken(String authToken) {
     this.authToken = authToken;
     return this;
   }
