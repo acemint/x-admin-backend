@@ -47,7 +47,7 @@ public class SatuSehatOauthEndpoint implements SatuSehatEndpoint<OAuthResponse> 
 
   @Override
   public SatuSehatEndpoint<OAuthResponse> setAuthToken(String authToken) {
-    return null;
+    return this;
   }
 
   private MultiValueMap<String, String> buildRequestBody() {
