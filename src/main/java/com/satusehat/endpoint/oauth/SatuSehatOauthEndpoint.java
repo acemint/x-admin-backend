@@ -2,7 +2,7 @@ package com.satusehat.endpoint.oauth;
 
 import com.satusehat.dto.response.oauth.OAuthResponse;
 import com.satusehat.endpoint.BaseSatuSehatEndpoint;
-import com.satusehat.property.SatuSehatProperty;
+import com.satusehat.property.SatuSehatPropertyHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -20,12 +20,10 @@ public class SatuSehatOauthEndpoint
   private static final Map.Entry<String, Object> QUERY_PARAM_GRANT_TYPE = Map.entry("grant_type", "client_credentials");
   private static final String HTTP_METHOD = "POST";
 
-  private final SatuSehatProperty satuSehatProperty;
   private final String clientId;
   private final String clientSecret;
 
-  public SatuSehatOauthEndpoint(SatuSehatProperty satuSehatProperty, String clientId, String clientSecret) {
-    this.satuSehatProperty = satuSehatProperty;
+  public SatuSehatOauthEndpoint(String clientId, String clientSecret) {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
   }
@@ -33,7 +31,7 @@ public class SatuSehatOauthEndpoint
   @Override
   public ResponseEntity<OAuthResponse> getMethodCall() {
     RestClient restClient = RestClient.builder()
-        .baseUrl(this.satuSehatProperty.getAuthUrl())
+        .baseUrl(SatuSehatPropertyHolder.getInstance().getAuthUrl())
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .build();
 

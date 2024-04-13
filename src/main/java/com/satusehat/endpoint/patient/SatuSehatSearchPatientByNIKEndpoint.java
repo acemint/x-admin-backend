@@ -4,6 +4,7 @@ import com.satusehat.dto.response.StandardizedResourceResponse;
 import com.satusehat.dto.response.patient.PatientResourceResponse;
 import com.satusehat.endpoint.BaseSatuSehatEndpoint;
 import com.satusehat.property.SatuSehatProperty;
+import com.satusehat.property.SatuSehatPropertyHolder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,20 +20,18 @@ public class SatuSehatSearchPatientByNIKEndpoint implements BaseSatuSehatEndpoin
   private static final String HTTP_METHOD = "GET";
   private static final Map.Entry<String, String> AUTHORIZATION_HEADER = Map.entry("Authorization", "Bearer ");
 
-  private final SatuSehatProperty satuSehatProperty;
   private final String authToken;
   private final String nik;
 
   public SatuSehatSearchPatientByNIKEndpoint(SatuSehatProperty satuSehatProperty, String authToken, String nik) {
-    this.satuSehatProperty = satuSehatProperty;
     this.authToken = authToken;
-    this.nik = this.satuSehatProperty.getNikUrl() + nik;
+    this.nik = SatuSehatPropertyHolder.getInstance().getNikUrl() + nik;
   }
 
   @Override
   public ResponseEntity<StandardizedResourceResponse<PatientResourceResponse>> getMethodCall() {
     RestClient restClient = RestClient.builder()
-        .baseUrl(this.satuSehatProperty.getBaseUrl())
+        .baseUrl(SatuSehatPropertyHolder.getInstance().getBaseUrl())
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .build();
 
