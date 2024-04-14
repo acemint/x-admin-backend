@@ -3,6 +3,7 @@ package com.clinic.xadmin.outbound;
 import com.clinic.xadmin.entity.ClinicSatuSehatCredential;
 import com.clinic.xadmin.exception.XAdminAPICallException;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
+import com.clinic.xadmin.exception.XAdminIllegalStateException;
 import com.clinic.xadmin.exception.XAdminInternalException;
 import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -35,11 +37,11 @@ public class SatuSehatAPICallWrapperImpl implements SatuSehatAPICallWrapper {
   @Override
   public <T> ResponseEntity<T> wrapThrowableCall(SatuSehatEndpoint<T> baseEndpoint, ClinicSatuSehatCredential credential) {
     try {
-      ResponseEntity<T> response = baseEndpoint.setAuthToken(credential.getSatuSehatToken()).getMethodCall();
-      return this.automaticRetryOnExpiredToken(baseEndpoint, response, credential);
+      return baseEndpoint.setAuthToken(credential.getSatuSehatToken()).getMethodCall();
     }
     catch (HttpClientErrorException e) {
-      throw new XAdminAPICallException(e);
+      return this.automaticRetryOnExpiredToken(baseEndpoint, credential, e);
+
     }
   }
 
@@ -52,18 +54,18 @@ public class SatuSehatAPICallWrapperImpl implements SatuSehatAPICallWrapper {
     return this.wrapThrowableCall(baseEndpoint, credential.get());
   }
 
-  private <T> ResponseEntity<T> automaticRetryOnExpiredToken(SatuSehatEndpoint<T> baseEndpoint, ResponseEntity<T> response, ClinicSatuSehatCredential credential) {
-    if (response.getStatusCode().isSameCodeAs(HttpStatus.FORBIDDEN) && !(baseEndpoint instanceof SatuSehatOauthEndpoint)) {
+  private <T> ResponseEntity<T> automaticRetryOnExpiredToken(SatuSehatEndpoint<T> baseEndpoint, ClinicSatuSehatCredential credential, HttpClientErrorException exception) {
+    if (exception.getStatusCode().isSameCodeAs(HttpStatus.UNAUTHORIZED) && !(baseEndpoint instanceof SatuSehatOauthEndpoint)) {
      this.refetchSatuSehatAccessToken(credential);
-     return baseEndpoint.getMethodCall();
+     return baseEndpoint.setAuthToken(credential.getSatuSehatToken()).getMethodCall();
     }
-    else if (response.getStatusCode().is4xxClientError()) {
-      throw new XAdminBadRequestException(this.getResponseBody(response));
+    else if (exception.getStatusCode().is4xxClientError()) {
+      throw new XAdminBadRequestException(exception.getResponseBodyAsString().replaceAll("\n", ""));
     }
-    else if (response.getStatusCode().is5xxServerError()) {
-      throw new XAdminInternalException(this.getResponseBody(response));
+    else if (exception.getStatusCode().is5xxServerError()) {
+      throw new XAdminInternalException(exception.getResponseBodyAsString().replaceAll("\n", ""));
     }
-    return response;
+    throw new XAdminIllegalStateException(exception.getResponseBodyAsString().replaceAll("\n", ""));
   }
 
   private void refetchSatuSehatAccessToken(ClinicSatuSehatCredential credential) {
@@ -80,15 +82,5 @@ public class SatuSehatAPICallWrapperImpl implements SatuSehatAPICallWrapper {
     }
   }
 
-  //  TODO: Make a util for ObjectMapper
-  private <T> String getResponseBody(ResponseEntity<T> response) {
-    String responseBody = null;
-    try {
-      responseBody = objectMapper.writeValueAsString(response.getBody());
-    } catch (JsonProcessingException e) {
-      responseBody = Optional.ofNullable(response.getBody()).map(Object::toString).orElse("No error message");
-    }
-    return responseBody;
-  }
 
 }
