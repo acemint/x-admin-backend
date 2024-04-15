@@ -4,6 +4,7 @@ import com.satusehat.dto.response.StandardizedResourceResponse;
 import com.satusehat.dto.response.patient.PatientResourceResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
 import com.satusehat.property.SatuSehatPropertyHolder;
+import lombok.Builder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,6 +26,7 @@ public class SatuSehatSearchPatientByDescriptionEndpoint implements
   private final String birthDate;
   private final String gender;
 
+  @Builder
   public SatuSehatSearchPatientByDescriptionEndpoint(String name, String birthDate, String gender) {
     this.name = name;
     this.birthDate = birthDate;
