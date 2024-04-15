@@ -17,6 +17,7 @@ public class StandardizedResourceResponse<T> {
 
   @JsonProperty("entry")
   private List<Entry<T>> entries;
+  private int total;
 
   @Data
   @NoArgsConstructor
