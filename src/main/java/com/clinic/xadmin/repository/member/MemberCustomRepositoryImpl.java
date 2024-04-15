@@ -45,7 +45,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
 
     return query.select(qMember)
         .from(qMember)
-        .where(qMember.username.eq(username))
+        .where(qMember.clinicUsername.eq(username))
         .fetchOne();
   }
 

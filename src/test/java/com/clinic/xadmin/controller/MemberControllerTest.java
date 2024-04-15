@@ -85,7 +85,7 @@ public class MemberControllerTest extends BaseControllerTest {
                 MemberControllerPath.BASE + MemberControllerPath.SELF)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.content.username").value(customUserDetails.getMember().getUsername()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.content.username").value(customUserDetails.getMember().getClinicUsername()))
         .andExpect(MockMvcResultMatchers.jsonPath("$.content.role").value(customUserDetails.getMember().getRole()));
   }
 
@@ -166,9 +166,9 @@ public class MemberControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
         .andExpect(MockMvcResultMatchers.jsonPath("$.content[*].emailAddress",
             Matchers.containsInRelativeOrder(
-                members.stream().filter(e -> e.getUsername().equals("user1_123")).findFirst().get().getEmailAddress(),
-                members.stream().filter(e -> e.getUsername().equals("user2_123")).findFirst().get().getEmailAddress(),
-                members.stream().filter(e -> e.getUsername().equals("user3_123")).findFirst().get().getEmailAddress())
+                members.stream().filter(e -> e.getClinicUsername().equals("user1_123")).findFirst().get().getEmailAddress(),
+                members.stream().filter(e -> e.getClinicUsername().equals("user2_123")).findFirst().get().getEmailAddress(),
+                members.stream().filter(e -> e.getClinicUsername().equals("user3_123")).findFirst().get().getEmailAddress())
         ));
   }
 
@@ -186,11 +186,11 @@ public class MemberControllerTest extends BaseControllerTest {
         // the first 2 Member data has "type" null which is why the predictable order is only the third
         .andExpect(MockMvcResultMatchers.jsonPath("$.content[1:3].emailAddress",
             Matchers.containsInAnyOrder(
-                members.stream().filter(e -> e.getUsername().equals("user1_123")).findFirst().get().getEmailAddress(),
-                members.stream().filter(e -> e.getUsername().equals("user3_123")).findFirst().get().getEmailAddress()
+                members.stream().filter(e -> e.getClinicUsername().equals("user1_123")).findFirst().get().getEmailAddress(),
+                members.stream().filter(e -> e.getClinicUsername().equals("user3_123")).findFirst().get().getEmailAddress()
         )))
         .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].emailAddress",
-            Matchers.equalTo(members.stream().filter(e -> e.getUsername().equals("user2_123")).findFirst().get().getEmailAddress())
+            Matchers.equalTo(members.stream().filter(e -> e.getClinicUsername().equals("user2_123")).findFirst().get().getEmailAddress())
         ));
   }
 
@@ -207,11 +207,11 @@ public class MemberControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
         .andExpect(MockMvcResultMatchers.jsonPath("$.content[0:2].emailAddress",
             Matchers.containsInAnyOrder(
-                members.stream().filter(e -> e.getUsername().equals("user1_123")).findFirst().get().getEmailAddress(),
-                members.stream().filter(e -> e.getUsername().equals("user2_123")).findFirst().get().getEmailAddress()
+                members.stream().filter(e -> e.getClinicUsername().equals("user1_123")).findFirst().get().getEmailAddress(),
+                members.stream().filter(e -> e.getClinicUsername().equals("user2_123")).findFirst().get().getEmailAddress()
             )))
         .andExpect(MockMvcResultMatchers.jsonPath("$.content[2].emailAddress",
-            Matchers.equalTo(members.stream().filter(e -> e.getUsername().equals("user3_123")).findFirst().get().getEmailAddress())
+            Matchers.equalTo(members.stream().filter(e -> e.getClinicUsername().equals("user3_123")).findFirst().get().getEmailAddress())
         ));
   }
 
@@ -261,7 +261,7 @@ public class MemberControllerTest extends BaseControllerTest {
         .readJsonAsBytes("member_register_normalUser.json", IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(requestBody))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
@@ -281,7 +281,7 @@ public class MemberControllerTest extends BaseControllerTest {
         .readJsonAsBytes("member_register_normalUser.json", IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .param("clinicCode", "CLC-123")
             .content(requestBody))
@@ -302,7 +302,7 @@ public class MemberControllerTest extends BaseControllerTest {
         .readJsonAsBytes("member_register_normalUserTypeIsDoctor.json", IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(requestBody))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()))
@@ -320,7 +320,7 @@ public class MemberControllerTest extends BaseControllerTest {
         .readJsonAsBytes("member_register_normalUser.json", IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(requestBody))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value()));
@@ -333,7 +333,7 @@ public class MemberControllerTest extends BaseControllerTest {
         .readJsonAsBytes("member_register_normalUserTypeIsDoctor.json", IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .param("clinicCode", "CLC-123")
             .content(requestBody))
@@ -352,7 +352,7 @@ public class MemberControllerTest extends BaseControllerTest {
 
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
@@ -370,7 +370,7 @@ public class MemberControllerTest extends BaseControllerTest {
     requestBody.setPassword("notStrongPassword");
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
@@ -388,7 +388,7 @@ public class MemberControllerTest extends BaseControllerTest {
     requestBody.setFirstName(null);
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
@@ -406,7 +406,7 @@ public class MemberControllerTest extends BaseControllerTest {
     requestBody.setGender("unknown");
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
@@ -424,7 +424,7 @@ public class MemberControllerTest extends BaseControllerTest {
     requestBody.setAge(1);
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
@@ -442,7 +442,7 @@ public class MemberControllerTest extends BaseControllerTest {
     requestBody.setAddress(null);
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
@@ -461,7 +461,7 @@ public class MemberControllerTest extends BaseControllerTest {
     requestBody.setPhoneNumber(null);
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
@@ -479,7 +479,7 @@ public class MemberControllerTest extends BaseControllerTest {
     requestBody.setRole(MemberRole.ROLE_DEVELOPER);
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
-                MemberControllerPath.BASE + MemberControllerPath.REGISTER)
+                MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))

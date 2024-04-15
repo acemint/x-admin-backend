@@ -31,8 +31,14 @@ public class Member extends BaseEntity {
   @Column(name = "code", nullable = false)
   private String code;
 
-  @Column(name = "username", nullable = false)
-  private String username;
+  @Column(name = "satu_sehat_patient_reference_id", nullable = false)
+  private String satuSehatPatientReferenceId;
+
+  @Column(name = "satu_sehat_practitioner_reference_id", nullable = false)
+  private String satuSehatPractitionerReferenceId;
+
+  @Column(name = "clinic_username", nullable = false, unique = true)
+  private String clinicUsername;
 
   @Column(name = "first_name", nullable = false)
   private String firstName;
@@ -42,6 +48,9 @@ public class Member extends BaseEntity {
 
   @Column(name = "email_address", nullable = false)
   private String emailAddress;
+
+  @Column(name = "nik", nullable = false)
+  private String nik;
 
   @Column(name = "phone_number", nullable = false)
   private String phoneNumber;
@@ -55,9 +64,6 @@ public class Member extends BaseEntity {
   @Column(name = "age", nullable = false)
   private Integer age;
 
-  @Column(name = "password", nullable = false)
-  private String password;
-
   @Column(name = "type")
   private String type;
 
@@ -66,6 +72,9 @@ public class Member extends BaseEntity {
 
   @Column(name = "status", nullable = false)
   private String status;
+
+  @Column(name = "password")
+  private String password;
 
   @Column(name = "salary")
   private BigDecimal salary;

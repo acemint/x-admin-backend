@@ -1,25 +1,28 @@
 package com.clinic.xadmin.model.patient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Pageable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class PatientFilter {
+public class SatuSehatPatientFilter {
 
-  private String clinicCode;
+  @NotNull
+  private String searchBy;
 
-  @Nullable
+  private String nik;
+
+  private String motherNik;
+
   private String name;
-
-  private Pageable pageable;
+  private String dateOfBirth;
+  private String gender;
 
 }

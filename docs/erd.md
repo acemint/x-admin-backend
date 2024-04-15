@@ -11,13 +11,9 @@ erDiagram
     XA_CLINIC ||--|| XA_CLINIC_CREDENTIAL: has
     XA_CLINIC ||--o{ XA_MEMBER : have
     XA_MEMBER ||--o{ XA_ATTENDANCE : creates
-    XA_MEMBER ||--o| XA_MEMBER_AS_MANAGER: mightBe
-    XA_MEMBER ||--o| XA_MEMBER_AS_PRACTITIONER: mightBe
-    XA_MEMBER ||--o| XA_MEMBER_AS_PATIENT: mightBe
     XA_CLINIC ||--o{ XA_ITEM: owns
     
-    XA_MEMBER_AS_PRACTITIONER ||--o{ XA_VISIT : confirms
-    XA_MEMBER_AS_PATIENT ||--o{ XA_VISIT : confirms
+    XA_MEMBER ||--o{ XA_VISIT : confirmsAndAccept
     XA_VISIT ||--o| XA_VISIT_TREATMENT : performs
     XA_VISIT_TREATMENT }|--|| XA_TREATMENT : details
     XA_VISIT_TREATMENT }|--|| XA_CAUSE : details
@@ -43,11 +39,13 @@ erDiagram
         uuid id PK
         string code "unique"
         uuid clinicId FK
+        string satuSehatPatientReferenceId "Patient IHS ID from SatuSehat, e.g.: P02478375538"
+        string satuSehatPractitionerReferenceId "Practitioner IHS ID from SatuSehat, e.g.: P02478375538"
         string username
         string firstName
         string lastName
+        string emailAddress "unique"
         date age
-        string type
         string role
         string status
         string gender
@@ -59,17 +57,10 @@ erDiagram
         string villageCode
         string rtCode
         string rwCode
-    }
-    XA_MEMBER_AS_MANAGER {
-        string password
-    }
-    XA_MEMBER_AS_PRACTITIONER {
-        string satuSehatReferenceId "IHS ID from SatuSehat, e.g.: P02478375538"
-        decimal salary
-        double taxPercentage
-    }
-    XA_MEMBER_AS_PATIENT {
-        string satuSehatReferenceId "IHS ID from SatuSehat, e.g.: P02478375538"
+        string password "for manager only"
+        string type "for practitioner only, specific to calculate salary"
+        decimal salary "for practitioner only"
+        double taxPercentage "for practitioner only"
     }
     XA_ATTENDANCE {
         uuid id PK
@@ -79,8 +70,8 @@ erDiagram
     }
     XA_VISIT {
         uuid id PK
-        uuid patientId FK
-        uuid memberId FK
+        uuid patientId FK "id of member, but with role Patient"
+        uuid practitionerId FK "id of member, but as role Practitioner"
         string satuSehatReferenceId "ID of Encounter from SatuSehat"
         string status
         datetime startTime

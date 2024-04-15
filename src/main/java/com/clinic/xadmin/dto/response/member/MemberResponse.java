@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class MemberResponse {
 
   private String id;
-  private String username;
+  private String clinicUsername;
   private String code;
   private String firstName;
   private String lastName;

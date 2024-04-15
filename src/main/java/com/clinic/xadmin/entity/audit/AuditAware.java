@@ -23,6 +23,6 @@ public class AuditAware implements AuditorAware<String> {
     Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
     Member currentAuthenticatedUser = ((CustomUserDetails) authentication.getPrincipal()).getMember();
     return Optional.ofNullable(currentAuthenticatedUser)
-        .map(Member::getUsername);
+        .map(Member::getClinicUsername);
   }
 }

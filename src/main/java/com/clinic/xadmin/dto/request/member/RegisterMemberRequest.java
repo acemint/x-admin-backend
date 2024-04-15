@@ -4,20 +4,18 @@ import com.clinic.xadmin.validator.annotation.ValidEmail;
 import com.clinic.xadmin.validator.annotation.ValidGender;
 import com.clinic.xadmin.validator.annotation.ValidPassword;
 import com.clinic.xadmin.validator.annotation.ValidRoleToRegister;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
+import lombok.experimental.SuperBuilder;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 @FieldNameConstants
 public class RegisterMemberRequest {
 
@@ -40,8 +38,6 @@ public class RegisterMemberRequest {
 
   @ValidRoleToRegister
   private String role;
-
-  private String type;
 
   @NotNull
   private String address;

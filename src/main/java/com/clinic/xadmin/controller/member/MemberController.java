@@ -2,7 +2,9 @@ package com.clinic.xadmin.controller.member;
 
 
 import com.clinic.xadmin.controller.helper.ControllerHelper;
-import com.clinic.xadmin.dto.request.member.RegisterMemberRequest;
+import com.clinic.xadmin.dto.request.member.RegisterMemberAsPractitionerRequest;
+import com.clinic.xadmin.dto.request.member.RegisterMemberAsManagerRequest;
+import com.clinic.xadmin.dto.request.member.RegisterMemberAsPatientRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.member.MemberResponse;
 import com.clinic.xadmin.entity.Clinic;
@@ -10,7 +12,6 @@ import com.clinic.xadmin.entity.Member;
 import com.clinic.xadmin.mapper.MemberMapper;
 import com.clinic.xadmin.mapper.PaginationMapper;
 import com.clinic.xadmin.model.member.MemberFilter;
-import com.clinic.xadmin.model.member.RegisterMemberData;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
@@ -52,21 +53,45 @@ public class MemberController {
     this.appSecurityContextHolder = appSecurityContextHolder;
   }
 
-  @Operation(
-      summary = MemberControllerDocs.REGISTER_SUMMARY,
-      description = MemberControllerDocs.REGISTER_DESCRIPTION)
-  @PostMapping(value = MemberControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @Operation(summary = MemberControllerDocs.REGISTER_MANAGER_REQUEST, description = MemberControllerDocs.REGISTER_MANAGER_DESCRIPTION)
+  @PostMapping(value = MemberControllerPath.REGISTER_MANAGER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
-  public ResponseEntity<StandardizedResponse<MemberResponse>> register(
+  public ResponseEntity<StandardizedResponse<MemberResponse>> registerManager(
       @RequestParam(name = "clinicCode", required = false) String clinicCode,
-      @RequestBody @Valid RegisterMemberRequest request) {
+      @RequestBody @Valid RegisterMemberAsManagerRequest request) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
-    clinicCode = clinic.getCode();
+    Member member = this.memberService.create(clinic, request);
 
-    RegisterMemberData registerMemberData = MemberMapper.INSTANCE.convertFromDtoToModel(request);
-    registerMemberData.setClinicCode(clinicCode);
+    return ResponseEntity.ok().body(
+        StandardizedResponse.<MemberResponse>builder()
+            .content(MemberMapper.INSTANCE.createFrom(member))
+            .build());
+  }
 
-    Member member = this.memberService.create(registerMemberData);
+  @Operation(summary = MemberControllerDocs.REGISTER_PATIENT_SUMMARY, description = MemberControllerDocs.REGISTER_PATIENT_DESCRIPTION)
+  @PostMapping(value = MemberControllerPath.REGISTER_PATIENT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
+  public ResponseEntity<StandardizedResponse<MemberResponse>> registerPatient(
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
+      @RequestBody @Valid RegisterMemberAsPatientRequest request) {
+    Clinic clinic = controllerHelper.getClinicScope(clinicCode);
+    Member member = this.memberService.create(clinic, request);
+
+    return ResponseEntity.ok().body(
+        StandardizedResponse.<MemberResponse>builder()
+            .content(MemberMapper.INSTANCE.createFrom(member))
+            .build());
+  }
+
+  @Operation(summary = MemberControllerDocs.REGISTER_PRACTITIONER_SUMMARY, description = MemberControllerDocs.REGISTER_PRACTITIONER_DESCRIPTION)
+  @PostMapping(value = MemberControllerPath.REGISTER_PRACTITIONER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
+  public ResponseEntity<StandardizedResponse<MemberResponse>> registerPractitionerx(
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
+      @RequestBody @Valid RegisterMemberAsPractitionerRequest request) {
+    Clinic clinic = controllerHelper.getClinicScope(clinicCode);
+    Member member = this.memberService.create(clinic, request);
+
     return ResponseEntity.ok().body(
         StandardizedResponse.<MemberResponse>builder()
             .content(MemberMapper.INSTANCE.createFrom(member))
