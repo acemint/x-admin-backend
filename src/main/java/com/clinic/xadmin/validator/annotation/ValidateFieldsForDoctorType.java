@@ -1,12 +1,11 @@
 package com.clinic.xadmin.validator.annotation;
 
-import com.clinic.xadmin.constant.employee.EmployeeType;
-import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
+import com.clinic.xadmin.constant.member.MemberType;
+import com.clinic.xadmin.dto.request.member.RegisterMemberRequest;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
-import org.springframework.util.StringUtils;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -33,22 +32,22 @@ public @interface ValidateFieldsForDoctorType {
 
   Class<? extends Payload>[] payload() default {};
 
-  class Validator implements ConstraintValidator<ValidateFieldsForDoctorType, RegisterEmployeeRequest> {
+  class Validator implements ConstraintValidator<ValidateFieldsForDoctorType, RegisterMemberRequest> {
 
     private static final String[] DOCTOR_ROLES = {
-        EmployeeType.DOCTOR,
-        EmployeeType.SPECIALIST_DOCTOR
+        MemberType.DOCTOR,
+        MemberType.SPECIALIST_DOCTOR
     };
 
     @Override
-    public boolean isValid(RegisterEmployeeRequest registerEmployeeRequest,
+    public boolean isValid(RegisterMemberRequest registerMemberRequest,
         ConstraintValidatorContext constraintValidatorContext) {
       constraintValidatorContext.disableDefaultConstraintViolation();
       boolean isValid = true;
-      if (Objects.isNull(registerEmployeeRequest.getType())) {
+      if (Objects.isNull(registerMemberRequest.getType())) {
         return true;
       }
-      if (!Arrays.asList(DOCTOR_ROLES).contains(registerEmployeeRequest.getType())) {
+      if (!Arrays.asList(DOCTOR_ROLES).contains(registerMemberRequest.getType())) {
         return true;
       }
       return isValid;

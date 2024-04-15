@@ -8,7 +8,6 @@ import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Visit;
 import com.clinic.xadmin.mapper.VisitMapper;
 import com.clinic.xadmin.model.visit.CreateVisitData;
-import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.service.visit.VisitService;
 import io.swagger.v3.oas.annotations.Operation;

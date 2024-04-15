@@ -1,20 +1,20 @@
-package com.clinic.xadmin.controller.employee;
+package com.clinic.xadmin.controller.member;
 
 
 import com.clinic.xadmin.controller.helper.ControllerHelper;
-import com.clinic.xadmin.dto.request.employee.RegisterEmployeeRequest;
+import com.clinic.xadmin.dto.request.member.RegisterMemberRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
-import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
+import com.clinic.xadmin.dto.response.member.MemberResponse;
 import com.clinic.xadmin.entity.Clinic;
-import com.clinic.xadmin.entity.Employee;
-import com.clinic.xadmin.mapper.EmployeeMapper;
+import com.clinic.xadmin.entity.Member;
+import com.clinic.xadmin.mapper.MemberMapper;
 import com.clinic.xadmin.mapper.PaginationMapper;
-import com.clinic.xadmin.model.employee.EmployeeFilter;
-import com.clinic.xadmin.model.employee.RegisterEmployeeData;
+import com.clinic.xadmin.model.member.MemberFilter;
+import com.clinic.xadmin.model.member.RegisterMemberData;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
-import com.clinic.xadmin.service.employee.EmployeeService;
+import com.clinic.xadmin.service.member.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,68 +35,68 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping(value = EmployeeControllerPath.BASE)
-public class EmployeeController {
+@RequestMapping(value = MemberControllerPath.BASE)
+public class MemberController {
 
   private final ControllerHelper controllerHelper;
-  private final EmployeeService employeeService;
+  private final MemberService memberService;
   private final AppSecurityContextHolder appSecurityContextHolder;
 
   @Autowired
-  public EmployeeController(
+  public MemberController(
       ControllerHelper controllerHelper,
-      EmployeeService employeeService,
+      MemberService memberService,
       AppSecurityContextHolder appSecurityContextHolder) {
     this.controllerHelper = controllerHelper;
-    this.employeeService = employeeService;
+    this.memberService = memberService;
     this.appSecurityContextHolder = appSecurityContextHolder;
   }
 
   @Operation(
-      summary = EmployeeControllerDocs.REGISTER_SUMMARY,
-      description = EmployeeControllerDocs.REGISTER_DESCRIPTION)
-  @PostMapping(value = EmployeeControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+      summary = MemberControllerDocs.REGISTER_SUMMARY,
+      description = MemberControllerDocs.REGISTER_DESCRIPTION)
+  @PostMapping(value = MemberControllerPath.REGISTER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
-  public ResponseEntity<StandardizedResponse<EmployeeResponse>> register(
+  public ResponseEntity<StandardizedResponse<MemberResponse>> register(
       @RequestParam(name = "clinicCode", required = false) String clinicCode,
-      @RequestBody @Valid RegisterEmployeeRequest request) {
+      @RequestBody @Valid RegisterMemberRequest request) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     clinicCode = clinic.getCode();
 
-    RegisterEmployeeData registerEmployeeData = EmployeeMapper.INSTANCE.convertFromDtoToModel(request);
-    registerEmployeeData.setClinicCode(clinicCode);
+    RegisterMemberData registerMemberData = MemberMapper.INSTANCE.convertFromDtoToModel(request);
+    registerMemberData.setClinicCode(clinicCode);
 
-    Employee employee = this.employeeService.createEmployee(registerEmployeeData);
+    Member member = this.memberService.create(registerMemberData);
     return ResponseEntity.ok().body(
-        StandardizedResponse.<EmployeeResponse>builder()
-            .content(EmployeeMapper.INSTANCE.createFrom(employee))
+        StandardizedResponse.<MemberResponse>builder()
+            .content(MemberMapper.INSTANCE.createFrom(member))
             .build());
   }
 
   @Operation(
-      summary = EmployeeControllerDocs.GET_SELF_SUMMARY)
-  @GetMapping(value = EmployeeControllerPath.SELF, produces = MediaType.APPLICATION_JSON_VALUE)
+      summary = MemberControllerDocs.GET_SELF_SUMMARY)
+  @GetMapping(value = MemberControllerPath.SELF, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
-  public ResponseEntity<StandardizedResponse<EmployeeResponse>> getSelf() {
+  public ResponseEntity<StandardizedResponse<MemberResponse>> getSelf() {
     CustomUserDetails userDetails = (CustomUserDetails) this.appSecurityContextHolder.getCurrentContext().getAuthentication().getPrincipal();
     return ResponseEntity.ok().body(
-        StandardizedResponse.<EmployeeResponse>builder()
-            .content(EmployeeMapper.INSTANCE.createFrom(userDetails.getEmployee()))
+        StandardizedResponse.<MemberResponse>builder()
+            .content(MemberMapper.INSTANCE.createFrom(userDetails.getMember()))
             .build());
   }
 
   @Operation(
-      summary = EmployeeControllerDocs.GET_EMPLOYEES_SUMMARY,
-      description = EmployeeControllerDocs.GET_EMPLOYEES_DESCRIPTION)
-  @GetMapping(value = EmployeeControllerPath.FILTER, produces = MediaType.APPLICATION_JSON_VALUE)
+      summary = MemberControllerDocs.GET_MEMBER_SUMMARY,
+      description = MemberControllerDocs.GET_MEMBER_DESCRIPTION)
+  @GetMapping(value = MemberControllerPath.FILTER, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
-  public ResponseEntity<StandardizedResponse<List<EmployeeResponse>>> filter(
+  public ResponseEntity<StandardizedResponse<List<MemberResponse>>> filter(
       @RequestParam(name = "name", required = false) String name,
       @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestParam(name = "sortBy", required = false) String[] sortBy,
-      @RequestParam(name = "sortDirection", defaultValue = EmployeeControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
-      @RequestParam(name = "pageNumber", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
-      @RequestParam(name = "pageSize", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_SIZE) Integer pageSize) {
+      @RequestParam(name = "sortDirection", defaultValue = MemberControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
+      @RequestParam(name = "pageNumber", defaultValue = MemberControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
+      @RequestParam(name = "pageSize", defaultValue = MemberControllerDefaultValue.DEFAULT_PAGE_SIZE) Integer pageSize) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     clinicCode = clinic.getCode();
 
@@ -106,17 +106,17 @@ public class EmployeeController {
       pageRequest = pageRequest.withSort(sort);
     }
 
-    EmployeeFilter employeeFilter = EmployeeFilter.builder()
+    MemberFilter memberFilter = MemberFilter.builder()
         .name(name)
         .clinicCode(clinicCode)
         .pageable(pageRequest)
         .build();
-    Page<Employee> employees = this.employeeService.getEmployees(employeeFilter);
+    Page<Member> members = this.memberService.get(memberFilter);
 
     return ResponseEntity.ok().body(StandardizedResponse
-        .<List<EmployeeResponse>>builder()
-        .content(EmployeeMapper.INSTANCE.createFrom(employees.getContent()))
-        .paginationMetadata(PaginationMapper.INSTANCE.createFrom(employees))
+        .<List<MemberResponse>>builder()
+        .content(MemberMapper.INSTANCE.createFrom(members.getContent()))
+        .paginationMetadata(PaginationMapper.INSTANCE.createFrom(members))
         .build());
   }
 

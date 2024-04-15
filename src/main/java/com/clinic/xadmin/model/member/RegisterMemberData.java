@@ -1,4 +1,4 @@
-package com.clinic.xadmin.model.employee;
+package com.clinic.xadmin.model.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterEmployeeData {
+public class RegisterMemberData {
 
   private String firstName;
   private String lastName;

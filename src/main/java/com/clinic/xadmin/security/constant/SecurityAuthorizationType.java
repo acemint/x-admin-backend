@@ -1,6 +1,6 @@
 package com.clinic.xadmin.security.constant;
 
-import com.clinic.xadmin.constant.employee.EmployeeRole;
+import com.clinic.xadmin.constant.member.MemberRole;
 import com.clinic.xadmin.security.role.AuthorizationEvaluator;
 
 public class SecurityAuthorizationType {
@@ -12,7 +12,7 @@ public class SecurityAuthorizationType {
   private static final String HAS_PERMISSION_FUNCTION_PREFIX = "@" + AuthorizationEvaluator.BEAN_NAME + ".hasRole('";
   private static final String HAS_PERMISSION_FUNCTION_SUFFIX = "')";
 
-  public static final String IS_CLINIC_ADMIN = HAS_PERMISSION_FUNCTION_PREFIX + EmployeeRole.ROLE_CLINIC_ADMIN + HAS_PERMISSION_FUNCTION_SUFFIX;
-  public static final String IS_DEVELOPER = HAS_PERMISSION_FUNCTION_PREFIX + EmployeeRole.ROLE_DEVELOPER + HAS_PERMISSION_FUNCTION_SUFFIX;
+  public static final String IS_CLINIC_ADMIN = HAS_PERMISSION_FUNCTION_PREFIX + MemberRole.ROLE_CLINIC_ADMIN + HAS_PERMISSION_FUNCTION_SUFFIX;
+  public static final String IS_DEVELOPER = HAS_PERMISSION_FUNCTION_PREFIX + MemberRole.ROLE_DEVELOPER + HAS_PERMISSION_FUNCTION_SUFFIX;
 
 }

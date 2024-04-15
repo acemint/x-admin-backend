@@ -1,6 +1,6 @@
 package com.clinic.xadmin.validator.annotation;
 
-import com.clinic.xadmin.constant.employee.EmployeeRole;
+import com.clinic.xadmin.constant.member.MemberRole;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -34,7 +34,7 @@ public @interface ValidRoleToRegister {
   class Validator implements ConstraintValidator<ValidRoleToRegister, String> {
 
     private static final String[] VALID_ROLE_TO_REGISTER = {
-        EmployeeRole.ROLE_CLINIC_ADMIN
+        MemberRole.ROLE_CLINIC_ADMIN
     };
 
     @Override

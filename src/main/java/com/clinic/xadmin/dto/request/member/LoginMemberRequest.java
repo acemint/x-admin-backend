@@ -1,4 +1,4 @@
-package com.clinic.xadmin.dto.request.employee;
+package com.clinic.xadmin.dto.request.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginEmployeeRequest implements Serializable {
+public class LoginMemberRequest implements Serializable {
 
   private String username;
   private String password;

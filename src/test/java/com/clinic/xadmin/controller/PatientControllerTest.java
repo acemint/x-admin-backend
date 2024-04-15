@@ -1,6 +1,6 @@
 package com.clinic.xadmin.controller;
 
-import com.clinic.xadmin.constant.employee.EmployeeRole;
+import com.clinic.xadmin.constant.member.MemberRole;
 import com.clinic.xadmin.controller.patient.PatientControllerPath;
 import com.clinic.xadmin.dto.request.patient.RegisterPatientRequest;
 import com.clinic.xadmin.entity.Clinic;
@@ -12,7 +12,6 @@ import com.clinic.xadmin.repository.patient.PatientRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +53,7 @@ public class PatientControllerTest extends BaseControllerTest {
   }
 
 
-  private void filter_constructEmployees(String specificFilePath) {
+  private void filter_construct(String specificFilePath) {
     String filePath = "patient_filter.json";
     if (Objects.nonNull(specificFilePath)) {
       filePath = specificFilePath;
@@ -70,9 +69,9 @@ public class PatientControllerTest extends BaseControllerTest {
 
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  @WithMockCustomUser(clinicId = "123", roles = { MemberRole.ROLE_CLINIC_ADMIN})
   public void filter_Valid_IsOk() throws Exception {
-    this.filter_constructEmployees(null);
+    this.filter_construct(null);
 
     this.mockMvc.perform(MockMvcRequestBuilders.get(PatientControllerPath.BASE + PatientControllerPath.FILTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -81,9 +80,9 @@ public class PatientControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "234", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
-  public void filter_EmployeeCannotAccessOtherClinic_IsOk() throws Exception {
-    this.filter_constructEmployees(null);
+  @WithMockCustomUser(clinicId = "234", roles = { MemberRole.ROLE_CLINIC_ADMIN})
+  public void filter_MemberCannotAccessOtherClinic_IsOk() throws Exception {
+    this.filter_construct(null);
 
     this.mockMvc.perform(MockMvcRequestBuilders.get(PatientControllerPath.BASE + PatientControllerPath.FILTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -92,9 +91,9 @@ public class PatientControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  @WithMockCustomUser(clinicId = "123", roles = { MemberRole.ROLE_CLINIC_ADMIN})
   public void filter_RequestParameterNameIsNotNull_IsOk() throws Exception {
-    this.filter_constructEmployees(null);
+    this.filter_construct(null);
 
     this.mockMvc.perform(MockMvcRequestBuilders.get(PatientControllerPath.BASE + PatientControllerPath.FILTER)
             .param("name", "uzu")
@@ -104,9 +103,9 @@ public class PatientControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  @WithMockCustomUser(clinicId = "123", roles = { MemberRole.ROLE_CLINIC_ADMIN})
   public void filter_SortByName_IsOk() throws Exception {
-    this.filter_constructEmployees(null);
+    this.filter_construct(null);
     List<Patient> patients = this.patientRepository.findAll();
 
     this.mockMvc.perform(MockMvcRequestBuilders.get(PatientControllerPath.BASE + PatientControllerPath.FILTER)
@@ -123,9 +122,9 @@ public class PatientControllerTest extends BaseControllerTest {
 
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  @WithMockCustomUser(clinicId = "123", roles = { MemberRole.ROLE_CLINIC_ADMIN})
   public void filter_PageNumberIsNotDefaultAndPageSizeIsNotDefault_IsOk() throws Exception {
-    this.filter_constructEmployees(null);
+    this.filter_construct(null);
 
     this.mockMvc.perform(MockMvcRequestBuilders.get(PatientControllerPath.BASE + PatientControllerPath.FILTER)
             .param("pageNumber", "1")
@@ -139,7 +138,7 @@ public class PatientControllerTest extends BaseControllerTest {
 
   @Test
   public void filter_CurrentUserIsNotAuthenticated_IsForbidden() throws Exception {
-    this.filter_constructEmployees(null);
+    this.filter_construct(null);
 
     this.mockMvc.perform(MockMvcRequestBuilders.get(PatientControllerPath.BASE + PatientControllerPath.FILTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -147,7 +146,7 @@ public class PatientControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  @WithMockCustomUser(clinicId = "123", roles = { MemberRole.ROLE_CLINIC_ADMIN})
   public void filter_CurrentUserIsNonDeveloper_ClinicCodeRequestParameterIsNotNull_IsForbidden() throws Exception {
     this.mockMvc.perform(MockMvcRequestBuilders.get(PatientControllerPath.BASE + PatientControllerPath.FILTER)
             .param("clinicCode", "CLC-123")
@@ -156,7 +155,7 @@ public class PatientControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  @WithMockCustomUser(clinicId = "123", roles = { MemberRole.ROLE_CLINIC_ADMIN})
   public void register_Valid_Success() throws Exception {
     this.register_ConstructClinic(null);
     RegisterPatientRequest request = IntegrationTestHelper
@@ -171,7 +170,7 @@ public class PatientControllerTest extends BaseControllerTest {
 
 
   @Test
-  @WithMockCustomUser(clinicId = "123", roles = { EmployeeRole.ROLE_CLINIC_ADMIN})
+  @WithMockCustomUser(clinicId = "123", roles = { MemberRole.ROLE_CLINIC_ADMIN})
   public void register_CurrentUserIsNonDeveloper_ClinicCodeRequestParameterIsNotNull_IsForbidden() throws Exception {
     this.register_ConstructClinic(null);
     RegisterPatientRequest request = IntegrationTestHelper

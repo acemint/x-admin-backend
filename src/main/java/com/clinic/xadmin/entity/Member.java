@@ -2,7 +2,6 @@ package com.clinic.xadmin.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -22,8 +21,8 @@ import java.math.BigDecimal;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "xa_employee")
-public class Employee extends BaseEntity {
+@Table(name = "xa_member")
+public class Member extends BaseEntity {
 
   @ManyToOne
   @JoinColumn(name ="clinic_id")

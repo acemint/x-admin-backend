@@ -1,6 +1,6 @@
 package com.clinic.xadmin.entity.audit;
 
-import com.clinic.xadmin.entity.Employee;
+import com.clinic.xadmin.entity.Member;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,8 @@ public class AuditAware implements AuditorAware<String> {
   @Override
   public Optional<String> getCurrentAuditor() {
     Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
-    Employee currentAuthenticatedUser = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
+    Member currentAuthenticatedUser = ((CustomUserDetails) authentication.getPrincipal()).getMember();
     return Optional.ofNullable(currentAuthenticatedUser)
-        .map(Employee::getUsername);
+        .map(Member::getUsername);
   }
 }

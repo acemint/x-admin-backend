@@ -1,9 +1,9 @@
-package com.clinic.xadmin.repository.employee;
+package com.clinic.xadmin.repository.member;
 
 
-import com.clinic.xadmin.entity.Employee;
-import com.clinic.xadmin.entity.QEmployee;
-import com.clinic.xadmin.model.employee.EmployeeFilter;
+import com.clinic.xadmin.entity.Member;
+import com.clinic.xadmin.entity.QMember;
+import com.clinic.xadmin.model.member.MemberFilter;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -24,80 +24,80 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
+public class MemberCustomRepositoryImpl implements MemberCustomRepository {
 
   //  TODO: Choose where to move this (which layer)
   public static final LinkedHashSet<String> AVAILABLE_SORTED_BY = new LinkedHashSet<>();
 
   static {
     AVAILABLE_SORTED_BY.add("name");
-    AVAILABLE_SORTED_BY.add(Employee.Fields.type);
-    AVAILABLE_SORTED_BY.add(Employee.Fields.status);
+    AVAILABLE_SORTED_BY.add(Member.Fields.type);
+    AVAILABLE_SORTED_BY.add(Member.Fields.status);
   }
 
   @Autowired
   private EntityManager entityManager;
 
   @Override
-  public Employee searchByUsername(String username) {
-    QEmployee qEmployee = QEmployee.employee;
+  public Member searchByUsername(String username) {
+    QMember qMember = QMember.member;
     JPAQuery<?> query = new JPAQuery<>(entityManager);
 
-    return query.select(qEmployee)
-        .from(qEmployee)
-        .where(qEmployee.username.eq(username))
+    return query.select(qMember)
+        .from(qMember)
+        .where(qMember.username.eq(username))
         .fetchOne();
   }
 
   @Override
-  public Employee searchByClinicCodeAndEmailAddress(String clinicCode, String emailAddress) {
-    QEmployee qEmployee = QEmployee.employee;
+  public Member searchByClinicCodeAndEmailAddress(String clinicCode, String emailAddress) {
+    QMember qMember = QMember.member;
     JPAQuery<?> query = new JPAQuery<>(entityManager);
 
-    return query.select(qEmployee)
-        .from(qEmployee)
-        .where(qEmployee.emailAddress.eq(emailAddress)
-            .and(qEmployee.clinic.code.eq(clinicCode)))
+    return query.select(qMember)
+        .from(qMember)
+        .where(qMember.emailAddress.eq(emailAddress)
+            .and(qMember.clinic.code.eq(clinicCode)))
         .fetchOne();
   }
 
   @Override
-  public Page<Employee> searchByFilter(EmployeeFilter filter) {
-    QEmployee qEmployee = QEmployee.employee;
+  public Page<Member> searchByFilter(MemberFilter filter) {
+    QMember qMember = QMember.member;
     JPAQuery<?> query = new JPAQuery<>(entityManager);
 
     Pageable pageable = filter.getPageable();
 
-    List<Employee> employees = query.select(qEmployee)
-        .from(qEmployee)
+    List<Member> members = query.select(qMember)
+        .from(qMember)
         .where(this.getBooleanExpression(filter))
         .limit(pageable.getPageSize())
         .offset(pageable.getOffset())
         .orderBy(this.getOrderSpecifier(pageable.getSort()).toArray(new OrderSpecifier[]{}))
         .fetch();
 
-    return new PageImpl<>(employees, filter.getPageable(), employees.size());
+    return new PageImpl<>(members, filter.getPageable(), members.size());
   }
 
-  private @Nullable BooleanExpression getBooleanExpression(EmployeeFilter filter) {
-    QEmployee qEmployee = QEmployee.employee;
+  private @Nullable BooleanExpression getBooleanExpression(MemberFilter filter) {
+    QMember qMember = QMember.member;
 
-    BooleanExpression booleanExpression = qEmployee.id.isNotNull();
+    BooleanExpression booleanExpression = qMember.id.isNotNull();
     if (StringUtils.hasText(filter.getName())) {
       String nameWithPercentSign = "%" + Optional.ofNullable(filter.getName()).orElse("") + "%";
       booleanExpression = booleanExpression.and(
-              qEmployee.firstName.likeIgnoreCase(nameWithPercentSign).or(qEmployee.lastName.likeIgnoreCase(nameWithPercentSign))
+              qMember.firstName.likeIgnoreCase(nameWithPercentSign).or(qMember.lastName.likeIgnoreCase(nameWithPercentSign))
       );
     }
     if (StringUtils.hasText(filter.getClinicCode())) {
       booleanExpression = booleanExpression.and(
-          qEmployee.clinic.code.eq(filter.getClinicCode()));
+          qMember.clinic.code.eq(filter.getClinicCode()));
     }
     return booleanExpression;
   }
 
   private List<OrderSpecifier<?>> getOrderSpecifier(Sort sort) {
-    QEmployee qEmployee = QEmployee.employee;
+    QMember qMember = QMember.member;
     Order order = sort.get().map(o -> o.getDirection().isAscending() ? Order.ASC : Order.DESC)
         .findFirst()
         .orElse(Order.ASC);
@@ -105,16 +105,16 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository {
     List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
     for (String property : sort.stream().map(Sort.Order::getProperty).toList()) {
       if (property.equals("name")) {
-        orderSpecifiers.add(new OrderSpecifier<>(order, qEmployee.firstName));
-        orderSpecifiers.add(new OrderSpecifier<>(order, qEmployee.lastName));
+        orderSpecifiers.add(new OrderSpecifier<>(order, qMember.firstName));
+        orderSpecifiers.add(new OrderSpecifier<>(order, qMember.lastName));
         continue;
       }
-      if (property.equals(Employee.Fields.type)) {
-        orderSpecifiers.add(new OrderSpecifier<>(order, qEmployee.type));
+      if (property.equals(Member.Fields.type)) {
+        orderSpecifiers.add(new OrderSpecifier<>(order, qMember.type));
         continue;
       }
-      if (property.equals(Employee.Fields.status)) {
-        orderSpecifiers.add(new OrderSpecifier<>(order, qEmployee.status));
+      if (property.equals(Member.Fields.status)) {
+        orderSpecifiers.add(new OrderSpecifier<>(order, qMember.status));
         continue;
       }
     }

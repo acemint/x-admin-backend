@@ -1,4 +1,4 @@
-package com.clinic.xadmin.model.employee;
+package com.clinic.xadmin.model.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.annotation.Nullable;
@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 @AllArgsConstructor
 @Builder
 @Data
-public class EmployeeFilter {
+public class MemberFilter {
 
   @Nullable
   private String clinicCode;

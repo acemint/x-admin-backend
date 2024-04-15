@@ -2,14 +2,10 @@ package com.clinic.xadmin.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,7 +28,7 @@ public class Visit extends BaseEntity {
 
   @ManyToOne
   @JoinColumn(name ="employee_id", nullable = false)
-  private Employee employee;
+  private Member member;
 
   @Column(name = "code", nullable = false)
   private String code;

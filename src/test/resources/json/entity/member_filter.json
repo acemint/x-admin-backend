@@ -2,7 +2,7 @@
   "id": "123",
   "code": "CLC-123",
   "name": "Dental Now",
-  "employees": [
+  "members": [
     {
       "code": "EMP-1",
       "username": "user1_123",
@@ -15,7 +15,7 @@
       "age": 35,
       "password": "Admin123:>",
       "type": null,
-      "role": "ROLE_REGULAR_EMPLOYEE",
+      "role": "ROLE_REGULAR",
       "status": "ACTIVE",
       "doctorNumber": null,
       "practiceLicense": null,
@@ -34,7 +34,7 @@
       "age": 35,
       "password": "Admin123:>",
       "type": "-",
-      "role": "ROLE_REGULAR_EMPLOYEE",
+      "role": "ROLE_REGULAR",
       "status": "ACTIVE",
       "doctorNumber": null,
       "practiceLicense": null,
@@ -53,7 +53,7 @@
       "age": 35,
       "password": "Admin123:>",
       "type": null,
-      "role": "ROLE_REGULAR_EMPLOYEE",
+      "role": "ROLE_REGULAR",
       "status": "INACTIVE",
       "doctorNumber": null,
       "practiceLicense": null,

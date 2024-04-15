@@ -1,13 +1,13 @@
-package com.clinic.xadmin.controller.employee;
+package com.clinic.xadmin.controller.member;
 
-public interface EmployeeControllerDocs {
+public interface MemberControllerDocs {
 
-  String REGISTER_SUMMARY = "Registers an employee within its' own clinic";
+  String REGISTER_SUMMARY = "Registers an member within its' own clinic";
   String REGISTER_DESCRIPTION = "Role Allowed: ROLE_CLINIC_ADMIN";
 
-  String GET_SELF_SUMMARY = "Get the data of current logged-in employee";
-  String GET_EMPLOYEES_SUMMARY = "Get the list of employees in own's clinic";
-  String GET_EMPLOYEES_DESCRIPTION = "Returns list of employees in the clinic that the authenticated user is at."
+  String GET_SELF_SUMMARY = "Get the data of current logged-in member";
+  String GET_MEMBER_SUMMARY = "Get the list of member in own's clinic";
+  String GET_MEMBER_DESCRIPTION = "Returns list of member in the clinic that the authenticated user is at."
       + "The user of this API must at least be ADMIN.<br><br>"
       + "Request Parameters: <br>"
       + "`name`: to filter by \"firstName\" or \"lastName\"<br>"

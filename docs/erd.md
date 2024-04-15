@@ -8,10 +8,16 @@ are the corresponding columns created and last changed. These columns are:
 <br><br><br>
 ```mermaid
 erDiagram
-    XA_CLINIC ||--o{ XA_EMPLOYEE : have
-    XA_PRACTITIONER ||--o{ XA_VISIT : confirms
-    XA_EMPLOYEE ||--o{ XA_ATTENDANCE : creates
-    XA_PATIENT ||--o{ XA_VISIT : confirms
+    XA_CLINIC ||--|| XA_CLINIC_CREDENTIAL: has
+    XA_CLINIC ||--o{ XA_MEMBER : have
+    XA_MEMBER ||--o{ XA_ATTENDANCE : creates
+    XA_MEMBER ||--o| XA_MEMBER_AS_MANAGER: mightBe
+    XA_MEMBER ||--o| XA_MEMBER_AS_PRACTITIONER: mightBe
+    XA_MEMBER ||--o| XA_MEMBER_AS_PATIENT: mightBe
+    XA_CLINIC ||--o{ XA_ITEM: owns
+    
+    XA_MEMBER_AS_PRACTITIONER ||--o{ XA_VISIT : confirms
+    XA_MEMBER_AS_PATIENT ||--o{ XA_VISIT : confirms
     XA_VISIT ||--o| XA_VISIT_TREATMENT : performs
     XA_VISIT_TREATMENT }|--|| XA_TREATMENT : details
     XA_VISIT_TREATMENT }|--|| XA_CAUSE : details
@@ -25,16 +31,19 @@ erDiagram
         date subscriptionValidFrom
         date subscriptionValidTo
         int subscriptionTier
+    }
+    XA_CLINIC_CREDENTIAL {
+        string clinicCode PK, FK
         string satuSehatOrganizationKey
         string satuSehatClientKey
-        string satuSehatSecretKey "bcrypt required"
+        string satuSehatSecretKey
         string satuSehatAccessToken
     }
-    XA_EMPLOYEE {
+    XA_MEMBER {
         uuid id PK
         string code "unique"
-        string username
         uuid clinicId FK
+        string username
         string firstName
         string lastName
         date age
@@ -44,38 +53,44 @@ erDiagram
         string gender
         string phoneNumber
         string address
+        string provinceCode
+        string cityCode
+        string districtCode
+        string villageCode
+        string rtCode
+        string rwCode
+    }
+    XA_MEMBER_AS_MANAGER {
         string password
+    }
+    XA_MEMBER_AS_PRACTITIONER {
+        string satuSehatReferenceId "IHS ID from SatuSehat, e.g.: P02478375538"
         decimal salary
         double taxPercentage
     }
-    XA_PRACTITIONER {
-        uuid id PK
-        string reference_id "IHS ID from SatuSehat, e.g.: P02478375538"
-        json satuSehatData
+    XA_MEMBER_AS_PATIENT {
+        string satuSehatReferenceId "IHS ID from SatuSehat, e.g.: P02478375538"
     }
-    XA_PATIENT {
+    XA_ATTENDANCE {
         uuid id PK
-        string reference_id "IHS ID from SatuSehat, e.g.: P02478375538"
-        json satuSehatData
+        uuid memberId FK
+        date clockIn
+        date clockOut
     }
     XA_VISIT {
         uuid id PK
         uuid patientId FK
-        uuid employeeId FK
-        string reference_id "ID of Encounter from SatuSehat"
+        uuid memberId FK
+        string satuSehatReferenceId "ID of Encounter from SatuSehat"
         string status
         datetime startTime
         datetime endTime
-    }
-    XA_ATTENDANCE {
-        uuid id PK
-        uuid employeeId FK
-        date clockIn
-        date clockOut
+        datetime sentToSatuSehatTime
     }
     XA_TREATMENT {
         uuid id PK
         string code "unique"
+        string referenceId "ID of Encounter from SatuSehat"
         uuid clinidId FK
         string name 
         double price
@@ -83,6 +98,7 @@ erDiagram
     XA_CAUSE {
         uuid id PK
         string code "unique"
+        string satuSehatReferenceId "ID from SatuSehat"
         uuid clinidId FK
         string name 
     }
@@ -90,6 +106,7 @@ erDiagram
         uuid id PK 
         string code "unique"
         uuid clinicId FK
+        string satuSehatReferenceId "ID from SatuSehat"
         string name
         double quantity
         string status

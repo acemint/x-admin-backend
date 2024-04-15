@@ -1,4 +1,4 @@
-package com.clinic.xadmin.dto.response.employee;
+package com.clinic.xadmin.dto.response.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EmployeeResponse {
+public class MemberResponse {
 
   private String id;
   private String username;

@@ -1,8 +1,8 @@
 package com.clinic.xadmin.controller.helper;
 
-import com.clinic.xadmin.constant.employee.EmployeeRole;
+import com.clinic.xadmin.constant.member.MemberRole;
 import com.clinic.xadmin.entity.Clinic;
-import com.clinic.xadmin.entity.Employee;
+import com.clinic.xadmin.entity.Member;
 import com.clinic.xadmin.exception.XAdminForbiddenException;
 import com.clinic.xadmin.exception.XAdminIllegalStateException;
 import com.clinic.xadmin.repository.clinic.ClinicRepository;
@@ -33,15 +33,15 @@ public class ControllerHelperImpl implements ControllerHelper {
   @Override
   public Clinic getClinicScope(String clinicCode) {
     Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
-    Employee currentAuthenticatedUser = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
+    Member currentAuthenticatedUser = ((CustomUserDetails) authentication.getPrincipal()).getMember();
     this.validateAuthenticationToRequest(currentAuthenticatedUser, clinicCode);
     return Optional.ofNullable(clinicCode)
         .map(this.clinicRepository::searchByCode)
         .orElse(currentAuthenticatedUser.getClinic());
   }
 
-  private void validateAuthenticationToRequest(Employee currentAuthenticatedUser, String clinicCode) {
-    if (EmployeeRole.isFirefighterRoles(currentAuthenticatedUser)) {
+  private void validateAuthenticationToRequest(Member currentAuthenticatedUser, String clinicCode) {
+    if (MemberRole.isFirefighterRoles(currentAuthenticatedUser)) {
       validateFirefighterRole(clinicCode);
     }
     else {
@@ -49,7 +49,7 @@ public class ControllerHelperImpl implements ControllerHelper {
     }
   }
 
-  private void validateNonFireFighterRole(Employee currentAuthenticatedUser, String clinicCode) {
+  private void validateNonFireFighterRole(Member currentAuthenticatedUser, String clinicCode) {
     if (StringUtils.hasText(clinicCode)) {
       throw new XAdminForbiddenException("Clinic code request param cannot be passed for user role " + currentAuthenticatedUser.getRole() + " for request parameter " + clinicCode);
     }

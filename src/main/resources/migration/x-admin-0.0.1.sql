@@ -18,7 +18,7 @@ CREATE TABLE public.xa_clinic (
 CREATE SEQUENCE public.clinic_sequence AS bigint;
 ALTER TABLE xa_clinic ADD UNIQUE(code);
 
-CREATE TABLE public.xa_employee (
+CREATE TABLE public.xa_member (
     id varchar(255) NOT NULL,
     created_date timestamp(6) null,
     created_by varchar(255) null,
@@ -45,9 +45,9 @@ CREATE TABLE public.xa_employee (
 	FOREIGN KEY (clinic_id) REFERENCES public.xa_clinic(id)
 );
 
-CREATE SEQUENCE public.employee_sequence AS bigint;
-ALTER TABLE xa_employee ADD UNIQUE(code);
-ALTER TABLE xa_employee ADD UNIQUE(username);
+CREATE SEQUENCE public.member_sequence AS bigint;
+ALTER TABLE xa_member ADD UNIQUE(code);
+ALTER TABLE xa_member ADD UNIQUE(username);
 
 
 CREATE TABLE public.xa_item (
@@ -103,11 +103,11 @@ CREATE TABLE public.xa_visit (
 	status varchar(50) NOT NULL,
 	start_time timestamp(6) NOT NULL,
 	end_time timestamp(6) NOT NULL,
-	employee_id varchar(255) NOT NULL,
+	member_id varchar(255) NOT NULL,
 	patient_id varchar(255) NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (patient_id) REFERENCES public.xa_patient(id),
-	FOREIGN KEY (employee_id) REFERENCES public.xa_employee(id)
+	FOREIGN KEY (member_id) REFERENCES public.xa_member(id)
 );
 
 CREATE SEQUENCE public.visit_sequence AS bigint;
@@ -154,7 +154,7 @@ CREATE TABLE public.xa_attendance (
     last_modified_by varchar(255) null,
 	clock_in timestamp(6) NOT NULL,
 	clock_out timestamp(6) NOT NULL,
-	employee_id varchar(255) NOT NULL,
+	member_id varchar(255) NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (employee_id) REFERENCES public.xa_employee(id)
+	FOREIGN KEY (member_id) REFERENCES public.xa_member(id)
 );

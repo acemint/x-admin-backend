@@ -1,2 +1,2 @@
-INSERT INTO xa_employee(id, code, first_name, last_name, email_address, phone_number, address, age, gender, "password", "role", "type", status, clinic_id)
-VALUES (GEN_RANDOM_UUID(), CONCAT('CLC-', nextval('employee_sequence'), 'Steven', 'Kristian', 'steven@gmail.com', '0896123', 'Jl. Surga', 18, 'MALE', '', 'ROLE_DEVELOPER', '-', '-', {})
+INSERT INTO xa_member(id, code, first_name, last_name, email_address, phone_number, address, age, gender, "password", "role", "type", status, clinic_id)
+VALUES (GEN_RANDOM_UUID(), CONCAT('CLC-', nextval('member_sequence'), 'Steven', 'Kristian', 'steven@gmail.com', '0896123', 'Jl. Surga', 18, 'MALE', '', 'ROLE_DEVELOPER', '-', '-', {})

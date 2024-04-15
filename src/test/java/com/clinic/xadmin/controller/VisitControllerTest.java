@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class RootPublicControllerTest extends BaseControllerTest {
+public class VisitControllerTest extends BaseControllerTest {
 
   @Autowired
   private MemberRepository memberRepository;

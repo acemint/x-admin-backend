@@ -2,7 +2,7 @@
   "id": "123",
   "code": "CLC-123",
   "name": "Dental Now",
-  "employees": [
+  "members": [
     {
       "code": "EMP-1",
       "username": "user.clc001",

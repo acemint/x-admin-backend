@@ -1,6 +1,6 @@
-package com.clinic.xadmin.constant.employee;
+package com.clinic.xadmin.constant.member;
 
-public class EmployeeStatus {
+public class MemberStatus {
 
   public static final String ACTIVE = "ACTIVE";
   public static final String INACTIVE = "INACTIVE";

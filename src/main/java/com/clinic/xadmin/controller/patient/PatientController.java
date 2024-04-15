@@ -1,7 +1,6 @@
 package com.clinic.xadmin.controller.patient;
 
 
-import com.clinic.xadmin.controller.employee.EmployeeControllerDefaultValue;
 import com.clinic.xadmin.controller.helper.ControllerHelper;
 import com.clinic.xadmin.dto.request.patient.RegisterPatientRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
@@ -94,9 +93,9 @@ public class PatientController {
       @RequestParam(name = "name", required = false) String name,
       @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestParam(name = "sortBy", required = false) String[] sortBy,
-      @RequestParam(name = "sortDirection", defaultValue = EmployeeControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
-      @RequestParam(name = "pageNumber", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
-      @RequestParam(name = "pageSize", defaultValue = EmployeeControllerDefaultValue.DEFAULT_PAGE_SIZE) Integer pageSize) {
+      @RequestParam(name = "sortDirection", defaultValue = PatientControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
+      @RequestParam(name = "pageNumber", defaultValue = PatientControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
+      @RequestParam(name = "pageSize", defaultValue = PatientControllerDefaultValue.DEFAULT_PAGE_SIZE) Integer pageSize) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     clinicCode = clinic.getCode();
 

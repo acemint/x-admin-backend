@@ -1,7 +1,7 @@
 package com.clinic.xadmin.security.authprovider;
 
-import com.clinic.xadmin.entity.Employee;
-import com.clinic.xadmin.repository.employee.EmployeeRepository;
+import com.clinic.xadmin.entity.Member;
+import com.clinic.xadmin.repository.member.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,19 +15,19 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
 
   public static final String BEAN_NAME = "CustomUserDetailsServiceImpl";
 
-  private final EmployeeRepository employeeRepository;
+  private final MemberRepository memberRepository;
 
   @Autowired
-  public CustomUserDetailsServiceImpl(EmployeeRepository employeeRepository) {
-    this.employeeRepository = employeeRepository;
+  public CustomUserDetailsServiceImpl(MemberRepository memberRepository) {
+    this.memberRepository = memberRepository;
   }
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Employee employee = this.employeeRepository.searchByUsername(username);
-    if (Objects.isNull(employee)) {
+    Member member = this.memberRepository.searchByUsername(username);
+    if (Objects.isNull(member)) {
       throw new UsernameNotFoundException("User not found with username: " + username);
     }
-    return CustomUserDetailsFactory.createFrom(employee);
+    return CustomUserDetailsFactory.createFrom(member);
   }
 }

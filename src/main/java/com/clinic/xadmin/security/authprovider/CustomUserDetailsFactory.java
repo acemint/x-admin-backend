@@ -1,13 +1,13 @@
 package com.clinic.xadmin.security.authprovider;
 
-import com.clinic.xadmin.entity.Employee;
+import com.clinic.xadmin.entity.Member;
 
 
 public class CustomUserDetailsFactory {
 
-  public static CustomUserDetails createFrom(Employee employee) {
+  public static CustomUserDetails createFrom(Member member) {
     return CustomUserDetails.builder()
-        .employee(employee)
+        .member(member)
         .build();
   }
 

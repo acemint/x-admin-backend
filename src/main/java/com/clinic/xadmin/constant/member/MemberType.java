@@ -1,6 +1,6 @@
-package com.clinic.xadmin.constant.employee;
+package com.clinic.xadmin.constant.member;
 
-public class EmployeeType {
+public class MemberType {
 
   public static final String DOCTOR = "DOCTOR";
   public static final String SPECIALIST_DOCTOR = "SPECIALIST-DOCTOR";
