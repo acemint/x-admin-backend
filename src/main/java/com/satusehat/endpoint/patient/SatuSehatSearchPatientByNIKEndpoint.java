@@ -4,6 +4,7 @@ import com.satusehat.dto.response.StandardizedResourceResponse;
 import com.satusehat.dto.response.patient.PatientResourceResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
 import com.satusehat.property.SatuSehatPropertyHolder;
+import lombok.Builder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,6 +24,7 @@ public class SatuSehatSearchPatientByNIKEndpoint implements
   private String authToken;
   private final String nik;
 
+  @Builder
   public SatuSehatSearchPatientByNIKEndpoint(String nik) {
     this.nik = SatuSehatPropertyHolder.getInstance().getNikUrl() + nik;
   }

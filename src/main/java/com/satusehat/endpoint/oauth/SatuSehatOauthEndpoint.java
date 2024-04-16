@@ -3,6 +3,7 @@ package com.satusehat.endpoint.oauth;
 import com.satusehat.dto.response.oauth.OAuthResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
 import com.satusehat.property.SatuSehatPropertyHolder;
+import lombok.Builder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ public class SatuSehatOauthEndpoint implements SatuSehatEndpoint<OAuthResponse> 
   private final String clientId;
   private final String clientSecret;
 
+  @Builder
   public SatuSehatOauthEndpoint(String clientId, String clientSecret) {
     this.clientId = clientId;
     this.clientSecret = clientSecret;

@@ -14,10 +14,10 @@ import java.util.List;
 public class PatientResourceResponse {
 
   private Boolean active;
-  private Address address;
+  private List<Address> address;
   private String birthDate;
   private Boolean deceasedBoolean;
-  private Communication communication;
+  private List<Communication> communication;
   private String gender;
   private String id;
   private List<Telecom> telecom;
@@ -30,7 +30,7 @@ public class PatientResourceResponse {
 
     private String city;
     private String country;
-    private AddressExtension extension;
+    private List<AddressExtension> extension;
     private List<String> line;
     private String use;
 
@@ -40,7 +40,7 @@ public class PatientResourceResponse {
     @AllArgsConstructor
     public static class AddressExtension {
 
-      private NestedAddressExtension extension;
+      private List<NestedAddressExtension> extension;
       private String url;
 
       @Data
