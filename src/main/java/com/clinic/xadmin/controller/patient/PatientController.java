@@ -27,6 +27,8 @@ public class PatientController {
     this.patientService = patientService;
   }
 
+
+  // TODO (MINOR): CREATE VALIDATOR FOR NULL FIELDS ON CERTAIN SEARCH BY CONDITIONS
   @Operation(summary = PatientControllerDocs.SEARCH_PATIENT_SUMMARY, description = PatientControllerDocs.SEARCH_PATIENT_DESCRIPTION)
   @GetMapping(value = PatientControllerPath.SEARCH, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<StandardizedResponse<IHSCodeResponse>> searchPatientByNIK(

@@ -314,7 +314,7 @@ public class MemberControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockCustomUser(roles = { MemberRole.ROLE_REGULAR})
+  @WithMockCustomUser(roles = { MemberRole.ROLE_PATIENT})
   public void register_MemberRoleIsRegularMember_IsForbidden() throws Exception {
     byte[] requestBody = IntegrationTestHelper
         .readJsonAsBytes("member_register_normalUser.json", IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);

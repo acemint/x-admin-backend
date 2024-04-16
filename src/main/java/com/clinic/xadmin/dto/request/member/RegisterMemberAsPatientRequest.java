@@ -1,5 +1,6 @@
 package com.clinic.xadmin.dto.request.member;
 
+import com.clinic.xadmin.constant.member.MemberRole;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -20,5 +21,7 @@ public class RegisterMemberAsPatientRequest extends RegisterMemberRequest {
 
   @NotNull
   private String satuSehatPatientReferenceId;
+
+  private String role = MemberRole.ROLE_PATIENT;
 
 }

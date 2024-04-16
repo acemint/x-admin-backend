@@ -2,8 +2,7 @@ package com.clinic.xadmin.dto.request.member;
 
 import com.clinic.xadmin.validator.annotation.ValidEmail;
 import com.clinic.xadmin.validator.annotation.ValidGender;
-import com.clinic.xadmin.validator.annotation.ValidPassword;
-import com.clinic.xadmin.validator.annotation.ValidRoleToRegister;
+import com.clinic.xadmin.validator.annotation.ValidStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -33,19 +32,11 @@ public class RegisterMemberRequest {
   @ValidEmail
   private String emailAddress;
 
-  @NotNull
+  @ValidStatus
   private String status;
 
-  @ValidRoleToRegister
-  private String role;
-
-  @NotNull
   private String address;
 
-  @NotNull
   private String phoneNumber;
-
-  @ValidPassword
-  private String password;
 
 }
