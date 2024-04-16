@@ -26,12 +26,15 @@ public class RegisterMemberRequest {
   @Min(18)
   private int age;
 
+  @NotNull
   @ValidGender
   private String gender;
 
+  @NotNull
   @ValidEmail
   private String emailAddress;
 
+  @NotNull
   @ValidStatus
   private String status;
 

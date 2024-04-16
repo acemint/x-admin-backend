@@ -34,7 +34,7 @@ public @interface ValidStatus {
     @Override
     public boolean isValid(String status, ConstraintValidatorContext context) {
       if (Objects.isNull(status)) {
-        return false;
+        return true;
       }
 
       if (!MemberStatus.VALID_STATUS.contains(status)) {

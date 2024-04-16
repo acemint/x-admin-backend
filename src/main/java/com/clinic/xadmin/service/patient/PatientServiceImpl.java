@@ -45,7 +45,7 @@ public class PatientServiceImpl implements PatientService {
       endpoint = SatuSehatSearchPatientByDescriptionEndpoint.builder()
           .name(filter.getName())
           .birthDate(filter.getDateOfBirth())
-          .gender(filter.getGender())
+          .gender(filter.getGender().toLowerCase())
           .build();
     }
     ResponseEntity<StandardizedResourceResponse<PatientResourceResponse>>

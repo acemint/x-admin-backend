@@ -40,7 +40,7 @@ public @interface ValidRegisterManagerRole {
     @Override
     public boolean isValid(String role, ConstraintValidatorContext context) {
       if (Objects.isNull(role)) {
-        return false;
+        return true;
       }
 
       if (!Arrays.stream(VALID_ROLE_TO_REGISTER).toList().contains(role)) {

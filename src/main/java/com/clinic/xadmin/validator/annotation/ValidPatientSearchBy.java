@@ -11,6 +11,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
@@ -24,7 +25,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface ValidPatientSearchBy {
 
-  String message() default "invalid search by: ${searchBy}";
+  String message() default "invalid search by: ${validatedValue}";
 
   Class<?>[] groups() default {};
 
@@ -35,6 +36,10 @@ public @interface ValidPatientSearchBy {
 
     @Override
     public boolean isValid(String searchBy, ConstraintValidatorContext context) {
+      if (Objects.isNull(searchBy)) {
+        return true;
+      }
+
       if (!Arrays.stream(PatientControllerSpecialValue.ALL_SEARCH_BY).toList().contains(searchBy)) {
         return false;
       }
