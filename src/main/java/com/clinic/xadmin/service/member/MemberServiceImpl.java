@@ -1,5 +1,6 @@
 package com.clinic.xadmin.service.member;
 
+import com.clinic.xadmin.constant.member.MemberRole;
 import com.clinic.xadmin.dto.request.member.RegisterMemberAsManagerRequest;
 import com.clinic.xadmin.dto.request.member.RegisterMemberAsPatientRequest;
 import com.clinic.xadmin.dto.request.member.RegisterMemberAsPractitionerRequest;
@@ -63,6 +64,7 @@ public class MemberServiceImpl implements MemberService {
     member.setClinicUsername(this.getValidUsername(request, clinic, null));
     member.setCode(this.memberRepository.getNextCode());
     member.setClinic(clinic);
+    member.setRole(MemberRole.ROLE_PATIENT);
 
     return this.memberRepository.save(member);
   }
@@ -76,6 +78,7 @@ public class MemberServiceImpl implements MemberService {
     member.setClinicUsername(this.getValidUsername(request, clinic, null));
     member.setCode(this.memberRepository.getNextCode());
     member.setClinic(clinic);
+    member.setRole(MemberRole.ROLE_PRACTITIONER);
 
     return this.memberRepository.save(member);
   }
@@ -128,9 +131,9 @@ public class MemberServiceImpl implements MemberService {
 
   private void validatePatientIHSCode(Clinic clinic, RegisterMemberAsPatientRequest request) {
     SatuSehatSearchPatientByIHSEndpoint endpoint = SatuSehatSearchPatientByIHSEndpoint.builder().ihsCode(request.getSatuSehatPatientReferenceId()).build();
-    ResponseEntity<StandardizedResourceResponse<PatientResourceResponse>>
+    ResponseEntity<PatientResourceResponse>
         response = this.apiCallWrapper.wrapThrowableCall(endpoint, clinic.getCode());
-    if (response.getBody().getEntries().isEmpty()) {
+    if (!StringUtils.hasText(response.getBody().getId())) {
       throw new XAdminBadRequestException("Invalid IHS Code: " + request.getSatuSehatPatientReferenceId());
     }
   }

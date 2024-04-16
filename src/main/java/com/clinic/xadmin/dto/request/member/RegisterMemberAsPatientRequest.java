@@ -22,6 +22,4 @@ public class RegisterMemberAsPatientRequest extends RegisterMemberRequest {
   @NotNull
   private String satuSehatPatientReferenceId;
 
-  private String role = MemberRole.ROLE_PATIENT;
-
 }

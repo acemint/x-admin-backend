@@ -2,6 +2,7 @@ package com.clinic.xadmin.controller;
 
 import com.clinic.xadmin.constant.member.MemberRole;
 import com.clinic.xadmin.controller.member.MemberControllerPath;
+import com.clinic.xadmin.dto.request.member.RegisterMemberAsManagerRequest;
 import com.clinic.xadmin.dto.request.member.RegisterMemberRequest;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Member;
@@ -365,8 +366,8 @@ public class MemberControllerTest extends BaseControllerTest {
     Clinic clinic = this.register_ConstructClinic(null);
     this.clinicRepository.save(clinic);
 
-    RegisterMemberRequest requestBody = IntegrationTestHelper
-        .readJsonFile("member_register_normalUser.json", RegisterMemberRequest.class, IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
+    RegisterMemberAsManagerRequest requestBody = IntegrationTestHelper
+        .readJsonFile("member_register_normalUser.json", RegisterMemberAsManagerRequest.class, IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
     requestBody.setPassword("notStrongPassword");
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
@@ -374,7 +375,7 @@ public class MemberControllerTest extends BaseControllerTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterMemberRequest.Fields.password)));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterMemberAsManagerRequest.Fields.password)));
   }
 
   @Test
@@ -474,8 +475,8 @@ public class MemberControllerTest extends BaseControllerTest {
     Clinic clinic = this.register_ConstructClinic(null);
     this.clinicRepository.save(clinic);
 
-    RegisterMemberRequest requestBody = IntegrationTestHelper
-        .readJsonFile("member_register_normalUser.json", RegisterMemberRequest.class, IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
+    RegisterMemberAsManagerRequest requestBody = IntegrationTestHelper
+        .readJsonFile("member_register_normalUser.json", RegisterMemberAsManagerRequest.class, IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
     requestBody.setRole(MemberRole.ROLE_DEVELOPER);
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
@@ -483,7 +484,7 @@ public class MemberControllerTest extends BaseControllerTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterMemberRequest.Fields.role)));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterMemberAsManagerRequest.Fields.role)));
   }
 
 
