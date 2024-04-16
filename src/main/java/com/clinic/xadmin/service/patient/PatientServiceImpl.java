@@ -1,11 +1,11 @@
 package com.clinic.xadmin.service.patient;
 
 import com.clinic.xadmin.controller.patient.PatientControllerSpecialValue;
-import com.clinic.xadmin.entity.Clinic;
+import com.clinic.xadmin.entity.ClinicSatuSehatCredential;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
 import com.clinic.xadmin.model.patient.SatuSehatPatientFilter;
 import com.clinic.xadmin.outbound.SatuSehatAPICallWrapper;
-import com.clinic.xadmin.repository.clinic.ClinicRepository;
+import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
 import com.satusehat.dto.response.StandardizedResourceResponse;
 import com.satusehat.dto.response.patient.PatientResourceResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
@@ -20,14 +20,16 @@ import org.springframework.stereotype.Service;
 public class PatientServiceImpl implements PatientService {
 
   private final SatuSehatAPICallWrapper apiCallWrapper;
+  private final ClinicSatuSehatCredentialRepository clinicSatuSehatCredentialRepository;
 
   @Autowired
-  private PatientServiceImpl(SatuSehatAPICallWrapper apiCallWrapper) {
+  private PatientServiceImpl(SatuSehatAPICallWrapper apiCallWrapper, ClinicSatuSehatCredentialRepository clinicSatuSehatCredentialRepository) {
     this.apiCallWrapper = apiCallWrapper;
+    this.clinicSatuSehatCredentialRepository = clinicSatuSehatCredentialRepository;
   }
 
   @Override
-  public String getPatientFromSatuSehat(Clinic clinic, SatuSehatPatientFilter filter) {
+  public String getPatientFromSatuSehat(SatuSehatPatientFilter filter) {
     SatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> endpoint = null;
     if (filter.getSearchBy().equals(PatientControllerSpecialValue.SEARCH_BY_NIK)) {
       endpoint = SatuSehatSearchPatientByNIKEndpoint.builder()
@@ -47,7 +49,7 @@ public class PatientServiceImpl implements PatientService {
           .build();
     }
     ResponseEntity<StandardizedResourceResponse<PatientResourceResponse>>
-        response = this.apiCallWrapper.wrapThrowableCall(endpoint, clinic.getCode());
+        response = this.apiCallWrapper.wrapThrowableCall(endpoint, clinicSatuSehatCredentialRepository.searchMainClinicApp());
     if (response.getBody().getEntries().isEmpty()) {
       return null;
     }

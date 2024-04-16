@@ -46,10 +46,6 @@ public class ClinicSatuSehatCredentialCustomRepositoryImpl implements ClinicSatu
     if (Objects.isNull(vaultResponse)) {
       throw new XAdminInternalException("Clinic auth not found " + clinicProperty.getName());
     }
-    try {
-      return this.objectMapper.readValue(vaultResponse.getRequiredData().toString(), ClinicSatuSehatCredential.class);
-    } catch (JsonProcessingException e) {
-      throw new XAdminInternalException("Clinic auth can't be processed " + clinicProperty.getName());
-    }
+    return this.objectMapper.convertValue(vaultResponse.getRequiredData(), ClinicSatuSehatCredential.class);
   }
 }
