@@ -110,7 +110,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
         continue;
       }
       if (property.equals(Member.Fields.practitionerType)) {
-        orderSpecifiers.add(new OrderSpecifier<>(order, qMember.type));
+        orderSpecifiers.add(new OrderSpecifier<>(order, qMember.practitionerType));
         continue;
       }
       if (property.equals(Member.Fields.status)) {

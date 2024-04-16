@@ -62,7 +62,7 @@ public class ControllerHelperImpl implements ControllerHelper {
     if (StringUtils.hasText(clinicCode)) {
       return;
     }
-    throw new XAdminIllegalStateException("The corresponding controller should not be hit with Firefighter Roles, request for changes if it is otherwise wrong" + " for request parameter " + clinicCode);
+    throw new XAdminIllegalStateException("The corresponding controller should have clinic code as it is hit with Firefighter Roles, request for changes if it is otherwise wrong" + " for request parameter " + clinicCode);
   }
 
 }
