@@ -31,7 +31,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
 
   static {
     AVAILABLE_SORTED_BY.add("name");
-    AVAILABLE_SORTED_BY.add(Member.Fields.type);
+    AVAILABLE_SORTED_BY.add(Member.Fields.practitionerType);
     AVAILABLE_SORTED_BY.add(Member.Fields.status);
   }
 
@@ -109,7 +109,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
         orderSpecifiers.add(new OrderSpecifier<>(order, qMember.lastName));
         continue;
       }
-      if (property.equals(Member.Fields.type)) {
+      if (property.equals(Member.Fields.practitionerType)) {
         orderSpecifiers.add(new OrderSpecifier<>(order, qMember.type));
         continue;
       }

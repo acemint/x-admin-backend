@@ -31,10 +31,10 @@ public class Member extends BaseEntity {
   @Column(name = "code", nullable = false)
   private String code;
 
-  @Column(name = "satu_sehat_patient_reference_id", nullable = false)
+  @Column(name = "satu_sehat_patient_reference_id")
   private String satuSehatPatientReferenceId;
 
-  @Column(name = "satu_sehat_practitioner_reference_id", nullable = false)
+  @Column(name = "satu_sehat_practitioner_reference_id")
   private String satuSehatPractitionerReferenceId;
 
   @Column(name = "clinic_username", nullable = false, unique = true)
@@ -46,26 +46,23 @@ public class Member extends BaseEntity {
   @Column(name = "last_name")
   private String lastName;
 
+  @Column(name = "nik")
+  private String nik;
+
   @Column(name = "email_address", nullable = false)
   private String emailAddress;
 
-  @Column(name = "nik", nullable = false)
-  private String nik;
-
-  @Column(name = "phone_number", nullable = false)
+  @Column(name = "phone_number")
   private String phoneNumber;
 
-  @Column(name = "address", nullable = false)
+  @Column(name = "address")
   private String address;
 
-  @Column(name = "gender", nullable = false)
+  @Column(name = "gender")
   private String gender;
 
-  @Column(name = "age", nullable = false)
+  @Column(name = "age")
   private Integer age;
-
-  @Column(name = "type")
-  private String type;
 
   @Column(name = "role", nullable = false)
   private String role;
@@ -76,10 +73,19 @@ public class Member extends BaseEntity {
   @Column(name = "password")
   private String password;
 
-  @Column(name = "salary")
-  private BigDecimal salary;
+  @Column(name = "practitioner_type")
+  private String practitionerType;
 
-  @Column(name = "tax_percentage")
-  private BigDecimal taxPercentage;
+  @Column(name = "practitioner_salary")
+  private BigDecimal practitionerSalary;
+
+  @Column(name = "practitioner_number")
+  private String practitionerNumber;
+
+  @Column(name = "practitioner_practice_license")
+  private String practitionerPracticeLicense;
+
+  @Column(name = "practitioner_tax_percentage")
+  private BigDecimal practitionerTaxPercentage;
 
 }
