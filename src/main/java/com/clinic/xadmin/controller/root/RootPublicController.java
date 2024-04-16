@@ -3,6 +3,8 @@ package com.clinic.xadmin.controller.root;
 import com.clinic.xadmin.dto.request.member.LoginMemberRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.member.MemberResponse;
+import com.clinic.xadmin.exception.XAdminBadRequestException;
+import com.clinic.xadmin.exception.XAdminForbiddenException;
 import com.clinic.xadmin.mapper.MemberMapper;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.configuration.AuthenticationManagerConfiguration;
@@ -49,8 +51,12 @@ public class RootPublicController {
       description = RootPublicControllerDocs.LOGIN_DESCRIPTION)
   @PostMapping(value = RootPublicControllerPath.LOGIN, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<StandardizedResponse<MemberResponse>> login(@RequestBody LoginMemberRequest request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-    Authentication
-        authenticationResponse = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+    Authentication authenticationResponse = null;
+    try {
+      authenticationResponse = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+    } catch (IllegalArgumentException e) {
+      throw new XAdminForbiddenException("Current user does not have eligibility to login");
+    }
 
     SecurityContext context = this.appSecurityContextHolder.createContext(authenticationResponse);
     this.securityContextRepository.saveContext(context, httpServletRequest, httpServletResponse);

@@ -20,7 +20,7 @@ public class MemberResponse {
   private String lastName;
   private String emailAddress;
   private String phoneNumber;
-  private String type;
+  private String practitionerType;
   private String role;
   private String status;
 
