@@ -23,12 +23,12 @@ import java.time.LocalDateTime;
 public class Visit extends BaseEntity {
 
   @ManyToOne
-  @JoinColumn(name ="patient_id", nullable = false)
-  private Patient patient;
+  @JoinColumn(name ="practitioner_id", nullable = false)
+  private Member practitioner;
 
   @ManyToOne
-  @JoinColumn(name ="employee_id", nullable = false)
-  private Member member;
+  @JoinColumn(name ="patient_id", nullable = false)
+  private Member patient;
 
   @Column(name = "code", nullable = false)
   private String code;
