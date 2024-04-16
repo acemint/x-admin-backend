@@ -74,6 +74,7 @@ public class XAdminControllerAdvice {
     return ResponseEntity.status(exception.getResponseStatus())
         .body(StandardizedErrorResponse.builder()
             .message(exception.getMessage())
+            .xAdminErrorCode("ERR-SATU_SEHAT_API_EXCEPTION")
             .build());
   }
 
