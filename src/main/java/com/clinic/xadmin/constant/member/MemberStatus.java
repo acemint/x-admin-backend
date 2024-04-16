@@ -1,7 +1,5 @@
 package com.clinic.xadmin.constant.member;
 
-import com.clinic.xadmin.constant.experimental.Gender;
-
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +12,7 @@ public class MemberStatus {
   public static final Set<String> VALID_STATUS = new HashSet<>();
 
   static {
-    Field[] fields = Gender.class.getDeclaredFields();
+    Field[] fields = MemberStatus.class.getDeclaredFields();
     for (Field field : fields) {
       if (java.lang.reflect.Modifier.isPublic(field.getModifiers()) &&
           java.lang.reflect.Modifier.isStatic(field.getModifiers()) &&
