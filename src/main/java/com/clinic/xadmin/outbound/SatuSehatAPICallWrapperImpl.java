@@ -7,12 +7,15 @@ import com.clinic.xadmin.exception.XAdminIllegalStateException;
 import com.clinic.xadmin.exception.XAdminInternalException;
 import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.satusehat.dto.response.StandardizedErrorResourceResponse;
 import com.satusehat.dto.response.oauth.OAuthResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
 import com.satusehat.endpoint.oauth.SatuSehatOauthEndpoint;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -20,6 +23,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -59,13 +63,11 @@ public class SatuSehatAPICallWrapperImpl implements SatuSehatAPICallWrapper {
      this.refetchSatuSehatAccessToken(credential);
      return baseEndpoint.setAuthToken(credential.getSatuSehatToken()).getMethodCall();
     }
-    else if (exception.getStatusCode().is4xxClientError()) {
-      throw new XAdminBadRequestException(exception.getResponseBodyAsString().replaceAll("\n", ""));
+    else if (exception.getStatusCode().is4xxClientError() ||
+        exception.getStatusCode().is5xxServerError()) {
+      throw new XAdminAPICallException(exception.getStatusCode(), this.getMessage(exception));
     }
-    else if (exception.getStatusCode().is5xxServerError()) {
-      throw new XAdminInternalException(exception.getResponseBodyAsString().replaceAll("\n", ""));
-    }
-    throw new XAdminIllegalStateException(exception.getResponseBodyAsString().replaceAll("\n", ""));
+    throw new XAdminAPICallException(HttpStatus.INTERNAL_SERVER_ERROR, this.getMessage(exception));
   }
 
   private void refetchSatuSehatAccessToken(ClinicSatuSehatCredential credential) {
@@ -79,6 +81,16 @@ public class SatuSehatAPICallWrapperImpl implements SatuSehatAPICallWrapper {
     }
     else {
       throw new XAdminInternalException("Unable to refetch token, please check log");
+    }
+  }
+
+  private String getMessage(HttpClientErrorException e) {
+    try {
+      StandardizedErrorResourceResponse error = objectMapper.readValue(e.getResponseBodyAsString(), new TypeReference<>() {});
+      return error.getIssue().stream()
+          .map(i -> i.getDetails().getText()).collect(Collectors.joining("\n"));
+    } catch (Exception exception) {
+      return e.getResponseBodyAsString();
     }
   }
 
