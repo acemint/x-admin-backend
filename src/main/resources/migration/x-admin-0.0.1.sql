@@ -42,8 +42,7 @@ CREATE TABLE public.xa_member (
 	practitioner_number varchar(255),
 	practitioner_practice_license varchar(255),
 	practitioner_salary numeric(38, 2),
-	tax_percentage numeric(38, 2) NULL,
-	practice_license varchar(255),
+	practitioner_tax_percentage numeric(38, 2) NULL,
 	clinic_id varchar(255) NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (clinic_id) REFERENCES public.xa_clinic(id)
