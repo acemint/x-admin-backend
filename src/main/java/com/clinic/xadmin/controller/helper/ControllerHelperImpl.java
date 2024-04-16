@@ -3,6 +3,7 @@ package com.clinic.xadmin.controller.helper;
 import com.clinic.xadmin.constant.member.MemberRole;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Member;
+import com.clinic.xadmin.exception.XAdminBadRequestException;
 import com.clinic.xadmin.exception.XAdminForbiddenException;
 import com.clinic.xadmin.exception.XAdminIllegalStateException;
 import com.clinic.xadmin.repository.clinic.ClinicRepository;
@@ -34,33 +35,32 @@ public class ControllerHelperImpl implements ControllerHelper {
   public Clinic getClinicScope(String clinicCode) {
     Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
     Member currentAuthenticatedUser = ((CustomUserDetails) authentication.getPrincipal()).getMember();
-    this.validateAuthenticationToRequest(currentAuthenticatedUser, clinicCode);
-    return Optional.ofNullable(clinicCode)
-        .map(this.clinicRepository::searchByCode)
-        .orElse(currentAuthenticatedUser.getClinic());
+    return this.getAccordingToRole(currentAuthenticatedUser, clinicCode);
   }
 
-  private void validateAuthenticationToRequest(Member currentAuthenticatedUser, String clinicCode) {
+  private Clinic getAccordingToRole(Member currentAuthenticatedUser, String clinicCode) {
     if (MemberRole.isFirefighterRoles(currentAuthenticatedUser)) {
-      validateFirefighterRole(clinicCode);
+      return this.getByManagerRole(clinicCode);
     }
     else {
-      this.validateNonFireFighterRole(currentAuthenticatedUser, clinicCode);
+      return this.getByNonManagerRole(currentAuthenticatedUser, clinicCode);
     }
   }
 
-  private void validateNonFireFighterRole(Member currentAuthenticatedUser, String clinicCode) {
+  private Clinic getByNonManagerRole(Member currentAuthenticatedUser, String clinicCode) {
     if (StringUtils.hasText(clinicCode)) {
       throw new XAdminForbiddenException("Clinic code request param cannot be passed for user role " + currentAuthenticatedUser.getRole() + " for request parameter " + clinicCode);
     }
     if (Objects.isNull(currentAuthenticatedUser.getClinic())) {
       throw new XAdminIllegalStateException("Unable to get user role " + currentAuthenticatedUser.getRole() + " without clinic id" + " for request parameter " + clinicCode);
     }
+    return currentAuthenticatedUser.getClinic();
   }
 
-  private void validateFirefighterRole(String clinicCode) {
+  private Clinic getByManagerRole(String clinicCode) {
     if (StringUtils.hasText(clinicCode)) {
-      return;
+      return Optional.ofNullable(this.clinicRepository.searchByCode(clinicCode))
+          .orElseThrow(() -> new XAdminBadRequestException("Clinic code " + clinicCode + " not found"));
     }
     throw new XAdminIllegalStateException("The corresponding controller should have clinic code as it is hit with Firefighter Roles, request for changes if it is otherwise wrong" + " for request parameter " + clinicCode);
   }
