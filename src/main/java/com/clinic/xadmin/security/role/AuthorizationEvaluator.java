@@ -1,9 +1,9 @@
 package com.clinic.xadmin.security.role;
 
-import com.clinic.xadmin.constant.employee.EmployeeRole;
+import com.clinic.xadmin.constant.member.MemberRole;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.entity.Clinic;
-import com.clinic.xadmin.entity.Employee;
+import com.clinic.xadmin.entity.Member;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +37,13 @@ public class AuthorizationEvaluator  {
     }
 
     // developer will have all access to the clinics
-    Employee employee = ((CustomUserDetails) authentication.getPrincipal()).getEmployee();
-    if (EmployeeRole.isFirefighterRoles(employee)) {
+    Member member = ((CustomUserDetails) authentication.getPrincipal()).getMember();
+    if (MemberRole.isFirefighterRoles(member)) {
       return true;
     }
 
     // non developer role require specific clinic
-    Clinic clinic = employee.getClinic();
+    Clinic clinic = member.getClinic();
     // TODO: set clinic subscription to a certain timeframe, now will bypass all clinic
     if (!Objects.isNull(clinic.getSubscriptionValidTo())) {
       if (clinic.getSubscriptionValidTo().isBefore(LocalDateTime.now())) {
@@ -52,7 +52,7 @@ public class AuthorizationEvaluator  {
     }
 
     return Arrays.stream(permission.split(SecurityAuthorizationType.ROLE_SPLITTER)).toList()
-        .contains(employee.getRole());
+        .contains(member.getRole());
   }
 
 }

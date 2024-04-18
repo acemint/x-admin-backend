@@ -7,17 +7,16 @@ import org.springframework.web.client.HttpClientErrorException;
 @Getter
 public class XAdminAPICallException extends RuntimeException {
 
-  private HttpStatusCode responseStatus;
-  private String message;
+  private final HttpStatusCode responseStatus;
 
   public XAdminAPICallException(HttpClientErrorException e) {
-    super(e);
+    super(e.getMessage());
     this.responseStatus = e.getStatusCode();
-    this.message = e.getMessage();
   }
 
-  public XAdminAPICallException(String message) {
+  public XAdminAPICallException(HttpStatusCode httpStatusCode, String message) {
     super(message);
+    this.responseStatus = httpStatusCode;
   }
 
 }

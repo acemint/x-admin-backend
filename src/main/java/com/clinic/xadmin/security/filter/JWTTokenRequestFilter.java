@@ -2,8 +2,8 @@ package com.clinic.xadmin.security.filter;
 
 import com.clinic.xadmin.security.context.ThreadLocalAuthenticationHolder;
 import com.clinic.xadmin.security.constant.CookieName;
-import com.clinic.xadmin.entity.Employee;
-import com.clinic.xadmin.repository.employee.EmployeeRepository;
+import com.clinic.xadmin.entity.Member;
+import com.clinic.xadmin.repository.member.MemberRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.authprovider.CustomUserDetailsFactory;
 import com.clinic.xadmin.security.util.JwtTokenUtil;
@@ -31,14 +31,14 @@ public class JWTTokenRequestFilter extends OncePerRequestFilter {
 
   public static final String JWT_TOKEN_FILTER_BEAN = "JWT_TOKEN_FILTER_BEAN";
 
-  private final EmployeeRepository employeeRepository;
+  private final MemberRepository memberRepository;
   private final JwtTokenUtil jwtTokenUtil;
 
   @Autowired
   public JWTTokenRequestFilter(JwtTokenUtil jwtTokenUtil,
-      EmployeeRepository employeeRepository) {
+      MemberRepository memberRepository) {
     this.jwtTokenUtil = jwtTokenUtil;
-    this.employeeRepository = employeeRepository;
+    this.memberRepository = memberRepository;
   }
 
   @Override
@@ -60,8 +60,8 @@ public class JWTTokenRequestFilter extends OncePerRequestFilter {
     }
 
     // Create authentication object and insert it into SecurityContext
-    Employee employee = employeeRepository.searchByUsername(claims.getSubject());
-    CustomUserDetails customUserDetails = CustomUserDetailsFactory.createFrom(employee);
+    Member member = memberRepository.searchByUsername(claims.getSubject());
+    CustomUserDetails customUserDetails = CustomUserDetailsFactory.createFrom(member);
     UsernamePasswordAuthenticationToken authentication =
         new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities()
     );

@@ -1,51 +1,63 @@
 package com.clinic.xadmin.service.patient;
 
-import com.clinic.xadmin.entity.Clinic;
-import com.clinic.xadmin.entity.Patient;
+import com.clinic.xadmin.controller.patient.PatientControllerSpecialValue;
+import com.clinic.xadmin.entity.ClinicSatuSehatCredential;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
-import com.clinic.xadmin.mapper.PatientMapper;
-import com.clinic.xadmin.model.patient.PatientFilter;
-import com.clinic.xadmin.model.patient.RegisterPatientData;
-import com.clinic.xadmin.repository.clinic.ClinicRepository;
-import com.clinic.xadmin.repository.patient.PatientRepository;
+import com.clinic.xadmin.model.patient.SatuSehatPatientFilter;
+import com.clinic.xadmin.outbound.SatuSehatAPICallWrapper;
+import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
+import com.satusehat.dto.response.StandardizedResourceResponse;
+import com.satusehat.dto.response.patient.PatientResourceResponse;
+import com.satusehat.endpoint.SatuSehatEndpoint;
+import com.satusehat.endpoint.patient.SatuSehatSearchPatientByDescriptionEndpoint;
+import com.satusehat.endpoint.patient.SatuSehatSearchPatientByMothersNIKEndpoint;
+import com.satusehat.endpoint.patient.SatuSehatSearchPatientByNIKEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 public class PatientServiceImpl implements PatientService {
 
-  private final PatientRepository patientRepository;
-  private final ClinicRepository clinicRepository;
+  private final SatuSehatAPICallWrapper apiCallWrapper;
+  private final ClinicSatuSehatCredentialRepository clinicSatuSehatCredentialRepository;
 
   @Autowired
-  private PatientServiceImpl(PatientRepository patientRepository, ClinicRepository clinicRepository) {
-    this.patientRepository = patientRepository;
-    this.clinicRepository = clinicRepository;
+  private PatientServiceImpl(SatuSehatAPICallWrapper apiCallWrapper, ClinicSatuSehatCredentialRepository clinicSatuSehatCredentialRepository) {
+    this.apiCallWrapper = apiCallWrapper;
+    this.clinicSatuSehatCredentialRepository = clinicSatuSehatCredentialRepository;
   }
 
   @Override
-  public Patient createPatient(RegisterPatientData registerPatientData) {
-    Patient existingPatient = this.patientRepository.searchByClinicCodeAndEmailAddress(registerPatientData.getClinicCode(), registerPatientData.getEmailAddress());
-    if (Objects.nonNull(existingPatient)) {
-      throw new XAdminBadRequestException("this user has existed");
+  public String getPatientFromSatuSehat(SatuSehatPatientFilter filter) {
+    SatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> endpoint = null;
+    if (filter.getSearchBy().equals(PatientControllerSpecialValue.SEARCH_BY_NIK)) {
+      endpoint = SatuSehatSearchPatientByNIKEndpoint.builder()
+          .nik(filter.getNik())
+          .build();
     }
-    Clinic clinic = this.clinicRepository.searchByCode(registerPatientData.getClinicCode());
-
-    Patient patient = PatientMapper.INSTANCE.createFrom(registerPatientData);
-
-    patient.setCode(this.patientRepository.getNextCode());
-    patient.setClinic(clinic);
-    return this.patientRepository.save(patient);
-  }
-
-  @Override
-  public Page<Patient> getPatients(PatientFilter patientFilter) {
-    patientFilter.setClinicCode(patientFilter.getClinicCode());
-
-    return this.patientRepository.searchByFilter(patientFilter);
+    else if (filter.getSearchBy().equals(PatientControllerSpecialValue.SEARCH_BY_MOTHER_NIK)) {
+      endpoint = SatuSehatSearchPatientByMothersNIKEndpoint.builder()
+          .nik(filter.getMotherNik())
+          .build();
+    }
+    else if (filter.getSearchBy().equals(PatientControllerSpecialValue.SEARCH_BY_DESCRIPTION)) {
+      endpoint = SatuSehatSearchPatientByDescriptionEndpoint.builder()
+          .name(filter.getName())
+          .birthDate(filter.getDateOfBirth())
+          .gender(filter.getGender().toLowerCase())
+          .build();
+    }
+    ResponseEntity<StandardizedResourceResponse<PatientResourceResponse>>
+        response = this.apiCallWrapper.wrapThrowableCall(endpoint, clinicSatuSehatCredentialRepository.searchMainClinicApp());
+    if (response.getBody().getEntries().isEmpty()) {
+      return null;
+    }
+    if (response.getBody().getTotal() > 1) {
+      throw new XAdminBadRequestException("Please specify the field search if you SearchByDescription, use full name!");
+    }
+    PatientResourceResponse patientResourceResponse = response.getBody().getEntries().getFirst().getResource();
+    return patientResourceResponse.getId();
   }
 
 }

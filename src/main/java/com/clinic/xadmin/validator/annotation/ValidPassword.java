@@ -34,7 +34,7 @@ public @interface ValidPassword {
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
       if (Objects.isNull(password)) {
-        return false;
+        return true;
       }
 
       // Password must be at least 8 characters long

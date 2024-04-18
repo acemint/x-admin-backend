@@ -1,9 +1,11 @@
 package com.clinic.xadmin.controller.root;
 
-import com.clinic.xadmin.dto.request.employee.LoginEmployeeRequest;
+import com.clinic.xadmin.dto.request.member.LoginMemberRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
-import com.clinic.xadmin.dto.response.employee.EmployeeResponse;
-import com.clinic.xadmin.mapper.EmployeeMapper;
+import com.clinic.xadmin.dto.response.member.MemberResponse;
+import com.clinic.xadmin.exception.XAdminBadRequestException;
+import com.clinic.xadmin.exception.XAdminForbiddenException;
+import com.clinic.xadmin.mapper.MemberMapper;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.configuration.AuthenticationManagerConfiguration;
 import com.clinic.xadmin.security.configuration.SessionManagementConfiguration;
@@ -48,17 +50,21 @@ public class RootPublicController {
       summary = RootPublicControllerDocs.LOGIN_SUMMARY,
       description = RootPublicControllerDocs.LOGIN_DESCRIPTION)
   @PostMapping(value = RootPublicControllerPath.LOGIN, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<StandardizedResponse<EmployeeResponse>> login(@RequestBody LoginEmployeeRequest request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-    Authentication
-        authenticationResponse = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+  public ResponseEntity<StandardizedResponse<MemberResponse>> login(@RequestBody LoginMemberRequest request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    Authentication authenticationResponse = null;
+    try {
+      authenticationResponse = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+    } catch (IllegalArgumentException e) {
+      throw new XAdminForbiddenException("Current user does not have eligibility to login");
+    }
 
     SecurityContext context = this.appSecurityContextHolder.createContext(authenticationResponse);
     this.securityContextRepository.saveContext(context, httpServletRequest, httpServletResponse);
 
     CustomUserDetails userDetails = (CustomUserDetails) authenticationResponse.getPrincipal();
     return ResponseEntity.ok().body(
-        StandardizedResponse.<EmployeeResponse>builder()
-            .content(EmployeeMapper.INSTANCE.createFrom(userDetails.getEmployee()))
+        StandardizedResponse.<MemberResponse>builder()
+            .content(MemberMapper.INSTANCE.createFrom(userDetails.getMember()))
             .build());
   }
 

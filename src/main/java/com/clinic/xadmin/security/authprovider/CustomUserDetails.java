@@ -1,6 +1,6 @@
 package com.clinic.xadmin.security.authprovider;
 
-import com.clinic.xadmin.entity.Employee;
+import com.clinic.xadmin.entity.Member;
 import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,15 +14,15 @@ import java.util.stream.Stream;
 @Builder
 public class CustomUserDetails implements UserDetails {
 
-  private Employee employee;
+  private Member member;
 
-  public Employee getEmployee() {
-    return this.employee;
+  public Member getMember() {
+    return this.member;
   }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return Stream.of(Optional.ofNullable(this.employee.getRole())
+    return Stream.of(Optional.ofNullable(this.member.getRole())
             .map(rs -> rs.split("::"))
             .orElse(new String[] {}))
         .map(SimpleGrantedAuthority::new)
@@ -31,12 +31,12 @@ public class CustomUserDetails implements UserDetails {
 
   @Override
   public String getPassword() {
-    return this.employee.getPassword();
+    return this.member.getPassword();
   }
 
   @Override
   public String getUsername() {
-    return this.employee.getUsername();
+    return this.member.getClinicUsername();
   }
 
   @Override

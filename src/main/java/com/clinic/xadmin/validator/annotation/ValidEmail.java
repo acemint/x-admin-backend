@@ -41,7 +41,7 @@ public @interface ValidEmail {
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
       if (Objects.isNull(email)) {
-        return false;
+        return true;
       }
 
       Matcher matcher = PATTERN.matcher(email);

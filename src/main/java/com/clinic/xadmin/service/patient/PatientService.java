@@ -1,14 +1,10 @@
 package com.clinic.xadmin.service.patient;
 
-import com.clinic.xadmin.entity.Patient;
-import com.clinic.xadmin.model.patient.PatientFilter;
-import com.clinic.xadmin.model.patient.RegisterPatientData;
-import org.springframework.data.domain.Page;
+import com.clinic.xadmin.entity.ClinicSatuSehatCredential;
+import com.clinic.xadmin.model.patient.SatuSehatPatientFilter;
 
 public interface PatientService {
 
-  Patient createPatient(RegisterPatientData registerPatientData);
-
-  Page<Patient> getPatients(PatientFilter patientFilter);
+  String getPatientFromSatuSehat(SatuSehatPatientFilter filter);
 
 }

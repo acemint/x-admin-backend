@@ -34,7 +34,7 @@ public @interface ValidGender {
     @Override
     public boolean isValid(String gender, ConstraintValidatorContext context) {
       if (Objects.isNull(gender)) {
-        return false;
+        return true;
       }
 
       if (!Gender.VALID_GENDERS.contains(gender)) {
