@@ -9,6 +9,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: admin123
       SPRING_CLOUD_VAULT_URI: https://localhost:8200
       SPRING_CLOUD_VAULT_AUTHENTICATION: testing123
+      SATU_SEHAT_PRODUCTION_ENVIRONMENT_NAME: staging
     ports:
       - "8080:8080"
   postgresql:

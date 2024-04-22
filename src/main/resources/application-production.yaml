@@ -24,4 +24,4 @@ xadmin.security:
       - ${XADMIN_CORS_ALLOWED_HOST_1}
 
 xadmin.satusehat.integration:
-  environment: production
+  environment: ${SATU_SEHAT_PRODUCTION_ENVIRONMENT_NAME:production}
