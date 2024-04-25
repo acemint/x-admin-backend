@@ -22,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,6 +66,14 @@ public class RootPublicController {
     return ResponseEntity.ok().body(
         StandardizedResponse.<MemberResponse>builder()
             .content(MemberMapper.INSTANCE.createFrom(userDetails.getMember()))
+            .build());
+  }
+
+  @GetMapping(value = RootPublicControllerPath.HEALTH, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<StandardizedResponse<String>> health() {
+    return ResponseEntity.ok().body(
+        StandardizedResponse.<String>builder()
+            .content("Successful")
             .build());
   }
 
