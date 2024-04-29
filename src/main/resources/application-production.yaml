@@ -1,7 +1,7 @@
 spring.datasource:
   url: ${SPRING_DATASOURCE_URL}
   username: ${SPRING_DATASOURCE_USERNAME}
-  password: ${SPRING_DATASOURCE_PASSWORD}
+  password: ${SPRING_DATASOURCE_PASSWORD_FILE}
 
 spring.cloud.vault:
   uri: ${SPRING_CLOUD_VAULT_URI}
