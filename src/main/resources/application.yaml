@@ -1,5 +1,10 @@
 server.servlet.context-path: /
 
+# To handle reverse proxy
+# https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto.webserver.use-behind-a-proxy-server.
+# TODO: If custom headers are being used, then might change the strategy to FRAMEWORK
+server.forward-headers-strategy: NATIVE
+
 springdoc:
   swagger-ui:
     operationsSorter: method

@@ -27,6 +27,6 @@ public class SatuSehatIntegrationConfiguration {
     SatuSehatProperty satuSehatProperty = SatuSehatPropertyFactory.createFrom(PropertyDefinition.withDefaults().setEnvironment(
         satuSehatIntegrationProperty.getEnvironment()));
     SatuSehatPropertyHolder.initialize(satuSehatProperty);
-    log.info("Satu Sehat Property Initialized");
+    log.info("Satu Sehat Property: satusehat-{}.yaml Initialized", satuSehatIntegrationProperty.getEnvironment());
   }
 }
