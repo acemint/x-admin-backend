@@ -13,6 +13,7 @@ import lombok.experimental.FieldNameConstants;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @FieldNameConstants
 @Entity
@@ -49,6 +50,9 @@ public class Member extends BaseEntity {
   @Column(name = "nik")
   private String nik;
 
+  @Column(name = "mother_nik")
+  private String motherNik;
+
   @Column(name = "email_address", nullable = false)
   private String emailAddress;
 
@@ -61,17 +65,20 @@ public class Member extends BaseEntity {
   @Column(name = "gender")
   private String gender;
 
-  @Column(name = "age")
-  private Integer age;
+  @Column(name = "date_of_birth")
+  private LocalDate dateOfBirth;
 
   @Column(name = "role", nullable = false)
   private String role;
 
-  @Column(name = "status", nullable = false)
-  private String status;
+  @Column(name = "activationStatus", nullable = false)
+  private String activationStatus;
 
   @Column(name = "password")
   private String password;
+
+  @Column(name = "admin_type")
+  private String adminType;
 
   @Column(name = "practitioner_type")
   private String practitionerType;

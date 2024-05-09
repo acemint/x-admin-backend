@@ -32,7 +32,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
   static {
     AVAILABLE_SORTED_BY.add("name");
     AVAILABLE_SORTED_BY.add(Member.Fields.practitionerType);
-    AVAILABLE_SORTED_BY.add(Member.Fields.status);
+    AVAILABLE_SORTED_BY.add(Member.Fields.activationStatus);
   }
 
   @Autowired
@@ -113,8 +113,8 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
         orderSpecifiers.add(new OrderSpecifier<>(order, qMember.practitionerType));
         continue;
       }
-      if (property.equals(Member.Fields.status)) {
-        orderSpecifiers.add(new OrderSpecifier<>(order, qMember.status));
+      if (property.equals(Member.Fields.activationStatus)) {
+        orderSpecifiers.add(new OrderSpecifier<>(order, qMember.activationStatus));
         continue;
       }
     }
