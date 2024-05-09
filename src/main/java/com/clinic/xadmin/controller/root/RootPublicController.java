@@ -6,6 +6,7 @@ import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.member.MemberResponse;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
 import com.clinic.xadmin.exception.XAdminForbiddenException;
+import com.clinic.xadmin.exception.XAdminInternalException;
 import com.clinic.xadmin.mapper.MemberMapper;
 import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
 import com.clinic.xadmin.security.authprovider.CustomUserDetails;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 import java.util.Objects;
 
@@ -102,19 +104,8 @@ public class RootPublicController {
           StandardizedResponse.<String>builder()
               .content("Successful, should be good to go")
               .build());
-    } catch (VaultException e) {
-      HttpClientErrorException exceptionCause = (HttpClientErrorException) e.getCause();
-      if (exceptionCause.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
-        return ResponseEntity.badRequest().body(
-            StandardizedResponse.<String>builder()
-                .content("Make sure your app role has permission to access apth")
-                .build());
-      } else {
-        return ResponseEntity.badRequest().body(
-            StandardizedResponse.<String>builder()
-                .content(e.getMessage())
-                .build());
-      }
+    } catch (Exception e) {
+      throw new XAdminInternalException(e.getMessage());
     }
   }
 
