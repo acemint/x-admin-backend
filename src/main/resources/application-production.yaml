@@ -10,6 +10,7 @@ spring.cloud.vault:
   
   # To authenticate to vault
   authentication: APP_ROLE
+  fail-fast: true
   app-role:
     role-id: ${SPRING_CLOUD_VAULT_APP_ROLE_ROLE_ID}
     secret-id: ${SPRING_CLOUD_VAULT_APP_ROLE_SECRET_ID}
