@@ -5,12 +5,14 @@ import com.clinic.xadmin.dto.request.clinic.UpdateClinicRequest;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.ClinicSatuSehatCredential;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
+import com.clinic.xadmin.model.clinic.ClinicFilter;
 import com.clinic.xadmin.outbound.SatuSehatAPICallWrapper;
 import com.clinic.xadmin.repository.clinic.ClinicRepository;
 import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
 import com.satusehat.dto.response.oauth.OAuthResponse;
 import com.satusehat.endpoint.oauth.SatuSehatOauthEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,6 +90,21 @@ public class ClinicServiceImpl implements ClinicService {
     clinicSatuSehatCredential.setSatuSehatToken(this.fetchAccessToken(clinicSatuSehatCredential));
     this.clinicSatuSehatCredentialRepository.save(clinicSatuSehatCredential);
     return existedClinic;
+  }
+
+  @Override
+  public Clinic getClinic(String clinicCode) {
+    Clinic existingClinic = this.clinicRepository.searchByCode(clinicCode);
+    if (Objects.isNull(existingClinic)) {
+      throw new XAdminBadRequestException("Clinic code does not exist: " + clinicCode);
+    }
+    return existingClinic;
+  }
+
+  @Override
+  public Page<Clinic> getClinics(ClinicFilter clinicFilter) {
+    Page<Clinic> clinics = this.clinicRepository.searchByFilter(clinicFilter);
+    return clinics;
   }
 
 
