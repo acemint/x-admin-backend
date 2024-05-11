@@ -1,5 +1,6 @@
 package com.clinic.xadmin.dto.request.member;
 
+import com.clinic.xadmin.validator.annotation.ValidDateStringFormat;
 import com.clinic.xadmin.validator.annotation.ValidEmail;
 import com.clinic.xadmin.validator.annotation.ValidGender;
 import com.clinic.xadmin.validator.annotation.ValidStatus;
@@ -23,8 +24,8 @@ public class RegisterMemberRequest {
 
   private String lastName;
 
-  @Min(18)
-  private int age;
+  @ValidDateStringFormat
+  private String dateOfBirth;
 
   @NotNull
   @ValidGender

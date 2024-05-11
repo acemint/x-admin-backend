@@ -7,7 +7,7 @@ import com.clinic.xadmin.model.patient.SatuSehatPatientFilter;
 import com.clinic.xadmin.service.patient.PatientService;
 import com.clinic.xadmin.validator.annotation.ValidDateStringFormat;
 import com.clinic.xadmin.validator.annotation.ValidGender;
-import com.clinic.xadmin.validator.annotation.ValidPatientSearchBy;
+import com.clinic.xadmin.validator.annotation.patient.ValidPatientSearchBy;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
