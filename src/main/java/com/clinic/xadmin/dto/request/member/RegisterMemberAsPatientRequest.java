@@ -19,7 +19,6 @@ import lombok.experimental.SuperBuilder;
 @FieldNameConstants
 public class RegisterMemberAsPatientRequest extends RegisterMemberRequest {
 
-  @NotNull
   private String satuSehatPatientReferenceId;
 
 }
