@@ -8,6 +8,7 @@ import org.mapstruct.factory.Mappers;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Objects;
 
 @Mapper
@@ -16,6 +17,7 @@ public interface ClinicMapper {
   ClinicMapper INSTANCE = Mappers.getMapper( ClinicMapper.class );
 
   ClinicResponse createFrom(Clinic clinic);
+  List<ClinicResponse> createFrom(List<Clinic> clinics);
 
   default Instant fromLocalDateTime(LocalDateTime localDateTime) {
     if (Objects.isNull(localDateTime)) {

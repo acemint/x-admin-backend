@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Objects;
@@ -43,8 +44,8 @@ public @interface ValidDateStringFormat {
 
       SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
       try {
-        simpleDateFormat.format(date);
-      } catch (IllegalArgumentException e) {
+        simpleDateFormat.parse(date);
+      } catch (IllegalArgumentException | ParseException e) {
         return false;
       }
       return true;
