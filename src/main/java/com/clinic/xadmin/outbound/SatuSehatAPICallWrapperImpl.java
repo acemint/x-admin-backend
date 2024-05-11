@@ -62,10 +62,7 @@ public class SatuSehatAPICallWrapperImpl implements SatuSehatAPICallWrapper {
      this.refetchSatuSehatAccessToken(credential);
      return baseEndpoint.setAuthToken(credential.getSatuSehatToken()).getMethodCall();
     }
-    else if (exception.getStatusCode().is4xxClientError()) {
-      throw new XAdminAPICallException(exception.getStatusCode(), this.getMessage(exception));
-    }
-    throw new XAdminAPICallException(HttpStatus.INTERNAL_SERVER_ERROR, this.getMessage(exception));
+    throw new XAdminAPICallException(exception.getStatusCode(), this.getMessage(exception));
   }
 
   private <T> ResponseEntity<T> handle5xxClientException(HttpServerErrorException exception) {
@@ -76,12 +73,12 @@ public class SatuSehatAPICallWrapperImpl implements SatuSehatAPICallWrapper {
     SatuSehatOauthEndpoint satuSehatOauthEndpoint = new SatuSehatOauthEndpoint(credential.getSatuSehatClientKey(), credential.getSatuSehatSecretKey());
     ResponseEntity<OAuthResponse> oauthEndpointResponse = satuSehatOauthEndpoint.getMethodCall();
     // TODO: If get 429 error too many request, create a timer to retry within 1 minute
-    if (oauthEndpointResponse.getStatusCode().is2xxSuccessful()) {
+    try {
       OAuthResponse oAuthResponse = oauthEndpointResponse.getBody();
       credential.setSatuSehatToken(oAuthResponse.getAccessToken());
       this.credentialRepository.save(credential);
     }
-    else {
+    catch (HttpClientErrorException e) {
       throw new XAdminInternalException("Unable to refetch token, please check log");
     }
   }
