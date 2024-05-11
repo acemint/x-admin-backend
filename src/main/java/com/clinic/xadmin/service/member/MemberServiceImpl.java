@@ -13,7 +13,6 @@ import com.clinic.xadmin.mapper.MemberMapper;
 import com.clinic.xadmin.model.member.MemberFilter;
 import com.clinic.xadmin.outbound.SatuSehatAPICallWrapper;
 import com.clinic.xadmin.repository.member.MemberRepository;
-import com.satusehat.dto.response.StandardizedResourceResponse;
 import com.satusehat.dto.response.patient.PatientResourceResponse;
 import com.satusehat.endpoint.patient.SatuSehatSearchPatientByIHSEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,7 +131,7 @@ public class MemberServiceImpl implements MemberService {
   private void validatePatientIHSCode(Clinic clinic, RegisterMemberAsPatientRequest request) {
     SatuSehatSearchPatientByIHSEndpoint endpoint = SatuSehatSearchPatientByIHSEndpoint.builder().ihsCode(request.getSatuSehatPatientReferenceId()).build();
     ResponseEntity<PatientResourceResponse>
-        response = this.apiCallWrapper.wrapThrowableCall(endpoint, clinic.getCode());
+        response = this.apiCallWrapper.call(endpoint, clinic.getCode());
     if (!StringUtils.hasText(response.getBody().getId())) {
       throw new XAdminBadRequestException("Invalid IHS Code: " + request.getSatuSehatPatientReferenceId());
     }

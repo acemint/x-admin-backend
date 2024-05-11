@@ -3,10 +3,8 @@ package com.clinic.xadmin.outbound;
 import com.clinic.xadmin.entity.ClinicSatuSehatCredential;
 import com.clinic.xadmin.exception.XAdminAPICallException;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
-import com.clinic.xadmin.exception.XAdminIllegalStateException;
 import com.clinic.xadmin.exception.XAdminInternalException;
 import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.satusehat.dto.response.StandardizedErrorResourceResponse;
@@ -15,13 +13,12 @@ import com.satusehat.endpoint.SatuSehatEndpoint;
 import com.satusehat.endpoint.oauth.SatuSehatOauthEndpoint;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,35 +36,40 @@ public class SatuSehatAPICallWrapperImpl implements SatuSehatAPICallWrapper {
   }
 
   @Override
-  public <T> ResponseEntity<T> wrapThrowableCall(SatuSehatEndpoint<T> baseEndpoint, ClinicSatuSehatCredential credential) {
+  public <T> ResponseEntity<T> call(SatuSehatEndpoint<T> baseEndpoint, ClinicSatuSehatCredential credential) {
     try {
       return baseEndpoint.setAuthToken(credential.getSatuSehatToken()).getMethodCall();
     }
     catch (HttpClientErrorException e) {
-      return this.automaticRetryOnExpiredToken(baseEndpoint, credential, e);
-
+      return this.handle4xxClientException(baseEndpoint, credential, e);
+    }
+    catch (HttpServerErrorException e) {
+      return this.handle5xxClientException(e);
     }
   }
 
   @Override
-  public <T> ResponseEntity<T> wrapThrowableCall(SatuSehatEndpoint<T> baseEndpoint, String clinicCode) {
+  public <T> ResponseEntity<T> call(SatuSehatEndpoint<T> baseEndpoint, String clinicCode) {
     Optional<ClinicSatuSehatCredential> credential = this.credentialRepository.findById(clinicCode);
     if (credential.isEmpty()) {
       throw new XAdminBadRequestException("clinic not found");
     }
-    return this.wrapThrowableCall(baseEndpoint, credential.get());
+    return this.call(baseEndpoint, credential.get());
   }
 
-  private <T> ResponseEntity<T> automaticRetryOnExpiredToken(SatuSehatEndpoint<T> baseEndpoint, ClinicSatuSehatCredential credential, HttpClientErrorException exception) {
+  private <T> ResponseEntity<T> handle4xxClientException(SatuSehatEndpoint<T> baseEndpoint, ClinicSatuSehatCredential credential, HttpClientErrorException exception) {
     if (exception.getStatusCode().isSameCodeAs(HttpStatus.UNAUTHORIZED) && !(baseEndpoint instanceof SatuSehatOauthEndpoint)) {
      this.refetchSatuSehatAccessToken(credential);
      return baseEndpoint.setAuthToken(credential.getSatuSehatToken()).getMethodCall();
     }
-    else if (exception.getStatusCode().is4xxClientError() ||
-        exception.getStatusCode().is5xxServerError()) {
+    else if (exception.getStatusCode().is4xxClientError()) {
       throw new XAdminAPICallException(exception.getStatusCode(), this.getMessage(exception));
     }
     throw new XAdminAPICallException(HttpStatus.INTERNAL_SERVER_ERROR, this.getMessage(exception));
+  }
+
+  private <T> ResponseEntity<T> handle5xxClientException(HttpServerErrorException exception) {
+    return ResponseEntity.internalServerError().build();
   }
 
   private void refetchSatuSehatAccessToken(ClinicSatuSehatCredential credential) {

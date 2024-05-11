@@ -1,7 +1,6 @@
 package com.clinic.xadmin.service.patient;
 
 import com.clinic.xadmin.controller.patient.PatientControllerSpecialValue;
-import com.clinic.xadmin.entity.ClinicSatuSehatCredential;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
 import com.clinic.xadmin.model.patient.SatuSehatPatientFilter;
 import com.clinic.xadmin.outbound.SatuSehatAPICallWrapper;
@@ -49,7 +48,7 @@ public class PatientServiceImpl implements PatientService {
           .build();
     }
     ResponseEntity<StandardizedResourceResponse<PatientResourceResponse>>
-        response = this.apiCallWrapper.wrapThrowableCall(endpoint, clinicSatuSehatCredentialRepository.searchMainClinicApp());
+        response = this.apiCallWrapper.call(endpoint, clinicSatuSehatCredentialRepository.searchMainClinicApp());
     if (response.getBody().getEntries().isEmpty()) {
       return null;
     }
