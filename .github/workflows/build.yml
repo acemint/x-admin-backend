@@ -1,7 +1,7 @@
 # This flow pushes the image of the app to GitHub Packages
 # 
 # Reference: https://docs.github.com/en/actions/publishing-packages/publishing-docker-images#publishing-images-to-github-packages
-name: Docker Image CI
+name: Docker Build CI
 
 # When this action will be triggered
 on:
