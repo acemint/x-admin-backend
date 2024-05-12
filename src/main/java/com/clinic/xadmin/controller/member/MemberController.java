@@ -57,14 +57,14 @@ public class MemberController {
   @PostMapping(value = MemberControllerPath.REGISTER_MANAGER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<MemberResponse>> registerManager(
-      @RequestParam(name = "clinicCode", required = false) String clinicCode,
+      @RequestParam(name = "clinic-code", required = false) String clinicCode,
       @RequestBody @Valid RegisterMemberAsManagerRequest request) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     Member member = this.memberService.create(clinic, request);
 
     return ResponseEntity.ok().body(
         StandardizedResponse.<MemberResponse>builder()
-            .content(MemberMapper.INSTANCE.createFrom(member))
+            .content(MemberMapper.INSTANCE.convertToAPIResponse(member))
             .build());
   }
 
@@ -72,14 +72,14 @@ public class MemberController {
   @PostMapping(value = MemberControllerPath.REGISTER_PATIENT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<MemberResponse>> registerPatient(
-      @RequestParam(name = "clinicCode", required = false) String clinicCode,
+      @RequestParam(name = "clinic-code", required = false) String clinicCode,
       @RequestBody @Valid RegisterMemberAsPatientRequest request) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     Member member = this.memberService.create(clinic, request);
 
     return ResponseEntity.ok().body(
         StandardizedResponse.<MemberResponse>builder()
-            .content(MemberMapper.INSTANCE.createFrom(member))
+            .content(MemberMapper.INSTANCE.convertToAPIResponse(member))
             .build());
   }
 
@@ -87,14 +87,14 @@ public class MemberController {
   @PostMapping(value = MemberControllerPath.REGISTER_PRACTITIONER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<MemberResponse>> registerPractitionerx(
-      @RequestParam(name = "clinicCode", required = false) String clinicCode,
+      @RequestParam(name = "clinic-code", required = false) String clinicCode,
       @RequestBody @Valid RegisterMemberAsPractitionerRequest request) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     Member member = this.memberService.create(clinic, request);
 
     return ResponseEntity.ok().body(
         StandardizedResponse.<MemberResponse>builder()
-            .content(MemberMapper.INSTANCE.createFrom(member))
+            .content(MemberMapper.INSTANCE.convertToAPIResponse(member))
             .build());
   }
 
@@ -106,7 +106,7 @@ public class MemberController {
     CustomUserDetails userDetails = (CustomUserDetails) this.appSecurityContextHolder.getCurrentContext().getAuthentication().getPrincipal();
     return ResponseEntity.ok().body(
         StandardizedResponse.<MemberResponse>builder()
-            .content(MemberMapper.INSTANCE.createFrom(userDetails.getMember()))
+            .content(MemberMapper.INSTANCE.convertToAPIResponse(userDetails.getMember()))
             .build());
   }
 
@@ -140,7 +140,7 @@ public class MemberController {
 
     return ResponseEntity.ok().body(StandardizedResponse
         .<List<MemberResponse>>builder()
-        .content(MemberMapper.INSTANCE.createFrom(members.getContent()))
+        .content(MemberMapper.INSTANCE.convertToAPIResponse(members.getContent()))
         .paginationMetadata(PaginationMapper.INSTANCE.createFrom(members))
         .build());
   }

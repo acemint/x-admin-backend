@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MemberResponse {
 
-  private String id;
   private String clinicUsername;
   private String code;
   private String firstName;

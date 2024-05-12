@@ -8,9 +8,13 @@ import com.clinic.xadmin.entity.Member;
 import com.satusehat.constant.KemkesURL;
 import com.satusehat.dto.request.patient.SatuSehatCreatePatientRequest;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Mapper
@@ -18,14 +22,27 @@ public interface MemberMapper {
 
   MemberMapper INSTANCE = Mappers.getMapper( MemberMapper.class );
 
-  MemberResponse createFrom(Member member);
-  Member createFrom(RegisterMemberAsManagerRequest request);
-  Member createFrom(RegisterMemberAsPatientRequest request);
-  Member createFrom(RegisterMemberAsPractitionerRequest request);
+  MemberResponse convertToAPIResponse(Member member);
+  List<MemberResponse> convertToAPIResponse(List<Member> members);
 
-  List<MemberResponse> createFrom(List<Member> members);
 
-  default SatuSehatCreatePatientRequest convertTo(Member member) {
+  @Mapping(source = "status", target = "activationStatus")
+  Member convertFromAPIRequest(RegisterMemberAsManagerRequest request);
+
+  @Mapping(source = "dateOfBirth", target = "dateOfBirth", qualifiedByName = "dateOfBirth")
+  @Mapping(source = "status", target = "activationStatus")
+  Member convertFromAPIRequest(RegisterMemberAsPatientRequest request);
+
+  @Mapping(source = "status", target = "activationStatus")
+  Member convertFromAPIRequest(RegisterMemberAsPractitionerRequest request);
+
+  @Named("dateOfBirth")
+  default LocalDate dateStringToDate(String date) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    return LocalDate.parse(date, formatter);
+  }
+
+  default SatuSehatCreatePatientRequest convertToSatuSehatAPIRequest(Member member) {
     SatuSehatCreatePatientRequest satuSehatCreatePatientRequest = new SatuSehatCreatePatientRequest();
 
     if (StringUtils.hasText(member.getNik())) {

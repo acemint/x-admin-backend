@@ -21,6 +21,5 @@ public class RegisterMemberAsPatientRequest extends RegisterMemberRequest {
 
   private String nik;
   private String mothersNik;
-  private String satuSehatPatientReferenceId;
 
 }
