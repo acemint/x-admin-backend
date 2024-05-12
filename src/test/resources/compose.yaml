@@ -1,0 +1,21 @@
+version: "3"
+services:
+  postgresql:
+    image: docker.io/postgres:14-alpine
+    container_name: x-admin-db
+    environment:
+      POSTGRES_DB: x-admin-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+  vault:
+    image: docker.io/hashicorp/vault:1.16
+    container_name: x-admin-vault
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ./docker-config/vault/:/config
+    ports:
+      - "8200:8200"
+    entrypoint: vault server -config=/config/vault.conf

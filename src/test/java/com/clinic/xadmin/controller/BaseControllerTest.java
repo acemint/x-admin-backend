@@ -1,5 +1,6 @@
 package com.clinic.xadmin.controller;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,14 @@ public class BaseControllerTest {
     ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
     populator.addScripts(
         new ClassPathResource("/sql/sequences.sql"));
+    populator.execute(dataSource);
+  }
+
+  @AfterAll
+  public static void deleteIndex(@Autowired DataSource dataSource) {
+    ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+    populator.addScripts(
+        new ClassPathResource("/sql/sequences-end.sql"));
     populator.execute(dataSource);
   }
 
