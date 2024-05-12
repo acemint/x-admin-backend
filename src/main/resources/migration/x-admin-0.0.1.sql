@@ -5,7 +5,10 @@
   -- 2. WHEN RUNNING THE CHANGES:
     -- When we run the DB Migration manually, we need to also ALTER the version. This helps us to check which version it is currently in
 
-UPDATE public.version SET commit_id = (:newVersion) WHERE commit_id = (:currentVersion);
+UPDATE public.version
+    SET commit_id = 'd97c50a48432038bdf3e123cdc2207a60a8e6668',
+        description = 'Initialize xa_clinic and xa_member table'
+    WHERE commit_id = (:currentVersion);
 
 CREATE TABLE public.version (
     commit_id VARCHAR(255) NOT NULL
