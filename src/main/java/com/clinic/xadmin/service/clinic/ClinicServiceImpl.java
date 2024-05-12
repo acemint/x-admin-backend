@@ -110,7 +110,7 @@ public class ClinicServiceImpl implements ClinicService {
 
   private String fetchAccessToken(ClinicSatuSehatCredential credential) {
     SatuSehatOauthEndpoint satuSehatOauthEndpoint = new SatuSehatOauthEndpoint(credential.getSatuSehatClientKey(), credential.getSatuSehatSecretKey());
-    ResponseEntity<OAuthResponse> oAuthResponse = this.apiCallWrapper.wrapThrowableCall(satuSehatOauthEndpoint, credential);
+    ResponseEntity<OAuthResponse> oAuthResponse = this.apiCallWrapper.call(satuSehatOauthEndpoint, credential);
     return oAuthResponse.getBody().getAccessToken();
   }
 

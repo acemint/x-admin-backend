@@ -1,5 +1,6 @@
 package com.satusehat.endpoint.patient;
 
+import com.satusehat.constant.KemkesURL;
 import com.satusehat.dto.response.StandardizedResourceResponse;
 import com.satusehat.dto.response.patient.PatientResourceResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
@@ -22,11 +23,11 @@ public class SatuSehatSearchPatientByMothersNIKEndpoint implements
   private static final Map.Entry<String, String> AUTHORIZATION_HEADER = Map.entry("Authorization", "Bearer ");
 
   private String authToken;
-  private final String nik;
+  private String nik;
 
   @Builder
   public SatuSehatSearchPatientByMothersNIKEndpoint(String nik) {
-    this.nik = SatuSehatPropertyHolder.getInstance().getMotherNikUrl() + nik;
+    this.nik = nik;
   }
 
   @Override
@@ -39,7 +40,7 @@ public class SatuSehatSearchPatientByMothersNIKEndpoint implements
     return restClient.method(HttpMethod.valueOf(HTTP_METHOD))
         .uri(uriBuilder -> uriBuilder
             .path(PATH)
-            .queryParam("identifier", this.nik)
+            .queryParam("identifier", KemkesURL.Identity.MOTHER_NIK + "|" + this.nik)
             .build())
         .header(AUTHORIZATION_HEADER.getKey(), AUTHORIZATION_HEADER.getValue() + this.authToken)
         .retrieve()

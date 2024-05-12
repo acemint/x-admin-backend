@@ -1,6 +1,6 @@
-package com.clinic.xadmin.validator.annotation;
+package com.clinic.xadmin.validator.annotation.patient;
 
-import com.clinic.xadmin.constant.member.MemberRole;
+import com.clinic.xadmin.controller.patient.PatientControllerSpecialValue;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -20,30 +20,26 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({TYPE, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
-@Constraint(validatedBy = ValidRegisterManagerRole.Validator.class)
+@Constraint(validatedBy = ValidPatientSearchBy.Validator.class)
 @Documented
-public @interface ValidRegisterManagerRole {
+public @interface ValidPatientSearchBy {
 
-  String message() default "invalid role creation: ${validatedValue}";
+  String message() default "invalid search by: ${validatedValue}";
 
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};
 
 
-  class Validator implements ConstraintValidator<ValidRegisterManagerRole, String> {
-
-    private static final String[] VALID_ROLE_TO_REGISTER = {
-        MemberRole.ROLE_CLINIC_ADMIN,
-    };
+  class Validator implements ConstraintValidator<ValidPatientSearchBy, String> {
 
     @Override
-    public boolean isValid(String role, ConstraintValidatorContext context) {
-      if (Objects.isNull(role)) {
+    public boolean isValid(String searchBy, ConstraintValidatorContext context) {
+      if (Objects.isNull(searchBy)) {
         return true;
       }
 
-      if (!Arrays.stream(VALID_ROLE_TO_REGISTER).toList().contains(role)) {
+      if (!Arrays.stream(PatientControllerSpecialValue.ALL_SEARCH_BY).toList().contains(searchBy)) {
         return false;
       }
       return true;

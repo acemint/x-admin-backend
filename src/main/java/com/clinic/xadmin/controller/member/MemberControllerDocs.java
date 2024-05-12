@@ -7,12 +7,12 @@ public interface MemberControllerDocs {
   String REGISTER_MANAGER_DESCRIPTION = "Role Allowed: ROLE_CLINIC_ADMIN";
 
   String REGISTER_PRACTITIONER_SUMMARY = "Registers a member with role Practitioner within its' own clinic";
-  String REGISTER_PRACTITIONER_DESCRIPTION = "Will access SatuSehat to check if the patient data has existed and obtain its' IHS number (e.g.: P1203102)"
+  String REGISTER_PRACTITIONER_DESCRIPTION = "Will access SatuSehat to check if the patient data has existed and obtain its' IHS number (e.g.: P1203102)<br>"
       + "Role Allowed: ROLE_CLINIC_ADMIN";
 
 
   String REGISTER_PATIENT_SUMMARY = "Registers a member with role Patient within its' own clinic";
-  String REGISTER_PATIENT_DESCRIPTION = "Will access SatuSehat to check if the patient data has existed and obtain its' IHS number (e.g.: P1203102)"
+  String REGISTER_PATIENT_DESCRIPTION = "Will access SatuSehat to check if the patient data has existed and obtain its' IHS number (e.g.: P1203102)<br>"
       + "Role Allowed: ROLE_CLINIC_ADMIN";
 
   String GET_SELF_SUMMARY = "Get the data of current logged-in member";

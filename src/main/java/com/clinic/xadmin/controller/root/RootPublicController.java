@@ -4,7 +4,6 @@ import com.clinic.xadmin.configuration.VaultConfiguration;
 import com.clinic.xadmin.dto.request.member.LoginMemberRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
 import com.clinic.xadmin.dto.response.member.MemberResponse;
-import com.clinic.xadmin.exception.XAdminBadRequestException;
 import com.clinic.xadmin.exception.XAdminForbiddenException;
 import com.clinic.xadmin.exception.XAdminInternalException;
 import com.clinic.xadmin.mapper.MemberMapper;
@@ -18,7 +17,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +24,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.vault.VaultException;
 import org.springframework.vault.core.VaultKeyValueOperationsSupport;
 import org.springframework.vault.core.VaultTemplate;
 import org.springframework.vault.support.VaultResponse;
@@ -36,10 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.reactive.function.client.WebClientRequestException;
-
-import java.util.Objects;
 
 @RestController
 @RequestMapping(RootPublicControllerPath.BASE)
@@ -81,7 +74,7 @@ public class RootPublicController {
     CustomUserDetails userDetails = (CustomUserDetails) authenticationResponse.getPrincipal();
     return ResponseEntity.ok().body(
         StandardizedResponse.<MemberResponse>builder()
-            .content(MemberMapper.INSTANCE.createFrom(userDetails.getMember()))
+            .content(MemberMapper.INSTANCE.convertToAPIResponse(userDetails.getMember()))
             .build());
   }
 

@@ -1,7 +1,7 @@
 package com.clinic.xadmin.dto.request.member;
 
 import com.clinic.xadmin.validator.annotation.ValidPassword;
-import com.clinic.xadmin.validator.annotation.ValidRegisterManagerRole;
+import com.clinic.xadmin.validator.annotation.member.ValidRegisterManagerRole;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

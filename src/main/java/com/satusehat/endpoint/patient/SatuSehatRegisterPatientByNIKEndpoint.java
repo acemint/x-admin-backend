@@ -1,7 +1,8 @@
 package com.satusehat.endpoint.patient;
 
-import com.satusehat.constant.KemkesURL;
+import com.satusehat.dto.request.patient.SatuSehatCreatePatientRequest;
 import com.satusehat.dto.response.StandardizedResourceResponse;
+import com.satusehat.dto.response.patient.PatientCreationResourceResponse;
 import com.satusehat.dto.response.patient.PatientResourceResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
 import com.satusehat.property.SatuSehatPropertyHolder;
@@ -15,23 +16,23 @@ import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
-public class SatuSehatSearchPatientByNIKEndpoint implements
-    SatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> {
+public class SatuSehatRegisterPatientByNIKEndpoint implements
+    SatuSehatEndpoint<PatientCreationResourceResponse> {
 
   private static final String PATH = "/Patient";
-  private static final String HTTP_METHOD = "GET";
+  private static final String HTTP_METHOD = "POST";
   private static final Map.Entry<String, String> AUTHORIZATION_HEADER = Map.entry("Authorization", "Bearer ");
 
   private String authToken;
-  private String nik;
+  private SatuSehatCreatePatientRequest satuSehatCreatePatientRequest;
 
   @Builder
-  public SatuSehatSearchPatientByNIKEndpoint(String nik) {
-    this.nik =  nik;
+  public SatuSehatRegisterPatientByNIKEndpoint(SatuSehatCreatePatientRequest satuSehatCreatePatientRequest) {
+    this.satuSehatCreatePatientRequest = satuSehatCreatePatientRequest;
   }
 
   @Override
-  public ResponseEntity<StandardizedResourceResponse<PatientResourceResponse>> getMethodCall() {
+  public ResponseEntity<PatientCreationResourceResponse> getMethodCall() {
     RestClient restClient = RestClient.builder()
         .baseUrl(SatuSehatPropertyHolder.getInstance().getBaseUrl())
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -40,15 +41,15 @@ public class SatuSehatSearchPatientByNIKEndpoint implements
     return restClient.method(HttpMethod.valueOf(HTTP_METHOD))
         .uri(uriBuilder -> uriBuilder
             .path(PATH)
-            .queryParam("identifier", KemkesURL.Identity.NIK + "|" + this.nik)
             .build())
         .header(AUTHORIZATION_HEADER.getKey(), AUTHORIZATION_HEADER.getValue() + this.authToken)
+        .body(satuSehatCreatePatientRequest)
         .retrieve()
         .toEntity(new ParameterizedTypeReference<>() {});
   }
 
   @Override
-  public SatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> setAuthToken(String authToken) {
+  public SatuSehatEndpoint<PatientCreationResourceResponse> setAuthToken(String authToken) {
     this.authToken = authToken;
     return this;
   }

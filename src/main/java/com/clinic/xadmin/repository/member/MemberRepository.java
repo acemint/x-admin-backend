@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface MemberRepository extends JpaRepository<Member, String>, MemberCustomRepository {
 
-  @Query(value = "SELECT CONCAT('EMP-', nextval('member_sequence'))", nativeQuery = true)
+  @Query(value = "SELECT CONCAT('MBR-', nextval('member_sequence'))", nativeQuery = true)
   String getNextCode();
 
 }
