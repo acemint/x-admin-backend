@@ -1,3 +1,17 @@
+-- MANUAL VERSIONIN RULEG:
+  -- 1. DURING NEW COMMIT:
+    -- If we have a changes of schema, once we commit the changes to Github, we need to UPDATE the table version to the given commitNumber
+
+  -- 2. WHEN RUNNING THE CHANGES:
+    -- When we run the DB Migration manually, we need to also ALTER the version. This helps us to check which version it is currently in
+
+UPDATE public.version SET commit_id = (:newVersion) WHERE commit_id = (:currentVersion);
+
+CREATE TABLE public.version (
+    commit_id VARCHAR(255) NOT NULL
+    description TEXT
+)
+
 CREATE TABLE public.xa_clinic (
     id varchar(255) NOT NULL,
     created_date timestamp(6),
