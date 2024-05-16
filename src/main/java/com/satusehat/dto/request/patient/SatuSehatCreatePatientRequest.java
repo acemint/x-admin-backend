@@ -1,6 +1,7 @@
 package com.satusehat.dto.request.patient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.satusehat.constant.KemkesURL;
 import lombok.Builder;
 import lombok.Data;
@@ -12,20 +13,37 @@ import java.util.List;
 @Data
 public class SatuSehatCreatePatientRequest {
 
-  private String id;
   private final String resourceType = "Patient";
+
   private final Meta meta = Meta.builder().build();
+
   private List<Identifier> identifier = new ArrayList<>();
-  private final List<Name> name = new ArrayList<>();
+
   private final Boolean active = Boolean.TRUE;
+
+  private final List<Name> name = new ArrayList<>();
+
+  @JsonProperty(value = "telecom")
   private List<Telecommunication> telecommunications = new ArrayList<>();
   private String gender;
-  private String birthDate;
-  private Boolean deceasedBoolean;
+
+  @JsonProperty(value = "birthDate")
+  private String dateOfBirth;
+
+  @JsonProperty(value = "deceasedBoolean")
+  private Boolean isDeceased;
+
   private List<Address> address = new ArrayList<>();
-  private final Integer multipleBirthInteger = 0;
-  private List<Contact> contact = new ArrayList<>();
-  private List<Communication> communication = new ArrayList<>();
+
+  // TODO: Investigate what this is for
+  private Integer multipleBirthInteger = 0;
+
+  @JsonProperty(value = "contact")
+  private List<Contact> contacts = new ArrayList<>();
+
+  @JsonProperty(value = "communication")
+  private List<Communication> communications = new ArrayList<>();
+
   private List<Extension> extension = new ArrayList<>();
 
   @Data
@@ -51,7 +69,7 @@ public class SatuSehatCreatePatientRequest {
   public static class Name {
 
     private String use;
-    private String fullName;
+    private String text;
 
   }
 

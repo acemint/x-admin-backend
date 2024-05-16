@@ -27,4 +27,9 @@ public interface MemberControllerDocs {
       + "`pageSize`: the size of data requested per page<br><br>"
       + "Role Allowed: All Authenticated User";
 
+  String FALLBACK_FETCH_IHS_CODE_PATIENT_SUMMARY = "To fetch the satuSehatPatientReferenceId of Member with ROLE_PATIENT whose IHS Code is null";
+  String FALLBACK_FETCH_IHS_CODE_PATIENT_DESCRIPTION = "Background: During Register Patient, the API to obtain IHS Code to SatuSehat might fail, due to their server down perhaps<br>"
+      + "We would like our system to be independent of SatuSehat. If their app is down, we need to be able to accept user's request until their system is back<br>"
+      + "This API is ideally hit with a scheduler to not overload the system";
+
 }

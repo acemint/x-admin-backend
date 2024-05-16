@@ -6,7 +6,8 @@ import org.springframework.web.client.HttpServerErrorException;
 
 public interface SatuSehatEndpoint<T> {
 
-  ResponseEntity<T> getMethodCall() throws HttpClientErrorException, HttpServerErrorException;
+  ResponseEntity<T> performHttpRequest() throws HttpClientErrorException, HttpServerErrorException;
+
   SatuSehatEndpoint<T> setAuthToken(String authToken);
 
 }

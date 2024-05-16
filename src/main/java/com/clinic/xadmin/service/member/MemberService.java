@@ -13,11 +13,15 @@ import org.springframework.data.domain.Page;
 public interface MemberService {
 
   Member create(Clinic clinic, RegisterMemberAsManagerRequest request);
+
   Member create(Clinic clinic, RegisterMemberAsPatientRequest request);
+
   Member create(Clinic clinic, RegisterMemberAsPractitionerRequest request);
 
   Page<Member> get(MemberFilter memberFilter);
 
   Member resetPassword(ResetPasswordRequest request);
+
+  void fallbackRefetchIHSCode();
 
 }

@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -64,17 +65,24 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
   @Override
   public Page<Member> searchByFilter(MemberFilter filter) {
     QMember qMember = QMember.member;
-    JPAQuery<?> query = new JPAQuery<>(entityManager);
+    JPAQuery<Member> query = new JPAQuery<>(entityManager);
 
     Pageable pageable = filter.getPageable();
 
-    List<Member> members = query.select(qMember)
+    query = query.select(qMember)
         .from(qMember)
-        .where(this.getBooleanExpression(filter))
-        .limit(pageable.getPageSize())
-        .offset(pageable.getOffset())
-        .orderBy(this.getOrderSpecifier(pageable.getSort()).toArray(new OrderSpecifier[]{}))
-        .fetch();
+        .where(this.getBooleanExpression(filter));
+
+    if (!pageable.isUnpaged()) {
+      query = query.limit(pageable.getPageSize())
+          .offset(pageable.getOffset());
+    }
+
+    if (!pageable.getSort().isUnsorted()) {
+      query = query.orderBy(this.getOrderSpecifier(pageable.getSort()).toArray(new OrderSpecifier[]{}));
+    }
+
+    List<Member> members = query.fetch();
 
     return new PageImpl<>(members, filter.getPageable(), members.size());
   }
@@ -92,6 +100,20 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     if (StringUtils.hasText(filter.getClinicCode())) {
       booleanExpression = booleanExpression.and(
           qMember.clinic.code.eq(filter.getClinicCode()));
+    }
+    if (StringUtils.hasText(filter.getRole())) {
+      booleanExpression = booleanExpression.and(
+          qMember.role.eq(filter.getRole()));
+    }
+    if (Objects.nonNull(filter.getFilterIHSCode())) {
+      if (filter.getFilterIHSCode().isNull()) {
+        booleanExpression = booleanExpression.and(
+            qMember.satuSehatPatientReferenceId.isNull());
+      }
+      else {
+        booleanExpression = booleanExpression.and(
+            qMember.satuSehatPatientReferenceId.isNotNull());
+      }
     }
     return booleanExpression;
   }
