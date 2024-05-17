@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PatientCreationResourceResponse {
+public class PatientCreationResourceErrorResponse {
 
   private Boolean success;
   private String message;
@@ -25,7 +25,7 @@ public class PatientCreationResourceResponse {
   @AllArgsConstructor
   public static class Response {
 
-    @JsonProperty(value = "patient_id")
+    @JsonProperty(value = "resourceID")
     private String patientId;
 
   }

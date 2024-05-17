@@ -8,25 +8,34 @@ import com.clinic.xadmin.dto.request.member.RegisterMemberRequest;
 import com.clinic.xadmin.dto.request.member.ResetPasswordRequest;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Member;
+import com.clinic.xadmin.exception.XAdminAPICallException;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
 import com.clinic.xadmin.mapper.MemberMapper;
 import com.clinic.xadmin.model.member.MemberFilter;
 import com.clinic.xadmin.outbound.SatuSehatAPICallWrapper;
 import com.clinic.xadmin.repository.member.MemberRepository;
 import com.satusehat.dto.request.patient.SatuSehatCreatePatientRequest;
+import com.satusehat.dto.response.patient.PatientCreationResourceErrorResponse;
 import com.satusehat.dto.response.patient.PatientCreationResourceResponse;
 import com.satusehat.endpoint.patient.SatuSehatRegisterPatientByNIKEndpoint;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.UnknownContentTypeException;
 
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@Transactional
+@Slf4j
 public class MemberServiceImpl implements MemberService {
 
   private final MemberRepository memberRepository;
@@ -34,7 +43,7 @@ public class MemberServiceImpl implements MemberService {
   private final SatuSehatAPICallWrapper apiCallWrapper;
 
   @Autowired
-  private MemberServiceImpl(MemberRepository memberRepository,
+  public MemberServiceImpl(MemberRepository memberRepository,
       PasswordEncoder passwordEncoder,
       SatuSehatAPICallWrapper apiCallWrapper) {
     this.memberRepository = memberRepository;
@@ -44,7 +53,10 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public Member create(Clinic clinic, RegisterMemberAsManagerRequest request) {
-    this.validatePreviousMemberDoesNotExist(clinic, request);
+    Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
+    if (Objects.isNull(existingMember)) {
+      throw new XAdminBadRequestException("member taken");
+    }
 
     Member member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
     member.setClinicUsername(this.getValidUsername(request, clinic, null));
@@ -57,29 +69,31 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public Member create(Clinic clinic, RegisterMemberAsPatientRequest request) {
-    this.validatePreviousMemberDoesNotExist(clinic, request);
-
-    Member member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
-    member.setClinicUsername(this.getValidUsername(request, clinic, null));
-    member.setCode(this.memberRepository.getNextCode());
-    member.setClinic(clinic);
+    // Create new member if not found else updates the existing ones
+    Member member = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
+    if (Objects.isNull(member)) {
+      member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
+      member.setClinicUsername(this.getValidUsername(request, clinic, null));
+      member.setCode(this.memberRepository.getNextCode());
+      member.setClinic(clinic);
+    }
     member.setRole(MemberRole.ROLE_PATIENT);
 
     // Obtain IHS Code from SatuSehat
-    SatuSehatCreatePatientRequest satuSehatCreatePatientRequest = MemberMapper.INSTANCE.convertToSatuSehatAPIRequest(member);
-    SatuSehatRegisterPatientByNIKEndpoint endpoint = SatuSehatRegisterPatientByNIKEndpoint.builder()
-        .satuSehatCreatePatientRequest(satuSehatCreatePatientRequest)
-        .build();
-    ResponseEntity<PatientCreationResourceResponse> response = this.apiCallWrapper.call(endpoint, clinic.getCode());
-    if (response.getStatusCode().is2xxSuccessful()) {
-      member.setSatuSehatPatientReferenceId(response.getBody().getContent().getPatientId());
+    try {
+      fetchIHSCode(member, member.getClinic());
+    } catch (XAdminAPICallException e) {
+      log.error("Failed to fetch member id: {}", member.getId(), e);
     }
     return this.memberRepository.save(member);
   }
 
   @Override
   public Member create(Clinic clinic, RegisterMemberAsPractitionerRequest request) {
-    this.validatePreviousMemberDoesNotExist(clinic, request);
+    Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
+    if (Objects.isNull(existingMember)) {
+      throw new XAdminBadRequestException("member taken");
+    }
     // TODO: ADD VALIDATION FOR PRACTITIONER IHS ID
 
     Member member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
@@ -114,6 +128,27 @@ public class MemberServiceImpl implements MemberService {
     return this.memberRepository.save(existingMember);
   }
 
+  @Override
+  public void fallbackRefetchIHSCode() {
+    MemberFilter filterMemberPatientWithNoIHSCode = MemberFilter.builder()
+        .role(MemberRole.ROLE_PATIENT)
+        .filterIHSCode(MemberFilter.FilterIHSCode.builder()
+            .isNull(true)
+            .build())
+        .pageable(Pageable.unpaged())
+        .build();
+    Page<Member> members = this.memberRepository.searchByFilter(filterMemberPatientWithNoIHSCode);
+
+    for (Member member : members.stream().toList()) {
+      try {
+        fetchIHSCode(member, member.getClinic());
+      } catch (XAdminAPICallException e) {
+        log.error("Failed to fetch member id: {}", member.getId(), e);
+      }
+    }
+    return;
+  }
+
   private String getValidUsername(RegisterMemberRequest registerMemberData, Clinic clinic, Integer additionalIndex) {
     StringBuilder username = new StringBuilder().append(registerMemberData.getFirstName().toLowerCase());
     if (!StringUtils.hasText(registerMemberData.getLastName())) {
@@ -130,10 +165,27 @@ public class MemberServiceImpl implements MemberService {
     return username.toString();
   }
 
-  private void validatePreviousMemberDoesNotExist(Clinic clinic, RegisterMemberRequest request) {
-    Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
-    if (Objects.nonNull(existingMember)) {
-      throw new XAdminBadRequestException("Email has been taken");
+
+  private void fetchIHSCode(Member member, Clinic clinic) {
+    // Obtain IHS Code from SatuSehat
+    SatuSehatCreatePatientRequest satuSehatCreatePatientRequest = MemberMapper.INSTANCE.convertToSatuSehatAPIRequest(member);
+    SatuSehatRegisterPatientByNIKEndpoint endpoint = SatuSehatRegisterPatientByNIKEndpoint.builder()
+        .satuSehatCreatePatientRequest(satuSehatCreatePatientRequest)
+        .build();
+
+
+    try {
+      ResponseEntity<PatientCreationResourceResponse> response = this.apiCallWrapper.call(endpoint, clinic.getCode());
+      member.setSatuSehatPatientReferenceId(response.getBody().getContent().getPatientId());
+    }
+    catch (HttpStatusCodeException error) {
+      try {
+        PatientCreationResourceErrorResponse response = error.getResponseBodyAs(PatientCreationResourceErrorResponse.class);
+        member.setSatuSehatPatientReferenceId(response.getContent().getPatientId());
+      }
+      catch (UnknownContentTypeException exception) {
+        log.error("Status: {}\tError Message: {}", error.getStatusCode(), error.getMessage());
+      }
     }
   }
 

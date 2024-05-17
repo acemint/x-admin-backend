@@ -32,7 +32,7 @@ public class SatuSehatRegisterPatientByNIKEndpoint implements
   }
 
   @Override
-  public ResponseEntity<PatientCreationResourceResponse> getMethodCall() {
+  public ResponseEntity<PatientCreationResourceResponse> performHttpRequest() {
     RestClient restClient = RestClient.builder()
         .baseUrl(SatuSehatPropertyHolder.getInstance().getBaseUrl())
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

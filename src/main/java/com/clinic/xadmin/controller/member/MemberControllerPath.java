@@ -8,6 +8,7 @@ public interface MemberControllerPath {
   String REGISTER_PRACTITIONER = "/register-practitioner";
   String SELF = "/self";
   String FILTER = "/filter";
+  String FALLBACK_REFETCH_IHS_CODE = "fallback-refetch-ihs-code";
   String RESET_PASSWORD = "/reset-password";
 
 }

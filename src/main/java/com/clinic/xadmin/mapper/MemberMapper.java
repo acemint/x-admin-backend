@@ -42,6 +42,13 @@ public interface MemberMapper {
     return LocalDate.parse(date, formatter);
   }
 
+  @Named("dateOfBirth")
+  default String dateToDateString(LocalDate date) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    return date.format(formatter);
+  }
+
+
   default SatuSehatCreatePatientRequest convertToSatuSehatAPIRequest(Member member) {
     SatuSehatCreatePatientRequest satuSehatCreatePatientRequest = new SatuSehatCreatePatientRequest();
 
@@ -50,6 +57,7 @@ public interface MemberMapper {
           SatuSehatCreatePatientRequest.Identifier.builder()
               .use("official")
               .system(KemkesURL.Identity.NIK)
+              .value(member.getNik())
               .build()
       );
     }
@@ -59,6 +67,7 @@ public interface MemberMapper {
           SatuSehatCreatePatientRequest.Identifier.builder()
               .use("official")
               .system(KemkesURL.Identity.MOTHER_NIK)
+              .value(member.getMotherNik())
               .build()
       );
     }
@@ -66,17 +75,22 @@ public interface MemberMapper {
     satuSehatCreatePatientRequest.getName().add(
         SatuSehatCreatePatientRequest.Name.builder()
             .use("official")
-            .fullName(member.getFirstName() + " " + member.getLastName())
+            .text(member.getFirstName() + " " + member.getLastName())
             .build()
     );
 
     satuSehatCreatePatientRequest.setGender(member.getGender().toLowerCase());
-    satuSehatCreatePatientRequest.setDeceasedBoolean(Boolean.FALSE);
-    satuSehatCreatePatientRequest.getAddress().add(
-        SatuSehatCreatePatientRequest.Address.builder()
-            .use("home")
-            .line(List.of(member.getAddress()))
-            .build());
+    satuSehatCreatePatientRequest.setDateOfBirth(dateToDateString(member.getDateOfBirth()));
+    satuSehatCreatePatientRequest.setIsDeceased(Boolean.FALSE);
+
+    if (StringUtils.hasText(member.getAddress())) {
+      satuSehatCreatePatientRequest.getAddress().add(
+          SatuSehatCreatePatientRequest.Address.builder()
+              .use("home")
+              .line(List.of(member.getAddress()))
+              .build());
+    }
+
     satuSehatCreatePatientRequest.getTelecommunications().add(
         SatuSehatCreatePatientRequest.Telecommunication
             .builder()
@@ -85,14 +99,16 @@ public interface MemberMapper {
             .use("home")
             .build()
     );
-    satuSehatCreatePatientRequest.getTelecommunications().add(
-        SatuSehatCreatePatientRequest.Telecommunication
-            .builder()
-            .system("phone")
-            .value("+" + member.getPhoneNumber())
-            .use("home")
-            .build()
-    );
+
+    if (StringUtils.hasText(member.getPhoneNumber())) {
+      satuSehatCreatePatientRequest.getTelecommunications().add(
+          SatuSehatCreatePatientRequest.Telecommunication
+              .builder()
+              .system("phone")
+              .value("+" + member.getPhoneNumber())
+              .use("home")
+              .build());
+    }
 
     return satuSehatCreatePatientRequest;
   }

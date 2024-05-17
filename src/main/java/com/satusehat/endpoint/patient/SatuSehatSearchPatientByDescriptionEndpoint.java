@@ -34,7 +34,7 @@ public class SatuSehatSearchPatientByDescriptionEndpoint implements
   }
 
   @Override
-  public ResponseEntity<StandardizedResourceResponse<PatientResourceResponse>> getMethodCall() {
+  public ResponseEntity<StandardizedResourceResponse<PatientResourceResponse>> performHttpRequest() {
     RestClient restClient = RestClient.builder()
         .baseUrl(SatuSehatPropertyHolder.getInstance().getBaseUrl())
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
