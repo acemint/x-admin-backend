@@ -51,7 +51,7 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public Member create(Clinic clinic, RegisterMemberAsManagerRequest request) {
     Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
-    if (Objects.isNull(existingMember)) {
+    if (Objects.nonNull(existingMember)) {
       throw new XAdminBadRequestException("member taken");
     }
 
@@ -66,32 +66,33 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public Member create(Clinic clinic, RegisterMemberAsPatientRequest request) {
-    // If not found then Create new member
-    // Else will set IHS Code if Not Found
-    Member member = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
-    if (Objects.isNull(member)) {
-      member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
-      member.setClinicUsername(this.getValidUsername(request, clinic, null));
-      member.setCode(this.memberRepository.getNextCode());
-      member.setClinic(clinic);
-      member.setRole(MemberRole.ROLE_PATIENT);
+    // Create new member while also fetching its IHS Code
+    Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
+    if (Objects.nonNull(existingMember)) {
+      throw new XAdminBadRequestException("member taken");
     }
 
-    if (StringUtils.hasText(member.getSatuSehatPatientReferenceId())) {
-      throw new XAdminBadRequestException("Nothing to update, Patient Reference ID is already filled");
-    }
+    existingMember = MemberMapper.INSTANCE.convertFromAPIRequest(request);
+    existingMember.setClinicUsername(this.getValidUsername(request, clinic, null));
+    existingMember.setCode(this.memberRepository.getNextCode());
+    existingMember.setClinic(clinic);
+    existingMember.setRole(MemberRole.ROLE_PATIENT);
 
     // Obtain IHS Code from SatuSehat
-    String ihsCode = this.patientService.getOrCreateSatuSehatPatient(member);
-    member.setSatuSehatPatientReferenceId(ihsCode);
+    try {
+      String ihsCode = this.patientService.getOrCreateSatuSehatPatient(existingMember);
+      existingMember.setSatuSehatPatientReferenceId(ihsCode);
+    } catch (HttpStatusCodeException e) {
+      log.error("Failed to fetch member id: {}", existingMember.getId(), e);
+    }
 
-    return this.memberRepository.save(member);
+    return this.memberRepository.save(existingMember);
   }
 
   @Override
   public Member create(Clinic clinic, RegisterMemberAsPractitionerRequest request) {
     Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
-    if (Objects.isNull(existingMember)) {
+    if (Objects.nonNull(existingMember)) {
       throw new XAdminBadRequestException("member taken");
     }
     // TODO: ADD VALIDATION FOR PRACTITIONER IHS ID
@@ -141,7 +142,8 @@ public class MemberServiceImpl implements MemberService {
 
     for (Member member : members.stream().toList()) {
       try {
-        this.patientService.getOrCreateSatuSehatPatient(member);
+        String ihsCode = this.patientService.getOrCreateSatuSehatPatient(member);
+        member.setSatuSehatPatientReferenceId(ihsCode);
       } catch (HttpStatusCodeException e) {
         log.error("Failed to fetch member id: {}", member.getId(), e);
       }
