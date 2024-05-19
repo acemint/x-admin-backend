@@ -14,7 +14,13 @@ import lombok.experimental.SuperBuilder;
 @FieldNameConstants
 public class RegisterMemberAsPractitionerRequest extends RegisterMemberRequest {
 
+  private String practitionerType;
+
   @NotNull
-  private String satuSehatPractitionerReferenceId;
+  private String practitionerPracticeLicense;
+
+  private String practitionerSalary;
+
+  private String practitionerTaxPercentage;
 
 }

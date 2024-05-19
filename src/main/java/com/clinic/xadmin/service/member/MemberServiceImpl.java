@@ -14,6 +14,7 @@ import com.clinic.xadmin.model.member.MemberFilter;
 import com.clinic.xadmin.outbound.SatuSehatAPICallWrapper;
 import com.clinic.xadmin.repository.member.MemberRepository;
 import com.clinic.xadmin.service.patient.PatientService;
+import com.clinic.xadmin.service.practitioner.PractitionerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,16 +37,19 @@ public class MemberServiceImpl implements MemberService {
   private final PasswordEncoder passwordEncoder;
   private final SatuSehatAPICallWrapper apiCallWrapper;
   private final PatientService patientService;
+  private final PractitionerService practitionerService;
 
   @Autowired
   public MemberServiceImpl(MemberRepository memberRepository,
       PasswordEncoder passwordEncoder,
       SatuSehatAPICallWrapper apiCallWrapper,
-      PatientService patientService) {
+      PatientService patientService,
+      PractitionerService practitionerService) {
     this.memberRepository = memberRepository;
     this.passwordEncoder = passwordEncoder;
     this.apiCallWrapper = apiCallWrapper;
     this.patientService = patientService;
+    this.practitionerService = practitionerService;
   }
 
   @Override
@@ -66,42 +70,50 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public Member create(Clinic clinic, RegisterMemberAsPatientRequest request) {
-    // Create new member while also fetching its IHS Code
+    // Create new member as Patient while also fetching its IHS Code
     Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
     if (Objects.nonNull(existingMember)) {
       throw new XAdminBadRequestException("member taken");
     }
 
-    existingMember = MemberMapper.INSTANCE.convertFromAPIRequest(request);
-    existingMember.setClinicUsername(this.getValidUsername(request, clinic, null));
-    existingMember.setCode(this.memberRepository.getNextCode());
-    existingMember.setClinic(clinic);
-    existingMember.setRole(MemberRole.ROLE_PATIENT);
+    Member member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
+    member.setClinicUsername(this.getValidUsername(request, clinic, null));
+    member.setCode(this.memberRepository.getNextCode());
+    member.setClinic(clinic);
+    member.setRole(MemberRole.ROLE_PATIENT);
 
     // Obtain IHS Code from SatuSehat
     try {
-      String ihsCode = this.patientService.getOrCreateSatuSehatPatient(existingMember);
-      existingMember.setSatuSehatPatientReferenceId(ihsCode);
+      String ihsCode = this.patientService.getOrCreateSatuSehatPatient(member);
+      member.setSatuSehatPatientReferenceId(ihsCode);
     } catch (HttpStatusCodeException e) {
-      log.error("Failed to fetch member id: {}", existingMember.getId(), e);
+      log.error("Failed to fetch Patient IHS Code: {}", member.getId(), e);
     }
 
-    return this.memberRepository.save(existingMember);
+    return this.memberRepository.save(member);
   }
 
   @Override
   public Member create(Clinic clinic, RegisterMemberAsPractitionerRequest request) {
+    // Create new member as Practitioner while also fetching its IHS Code
     Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
     if (Objects.nonNull(existingMember)) {
       throw new XAdminBadRequestException("member taken");
     }
-    // TODO: ADD VALIDATION FOR PRACTITIONER IHS ID
 
     Member member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
     member.setClinicUsername(this.getValidUsername(request, clinic, null));
     member.setCode(this.memberRepository.getNextCode());
     member.setClinic(clinic);
     member.setRole(MemberRole.ROLE_PRACTITIONER);
+
+    // Obtain IHS Code from SatuSehat
+    try {
+      String ihsCode = this.practitionerService.getPractitionerFromSatuSehat(member);
+      member.setSatuSehatPractitionerReferenceId(ihsCode);
+    } catch (HttpStatusCodeException e) {
+      log.error("Failed to fetch Practitioner IHS Code: {}", member.getId(), e);
+    }
 
     return this.memberRepository.save(member);
   }
@@ -131,6 +143,7 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public void fallbackRefetchIHSCode() {
+    // TODO: Add refetch also for Practitioner
     MemberFilter filterMemberPatientWithNoIHSCode = MemberFilter.builder()
         .role(MemberRole.ROLE_PATIENT)
         .filterIHSCode(MemberFilter.FilterIHSCode.builder()
