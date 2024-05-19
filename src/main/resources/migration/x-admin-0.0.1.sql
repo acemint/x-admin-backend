@@ -6,9 +6,9 @@
     -- When we run the DB Migration manually, we need to also ALTER the version. This helps us to check which version it is currently in
 
 UPDATE public.version
-    SET commit_id = 'd97c50a48432038bdf3e123cdc2207a60a8e6668',
-        description = 'Initialize xa_clinic and xa_member table'
-    WHERE commit_id = (:currentVersion);
+    SET commit_id = '???',
+        description = 'Initialize xa_visit table'
+    WHERE commit_id = 'd97c50a48432038bdf3e123cdc2207a60a8e6668';
 
 CREATE TABLE public.version (
     commit_id VARCHAR(255) NOT NULL
@@ -69,6 +69,39 @@ CREATE TABLE public.xa_member (
 
 CREATE SEQUENCE public.member_sequence AS bigint;
 
+
+CREATE TABLE public.xa_visit (
+	id varchar(255) NOT NULL,
+    created_date timestamp(6) null,
+    created_by varchar(255) null,
+    last_modified_date timestamp(6) null,
+    last_modified_by varchar(255) null,
+	code varchar(255) NOT NULL,
+	status varchar(50) NOT NULL,
+	start_time timestamp(6) NOT NULL,
+	end_time timestamp(6) NOT NULL,
+	patient_id varchar(255) NOT NULL,
+	practitioner_id varchar(255) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (patient_id) REFERENCES public.xa_member(id),
+	FOREIGN KEY (practitioner_id) REFERENCES public.xa_member(id)
+);
+
+CREATE TABLE public.xa_visit_history (
+	id varchar(255) NOT NULL,
+    created_date timestamp(6) null,
+    created_by varchar(255) null,
+    last_modified_date timestamp(6) null,
+    last_modified_by varchar(255) null,
+	status varchar(50) NOT NULL,
+	start_time timestamp(6) NOT NULL,
+	end_time timestamp(6) NOT NULL,
+	visit_id varchar(255) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (visit_id) REFERENCES public.xa_visit(id)
+);
+
+CREATE SEQUENCE public.visit_sequence AS bigint;
 
 
 
