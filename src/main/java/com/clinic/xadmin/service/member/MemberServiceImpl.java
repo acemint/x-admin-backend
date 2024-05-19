@@ -8,6 +8,7 @@ import com.clinic.xadmin.dto.request.member.RegisterMemberRequest;
 import com.clinic.xadmin.dto.request.member.ResetPasswordRequest;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Member;
+import com.clinic.xadmin.exception.XAdminAPICallException;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
 import com.clinic.xadmin.mapper.MemberMapper;
 import com.clinic.xadmin.model.member.MemberFilter;
@@ -88,6 +89,7 @@ public class MemberServiceImpl implements MemberService {
       member.setSatuSehatPatientReferenceId(ihsCode);
     } catch (HttpStatusCodeException e) {
       log.error("Failed to fetch Patient IHS Code: {}", member.getId(), e);
+      throw new XAdminAPICallException(e);
     }
 
     return this.memberRepository.save(member);
@@ -113,6 +115,7 @@ public class MemberServiceImpl implements MemberService {
       member.setSatuSehatPractitionerReferenceId(ihsCode);
     } catch (HttpStatusCodeException e) {
       log.error("Failed to fetch Practitioner IHS Code: {}", member.getId(), e);
+      throw new XAdminAPICallException(e);
     }
 
     return this.memberRepository.save(member);
