@@ -1,9 +1,7 @@
 package com.satusehat.endpoint.patient;
 
 import com.satusehat.dto.request.patient.SatuSehatCreatePatientRequest;
-import com.satusehat.dto.response.StandardizedResourceResponse;
 import com.satusehat.dto.response.patient.PatientCreationResourceResponse;
-import com.satusehat.dto.response.patient.PatientResourceResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
 import com.satusehat.property.SatuSehatPropertyHolder;
 import lombok.Builder;

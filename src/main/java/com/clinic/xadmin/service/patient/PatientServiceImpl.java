@@ -11,7 +11,7 @@ import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
 import com.satusehat.dto.request.patient.SatuSehatCreatePatientRequest;
 import com.satusehat.dto.response.StandardizedResourceResponse;
 import com.satusehat.dto.response.patient.PatientCreationResourceResponse;
-import com.satusehat.dto.response.patient.PatientResourceResponse;
+import com.satusehat.dto.response.patient.PatientSearchResourceResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
 import com.satusehat.endpoint.patient.SatuSehatRegisterPatientByNIKEndpoint;
 import com.satusehat.endpoint.patient.SatuSehatSearchPatientByDescriptionEndpoint;
@@ -40,7 +40,7 @@ public class PatientServiceImpl implements PatientService {
 
   @Override
   public String getPatientFromSatuSehat(SatuSehatPatientFilter filter) {
-    SatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> endpoint = null;
+    SatuSehatEndpoint<StandardizedResourceResponse<PatientSearchResourceResponse>> endpoint = null;
     if (filter.getSearchBy().equals(PatientControllerSpecialValue.SEARCH_BY_NIK)) {
       endpoint = SatuSehatSearchPatientByNIKEndpoint.builder()
           .nik(filter.getNik())
@@ -58,7 +58,7 @@ public class PatientServiceImpl implements PatientService {
           .gender(filter.getGender().toLowerCase())
           .build();
     }
-    ResponseEntity<StandardizedResourceResponse<PatientResourceResponse>>
+    ResponseEntity<StandardizedResourceResponse<PatientSearchResourceResponse>>
         response = this.apiCallWrapper.call(endpoint, clinicSatuSehatCredentialRepository.searchMainClinicApp());
     if (response.getBody().getEntries().isEmpty()) {
       return null;
@@ -66,8 +66,9 @@ public class PatientServiceImpl implements PatientService {
     if (response.getBody().getTotal() > 1) {
       throw new XAdminBadRequestException("Please specify the field search if you SearchByDescription, use full name!");
     }
-    PatientResourceResponse patientResourceResponse = response.getBody().getEntries().getFirst().getResource();
-    return patientResourceResponse.getId();
+    PatientSearchResourceResponse
+        patientSearchResourceResponse = response.getBody().getEntries().getFirst().getResource();
+    return patientSearchResourceResponse.getId();
   }
 
   @Override
@@ -123,8 +124,8 @@ public class PatientServiceImpl implements PatientService {
     return null;
   }
 
-  private String callGETPatientEndpoint(SatuSehatEndpoint<StandardizedResourceResponse<PatientResourceResponse>> endpoint) throws HttpStatusCodeException {
-    ResponseEntity<StandardizedResourceResponse<PatientResourceResponse>>
+  private String callGETPatientEndpoint(SatuSehatEndpoint<StandardizedResourceResponse<PatientSearchResourceResponse>> endpoint) throws HttpStatusCodeException {
+    ResponseEntity<StandardizedResourceResponse<PatientSearchResourceResponse>>
         response = this.apiCallWrapper.call(endpoint, clinicSatuSehatCredentialRepository.searchMainClinicApp());
     if (response.getBody().getEntries().isEmpty()) {
       return null;
@@ -132,8 +133,9 @@ public class PatientServiceImpl implements PatientService {
     if (response.getBody().getTotal() > 1) {
       return null;
     }
-    PatientResourceResponse patientResourceResponse = response.getBody().getEntries().getFirst().getResource();
-    return patientResourceResponse.getId();
+    PatientSearchResourceResponse
+        patientSearchResourceResponse = response.getBody().getEntries().getFirst().getResource();
+    return patientSearchResourceResponse.getId();
   }
 
   private String callPOSTCreatePatient(Member member, Clinic clinic) throws HttpStatusCodeException {
