@@ -143,7 +143,6 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public void fallbackRefetchIHSCode() {
-    // TODO: Add refetch also for Practitioner
     MemberFilter filterMemberPatientWithNoIHSCode = MemberFilter.builder()
         .role(MemberRole.ROLE_PATIENT)
         .filterIHSCode(MemberFilter.FilterIHSCode.builder()
@@ -151,14 +150,32 @@ public class MemberServiceImpl implements MemberService {
             .build())
         .pageable(Pageable.unpaged())
         .build();
-    Page<Member> members = this.memberRepository.searchByFilter(filterMemberPatientWithNoIHSCode);
+    Page<Member> patients = this.memberRepository.searchByFilter(filterMemberPatientWithNoIHSCode);
 
-    for (Member member : members.stream().toList()) {
+    for (Member member : patients.stream().toList()) {
       try {
         String ihsCode = this.patientService.getOrCreateSatuSehatPatient(member);
         member.setSatuSehatPatientReferenceId(ihsCode);
       } catch (HttpStatusCodeException e) {
-        log.error("Failed to fetch member id: {}", member.getId(), e);
+        log.error("Failed to fetch Patient IHS Code: {}", member.getId(), e);
+      }
+    }
+
+    MemberFilter filterMemberPractitionerWithNoIHSCode = MemberFilter.builder()
+        .role(MemberRole.ROLE_PRACTITIONER)
+        .filterIHSCode(MemberFilter.FilterIHSCode.builder()
+            .isNull(true)
+            .build())
+        .pageable(Pageable.unpaged())
+        .build();
+    Page<Member> practitioners = this.memberRepository.searchByFilter(filterMemberPractitionerWithNoIHSCode);
+
+    for (Member member : practitioners.stream().toList()) {
+      try {
+        String ihsCode = this.practitionerService.getPractitionerFromSatuSehat(member);
+        member.setSatuSehatPractitionerReferenceId(ihsCode);
+      } catch (HttpStatusCodeException e) {
+        log.error("Failed to fetch Practitioner IHS Code: {}", member.getId(), e);
       }
     }
     return;
