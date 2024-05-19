@@ -14,7 +14,7 @@ import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
-public class SatuSehatRegisterPatientByNIKEndpoint implements
+public class SatuSehatRegisterPatientEndpoint implements
     SatuSehatEndpoint<PatientCreationResourceResponse> {
 
   private static final String PATH = "/Patient";
@@ -25,7 +25,7 @@ public class SatuSehatRegisterPatientByNIKEndpoint implements
   private SatuSehatCreatePatientRequest satuSehatCreatePatientRequest;
 
   @Builder
-  public SatuSehatRegisterPatientByNIKEndpoint(SatuSehatCreatePatientRequest satuSehatCreatePatientRequest) {
+  public SatuSehatRegisterPatientEndpoint(SatuSehatCreatePatientRequest satuSehatCreatePatientRequest) {
     this.satuSehatCreatePatientRequest = satuSehatCreatePatientRequest;
   }
 

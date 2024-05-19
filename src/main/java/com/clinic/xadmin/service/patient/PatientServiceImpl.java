@@ -13,7 +13,7 @@ import com.satusehat.dto.response.StandardizedResourceResponse;
 import com.satusehat.dto.response.patient.PatientCreationResourceResponse;
 import com.satusehat.dto.response.patient.PatientSearchResourceResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
-import com.satusehat.endpoint.patient.SatuSehatRegisterPatientByNIKEndpoint;
+import com.satusehat.endpoint.patient.SatuSehatRegisterPatientEndpoint;
 import com.satusehat.endpoint.patient.SatuSehatSearchPatientByDescriptionEndpoint;
 import com.satusehat.endpoint.patient.SatuSehatSearchPatientByMothersNIKEndpoint;
 import com.satusehat.endpoint.patient.SatuSehatSearchPatientByNIKEndpoint;
@@ -111,36 +111,21 @@ public class PatientServiceImpl implements PatientService {
       }
     }
 
-    if (Objects.nonNull(member.getFirstName()) && Objects.nonNull(member.getGender()) && Objects.nonNull(member.getDateOfBirth())) {
-      String ihsCode = callGETPatientEndpoint(SatuSehatSearchPatientByDescriptionEndpoint.builder()
-          .name(member.getFirstName() + member.getLastName())
-          .birthDate(member.getDateOfBirth().format(formatter))
-          .gender(member.getGender().toLowerCase())
-          .build());
-      if (Objects.nonNull(ihsCode)) {
-        return ihsCode;
-      }
-    }
     return null;
   }
 
   private String callGETPatientEndpoint(SatuSehatEndpoint<StandardizedResourceResponse<PatientSearchResourceResponse>> endpoint) throws HttpStatusCodeException {
     ResponseEntity<StandardizedResourceResponse<PatientSearchResourceResponse>>
         response = this.apiCallWrapper.call(endpoint, clinicSatuSehatCredentialRepository.searchMainClinicApp());
-    if (response.getBody().getEntries().isEmpty()) {
+    if (response.getBody().getEntries().isEmpty() || response.getBody().getTotal() > 1) {
       return null;
     }
-    if (response.getBody().getTotal() > 1) {
-      return null;
-    }
-    PatientSearchResourceResponse
-        patientSearchResourceResponse = response.getBody().getEntries().getFirst().getResource();
-    return patientSearchResourceResponse.getId();
+    return response.getBody().getEntries().getFirst().getResource().getId();
   }
 
   private String callPOSTCreatePatient(Member member, Clinic clinic) throws HttpStatusCodeException {
     SatuSehatCreatePatientRequest satuSehatCreatePatientRequest = MemberMapper.INSTANCE.convertToSatuSehatAPIRequest(member);
-    SatuSehatRegisterPatientByNIKEndpoint endpoint = SatuSehatRegisterPatientByNIKEndpoint.builder()
+    SatuSehatRegisterPatientEndpoint endpoint = SatuSehatRegisterPatientEndpoint.builder()
         .satuSehatCreatePatientRequest(satuSehatCreatePatientRequest)
         .build();
     ResponseEntity<PatientCreationResourceResponse> response = this.apiCallWrapper.call(endpoint, clinic.getCode());

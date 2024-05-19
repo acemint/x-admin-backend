@@ -40,6 +40,11 @@ import java.util.Objects;
 @RequestMapping(value = MemberControllerPath.BASE)
 public class MemberController {
 
+  // TODO: Create a PATCH API to fetch Patient IHS Code for existing Member
+  // TODO: Create a PATCH API to fetch Practitioner IHS Code for existing Member
+
+  // TODO: Create a validation in register member, such that IHS Code from searchByNik = searchByDescription
+
   private final ControllerHelper controllerHelper;
   private final MemberService memberService;
   private final AppSecurityContextHolder appSecurityContextHolder;

@@ -15,6 +15,15 @@ import lombok.experimental.SuperBuilder;
 public class RegisterMemberAsPractitionerRequest extends RegisterMemberRequest {
 
   @NotNull
-  private String satuSehatPractitionerReferenceId;
+  private String nik;
+
+  private String practitionerType;
+
+  @NotNull
+  private String practitionerPracticeLicense;
+
+  private String practitionerSalary;
+
+  private String practitionerTaxPercentage;
 
 }
