@@ -5,10 +5,8 @@
   -- 2. WHEN RUNNING THE CHANGES:
     -- When we run the DB Migration manually, we need to also ALTER the version. This helps us to check which version it is currently in
 
-UPDATE public.version
-    SET commit_id = 'b1c35e7dc9327bc8a91624366754f8257309441e',
-        description = 'Initialize xa_visit table'
-    WHERE commit_id = 'd97c50a48432038bdf3e123cdc2207a60a8e6668';
+INSERT INTO public.version(commit_id, description)
+VALUES ('d97c50a48432038bdf3e123cdc2207a60a8e6668', 'Initialize xa_clinic and xa_member table');
 
 CREATE TABLE public.version (
     commit_id VARCHAR(255) NOT NULL
@@ -102,6 +100,10 @@ CREATE TABLE public.xa_visit_history (
 );
 
 CREATE SEQUENCE public.visit_sequence AS bigint;
+
+INSERT INTO public.version(commit_id, description)
+VALUES ('b1c35e7dc9327bc8a91624366754f8257309441e', 'Initialize xa_visit table');
+
 
 
 
