@@ -111,31 +111,16 @@ public class PatientServiceImpl implements PatientService {
       }
     }
 
-    if (Objects.nonNull(member.getFirstName()) && Objects.nonNull(member.getGender()) && Objects.nonNull(member.getDateOfBirth())) {
-      String ihsCode = callGETPatientEndpoint(SatuSehatSearchPatientByDescriptionEndpoint.builder()
-          .name(member.getFirstName() + member.getLastName())
-          .birthDate(member.getDateOfBirth().format(formatter))
-          .gender(member.getGender().toLowerCase())
-          .build());
-      if (Objects.nonNull(ihsCode)) {
-        return ihsCode;
-      }
-    }
     return null;
   }
 
   private String callGETPatientEndpoint(SatuSehatEndpoint<StandardizedResourceResponse<PatientSearchResourceResponse>> endpoint) throws HttpStatusCodeException {
     ResponseEntity<StandardizedResourceResponse<PatientSearchResourceResponse>>
         response = this.apiCallWrapper.call(endpoint, clinicSatuSehatCredentialRepository.searchMainClinicApp());
-    if (response.getBody().getEntries().isEmpty()) {
+    if (response.getBody().getEntries().isEmpty() || response.getBody().getTotal() > 1) {
       return null;
     }
-    if (response.getBody().getTotal() > 1) {
-      return null;
-    }
-    PatientSearchResourceResponse
-        patientSearchResourceResponse = response.getBody().getEntries().getFirst().getResource();
-    return patientSearchResourceResponse.getId();
+    return response.getBody().getEntries().getFirst().getResource().getId();
   }
 
   private String callPOSTCreatePatient(Member member, Clinic clinic) throws HttpStatusCodeException {
