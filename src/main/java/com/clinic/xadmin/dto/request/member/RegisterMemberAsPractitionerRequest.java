@@ -14,6 +14,9 @@ import lombok.experimental.SuperBuilder;
 @FieldNameConstants
 public class RegisterMemberAsPractitionerRequest extends RegisterMemberRequest {
 
+  @NotNull
+  private String nik;
+
   private String practitionerType;
 
   @NotNull

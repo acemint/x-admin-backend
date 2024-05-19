@@ -55,7 +55,7 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public Member create(Clinic clinic, RegisterMemberAsManagerRequest request) {
-    validateExistingMember(clinic, request);
+    validateExistingMemberByEmailAddress(clinic, request);
 
     Member member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
     member.setClinicUsername(this.getValidUsername(request, clinic, null));
@@ -69,7 +69,8 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public Member create(Clinic clinic, RegisterMemberAsPatientRequest request) {
     // Create new member as Patient while also fetching its IHS Code
-    validateExistingMember(clinic, request);
+    validateExistingMemberByEmailAddress(clinic, request);
+    validateExistingMemberByNik(clinic, request.getNik());
 
     Member member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
     member.setClinicUsername(this.getValidUsername(request, clinic, null));
@@ -92,7 +93,8 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public Member create(Clinic clinic, RegisterMemberAsPractitionerRequest request) {
     // Create new member as Practitioner while also fetching its IHS Code
-    validateExistingMember(clinic, request);
+    validateExistingMemberByEmailAddress(clinic, request);
+    validateExistingMemberByNik(clinic, request.getNik());
 
     Member member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
     member.setClinicUsername(this.getValidUsername(request, clinic, null));
@@ -175,16 +177,18 @@ public class MemberServiceImpl implements MemberService {
     return;
   }
 
-  private void validateExistingMember(Clinic clinic, RegisterMemberRequest request) {
+  private void validateExistingMemberByEmailAddress(Clinic clinic, RegisterMemberRequest request) {
     Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
     if (Objects.nonNull(existingMember)) {
       throw new XAdminBadRequestException("member with this email address has been used in this clinic");
     }
-    existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
+  }
+
+  private void validateExistingMemberByNik(Clinic clinic, String nik) {
+    Member existingMember = this.memberRepository.searchByClinicCodeAndNik(clinic.getCode(), nik);
     if (Objects.nonNull(existingMember)) {
       throw new XAdminBadRequestException("member with this NIK has been used in this clinic");
     }
-
   }
 
   private String getValidUsername(RegisterMemberRequest registerMemberData, Clinic clinic, Integer additionalIndex) {
