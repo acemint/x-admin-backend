@@ -8,7 +8,11 @@ import org.springframework.data.domain.Page;
 public interface MemberCustomRepository {
 
   Member searchByUsername(String username);
+
   Member searchByClinicCodeAndEmailAddress(String clinicCode, String emailAddress);
+
+  Member searchByClinicCodeAndNik(String clinicCode, String nik);
+
   Page<Member> searchByFilter(MemberFilter filter);
 
 }

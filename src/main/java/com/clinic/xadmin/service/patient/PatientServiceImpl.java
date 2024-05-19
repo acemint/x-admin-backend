@@ -13,7 +13,7 @@ import com.satusehat.dto.response.StandardizedResourceResponse;
 import com.satusehat.dto.response.patient.PatientCreationResourceResponse;
 import com.satusehat.dto.response.patient.PatientSearchResourceResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
-import com.satusehat.endpoint.patient.SatuSehatRegisterPatientByNIKEndpoint;
+import com.satusehat.endpoint.patient.SatuSehatRegisterPatientEndpoint;
 import com.satusehat.endpoint.patient.SatuSehatSearchPatientByDescriptionEndpoint;
 import com.satusehat.endpoint.patient.SatuSehatSearchPatientByMothersNIKEndpoint;
 import com.satusehat.endpoint.patient.SatuSehatSearchPatientByNIKEndpoint;
@@ -125,7 +125,7 @@ public class PatientServiceImpl implements PatientService {
 
   private String callPOSTCreatePatient(Member member, Clinic clinic) throws HttpStatusCodeException {
     SatuSehatCreatePatientRequest satuSehatCreatePatientRequest = MemberMapper.INSTANCE.convertToSatuSehatAPIRequest(member);
-    SatuSehatRegisterPatientByNIKEndpoint endpoint = SatuSehatRegisterPatientByNIKEndpoint.builder()
+    SatuSehatRegisterPatientEndpoint endpoint = SatuSehatRegisterPatientEndpoint.builder()
         .satuSehatCreatePatientRequest(satuSehatCreatePatientRequest)
         .build();
     ResponseEntity<PatientCreationResourceResponse> response = this.apiCallWrapper.call(endpoint, clinic.getCode());
