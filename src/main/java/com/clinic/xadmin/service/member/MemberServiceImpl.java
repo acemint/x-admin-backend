@@ -55,10 +55,7 @@ public class MemberServiceImpl implements MemberService {
 
   @Override
   public Member create(Clinic clinic, RegisterMemberAsManagerRequest request) {
-    Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
-    if (Objects.nonNull(existingMember)) {
-      throw new XAdminBadRequestException("member taken");
-    }
+    validateExistingMember(clinic, request);
 
     Member member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
     member.setClinicUsername(this.getValidUsername(request, clinic, null));
@@ -72,10 +69,7 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public Member create(Clinic clinic, RegisterMemberAsPatientRequest request) {
     // Create new member as Patient while also fetching its IHS Code
-    Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
-    if (Objects.nonNull(existingMember)) {
-      throw new XAdminBadRequestException("member taken");
-    }
+    validateExistingMember(clinic, request);
 
     Member member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
     member.setClinicUsername(this.getValidUsername(request, clinic, null));
@@ -98,10 +92,7 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public Member create(Clinic clinic, RegisterMemberAsPractitionerRequest request) {
     // Create new member as Practitioner while also fetching its IHS Code
-    Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
-    if (Objects.nonNull(existingMember)) {
-      throw new XAdminBadRequestException("member taken");
-    }
+    validateExistingMember(clinic, request);
 
     Member member = MemberMapper.INSTANCE.convertFromAPIRequest(request);
     member.setClinicUsername(this.getValidUsername(request, clinic, null));
@@ -182,6 +173,18 @@ public class MemberServiceImpl implements MemberService {
       }
     }
     return;
+  }
+
+  private void validateExistingMember(Clinic clinic, RegisterMemberRequest request) {
+    Member existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
+    if (Objects.nonNull(existingMember)) {
+      throw new XAdminBadRequestException("member with this email address has been used in this clinic");
+    }
+    existingMember = this.memberRepository.searchByClinicCodeAndEmailAddress(clinic.getCode(), request.getEmailAddress());
+    if (Objects.nonNull(existingMember)) {
+      throw new XAdminBadRequestException("member with this NIK has been used in this clinic");
+    }
+
   }
 
   private String getValidUsername(RegisterMemberRequest registerMemberData, Clinic clinic, Integer additionalIndex) {
