@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Deprecated
+//TODO: Might be removed, because the POST endpoint sometimes return the resourceID and sometimes refer to duplicate
 public class PatientCreationResourceErrorResponse {
 
   private Boolean success;

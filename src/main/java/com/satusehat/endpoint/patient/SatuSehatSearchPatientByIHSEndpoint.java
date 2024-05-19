@@ -1,6 +1,6 @@
 package com.satusehat.endpoint.patient;
 
-import com.satusehat.dto.response.patient.PatientResourceResponse;
+import com.satusehat.dto.response.patient.PatientSearchResourceResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
 import com.satusehat.property.SatuSehatPropertyHolder;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 
-public class SatuSehatSearchPatientByIHSEndpoint implements SatuSehatEndpoint<PatientResourceResponse> {
+public class SatuSehatSearchPatientByIHSEndpoint implements SatuSehatEndpoint<PatientSearchResourceResponse> {
 
   private static final String PATH = "/Patient";
   private static final String HTTP_METHOD = "GET";
@@ -28,7 +28,7 @@ public class SatuSehatSearchPatientByIHSEndpoint implements SatuSehatEndpoint<Pa
   }
 
   @Override
-  public ResponseEntity<PatientResourceResponse> performHttpRequest() {
+  public ResponseEntity<PatientSearchResourceResponse> performHttpRequest() {
     RestClient restClient = RestClient.builder()
         .baseUrl(SatuSehatPropertyHolder.getInstance().getBaseUrl())
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -44,7 +44,7 @@ public class SatuSehatSearchPatientByIHSEndpoint implements SatuSehatEndpoint<Pa
   }
 
   @Override
-  public SatuSehatEndpoint<PatientResourceResponse> setAuthToken(String authToken) {
+  public SatuSehatEndpoint<PatientSearchResourceResponse> setAuthToken(String authToken) {
     this.authToken = authToken;
     return this;
   }
