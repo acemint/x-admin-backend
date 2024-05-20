@@ -38,7 +38,7 @@ public class PractitionerServiceImpl implements PractitionerService {
     if (StringUtils.hasText(ihsCode)) {
       return ihsCode;
     }
-    throw new XAdminBadRequestException("Unable to get or create data");
+    throw new XAdminBadRequestException("Data provided does not exist in Satu Sehat. Please contact developer");
   }
 
   private String callGETPractitionerByAllEndpoints(Member member) {
