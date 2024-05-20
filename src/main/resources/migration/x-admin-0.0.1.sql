@@ -104,6 +104,10 @@ CREATE SEQUENCE public.visit_sequence AS bigint;
 INSERT INTO public.version(commit_id, description)
 VALUES ('b1c35e7dc9327bc8a91624366754f8257309441e', 'Initialize xa_visit table');
 
+ALTER TABLE xa_clinic ADD COLUMN satu_sehat_clinic_reference_id VARCHAR(255) NOT NULL;
+ALTER TABLE xa_visit ALTER COLUMN end_time DROP NOT NULL;
+ALTER TABLE xa_visit_history ALTER COLUMN end_time DROP NOT NULL;
+
 
 
 
