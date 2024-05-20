@@ -75,7 +75,7 @@ public interface MemberMapper {
     satuSehatCreatePatientRequest.getName().add(
         SatuSehatCreatePatientRequest.Name.builder()
             .use("official")
-            .text(member.getFirstName() + " " + member.getLastName())
+            .text(member.getFullName())
             .build()
     );
 

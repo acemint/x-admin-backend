@@ -95,4 +95,8 @@ public class Member extends BaseEntity {
   @Column(name = "practitioner_tax_percentage")
   private BigDecimal practitionerTaxPercentage;
 
+  public String getFullName() {
+    return this.getFirstName() + " " + this.getLastName();
+  }
+
 }
