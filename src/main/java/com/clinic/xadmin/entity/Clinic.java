@@ -48,4 +48,7 @@ public class Clinic extends BaseEntity {
   @Column(name = "subscription_tier")
   private Integer subscriptionTier;
 
+  @Column(name = "satu_sehat_clinic_reference_id", nullable = false)
+  private String satuSehatClinicReferenceId;
+
 }

@@ -42,6 +42,7 @@ public class ClinicServiceImpl implements ClinicService {
       throw new XAdminBadRequestException("Clinic name has existed: " + request.getName());
     }
     Clinic newClinic = Clinic.builder()
+        .satuSehatClinicReferenceId(request.getSatuSehatOrganizationKey())
         .name(request.getName())
         .code(this.clinicRepository.getNextCode())
         .commissionFee(request.getCommissionFee())
@@ -72,6 +73,7 @@ public class ClinicServiceImpl implements ClinicService {
       throw new XAdminBadRequestException("Clinic code does not exist: " + clinicCode);
     }
     existedClinic.setName(request.getName())
+        .setSatuSehatClinicReferenceId(request.getSatuSehatOrganizationKey())
         .setCommissionFee(request.getCommissionFee())
         .setSittingFee(request.getSittingFee())
         .setMedicalItemFee(request.getMedicalItemFee())
