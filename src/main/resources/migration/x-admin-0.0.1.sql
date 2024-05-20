@@ -108,6 +108,9 @@ ALTER TABLE xa_clinic ADD COLUMN satu_sehat_clinic_reference_id VARCHAR(255) NOT
 ALTER TABLE xa_visit ALTER COLUMN end_time DROP NOT NULL;
 ALTER TABLE xa_visit_history ALTER COLUMN end_time DROP NOT NULL;
 
+INSERT INTO public.version(commit_id, description)
+VALUES ('8c496e9e57977abd65420eab0ae481784db59039', 'Added column for Satu Sehat Reference ID in SatuSehat and remove not null in xa_visit');
+
 
 
 
