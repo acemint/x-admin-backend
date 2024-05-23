@@ -51,7 +51,7 @@ public class SatuSehatCreateEncounterRequest {
     public static class EncounterIdentifierBuilder {
 
       public EncounterIdentifierBuilder system(String organizationKey) {
-        this.system = "http://sys-ids.kemkes.go.id/encounter/" + system;
+        this.system = "http://sys-ids.kemkes.go.id/encounter/" + organizationKey;
         return this;
       }
 
