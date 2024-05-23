@@ -24,7 +24,8 @@ public class CustomCorsConfiguration {
   @Bean(value = CustomCorsConfiguration.CORS_CONFIGURATION_BEAN_NAME)
   public CorsConfigurationSource corsConfiguration() {
     CorsConfiguration corsConfiguration = new CorsConfiguration();
-    corsConfiguration.setAllowedHeaders(Arrays.asList("GET", "PUT", "POST", "DELETE"));
+    corsConfiguration.setAllowCredentials(Boolean.TRUE);
+    corsConfiguration.setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "DELETE"));
     corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control"));
     corsConfiguration.setAllowedOriginPatterns(securityProperties.getCors().getAllowedHosts());
 

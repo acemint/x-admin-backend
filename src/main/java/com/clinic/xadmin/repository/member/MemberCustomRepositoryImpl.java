@@ -75,6 +75,18 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
   }
 
   @Override
+  public Member searchByClinicCodeAndCode(String clinicCode, String code) {
+    QMember qMember = QMember.member;
+    JPAQuery<?> query = new JPAQuery<>(entityManager);
+
+    return query.select(qMember)
+        .from(qMember)
+        .where(qMember.code.eq(code)
+            .and(qMember.clinic.code.eq(clinicCode)))
+        .fetchOne();
+  }
+
+  @Override
   public Page<Member> searchByFilter(MemberFilter filter) {
     QMember qMember = QMember.member;
     JPAQuery<Member> query = new JPAQuery<>(entityManager);

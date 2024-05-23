@@ -8,7 +8,6 @@ public class MemberRole {
 
   public static final String ROLE_DEVELOPER = "ROLE_DEVELOPER";
   public static final String ROLE_VENDOR = "ROLE_VENDOR";
-
   public static final String ROLE_CLINIC_ADMIN = "ROLE_CLINIC_ADMIN";
   public static final String ROLE_PRACTITIONER = "ROLE_PRACTITIONER";
   public static final String ROLE_PATIENT = "ROLE_PATIENT";

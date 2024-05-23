@@ -86,7 +86,7 @@ public class PatientServiceImpl implements PatientService {
     if (StringUtils.hasText(ihsCode)) {
       return ihsCode;
     }
-    throw new XAdminBadRequestException("Unable to get or create data");
+    throw new XAdminBadRequestException("Data provided does not exist and cannot be created in Satu Sehat. Please contact developer");
   }
 
   private String callGETPatientByAllEndpoints(Member member) {

@@ -6,6 +6,8 @@ import com.clinic.xadmin.dto.request.member.RegisterMemberAsPractitionerRequest;
 import com.clinic.xadmin.dto.response.member.MemberResponse;
 import com.clinic.xadmin.entity.Member;
 import com.satusehat.constant.KemkesURL;
+import com.satusehat.dto.request.commons.Address;
+import com.satusehat.dto.request.commons.Telecommunication;
 import com.satusehat.dto.request.patient.SatuSehatCreatePatientRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -75,7 +77,7 @@ public interface MemberMapper {
     satuSehatCreatePatientRequest.getName().add(
         SatuSehatCreatePatientRequest.Name.builder()
             .use("official")
-            .text(member.getFirstName() + " " + member.getLastName())
+            .text(member.getFullName())
             .build()
     );
 
@@ -84,15 +86,15 @@ public interface MemberMapper {
     satuSehatCreatePatientRequest.setIsDeceased(Boolean.FALSE);
 
     if (StringUtils.hasText(member.getAddress())) {
-      satuSehatCreatePatientRequest.getAddress().add(
-          SatuSehatCreatePatientRequest.Address.builder()
+      satuSehatCreatePatientRequest.getAddresses().add(
+          Address.builder()
               .use("home")
               .line(List.of(member.getAddress()))
               .build());
     }
 
     satuSehatCreatePatientRequest.getTelecommunications().add(
-        SatuSehatCreatePatientRequest.Telecommunication
+        Telecommunication
             .builder()
             .system("email")
             .value(member.getEmailAddress())
@@ -102,7 +104,7 @@ public interface MemberMapper {
 
     if (StringUtils.hasText(member.getPhoneNumber())) {
       satuSehatCreatePatientRequest.getTelecommunications().add(
-          SatuSehatCreatePatientRequest.Telecommunication
+          Telecommunication
               .builder()
               .system("phone")
               .value("+" + member.getPhoneNumber())

@@ -5,10 +5,8 @@
   -- 2. WHEN RUNNING THE CHANGES:
     -- When we run the DB Migration manually, we need to also ALTER the version. This helps us to check which version it is currently in
 
-UPDATE public.version
-    SET commit_id = 'd97c50a48432038bdf3e123cdc2207a60a8e6668',
-        description = 'Initialize xa_clinic and xa_member table'
-    WHERE commit_id = (:currentVersion);
+INSERT INTO public.version(commit_id, description)
+VALUES ('d97c50a48432038bdf3e123cdc2207a60a8e6668', 'Initialize xa_clinic and xa_member table');
 
 CREATE TABLE public.version (
     commit_id VARCHAR(255) NOT NULL
@@ -68,6 +66,50 @@ CREATE TABLE public.xa_member (
 );
 
 CREATE SEQUENCE public.member_sequence AS bigint;
+
+
+CREATE TABLE public.xa_visit (
+	id varchar(255) NOT NULL,
+    created_date timestamp(6) null,
+    created_by varchar(255) null,
+    last_modified_date timestamp(6) null,
+    last_modified_by varchar(255) null,
+	code varchar(255) NOT NULL,
+	status varchar(50) NOT NULL,
+	start_time timestamp(6) NOT NULL,
+	end_time timestamp(6) NOT NULL,
+	patient_id varchar(255) NOT NULL,
+	practitioner_id varchar(255) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (patient_id) REFERENCES public.xa_member(id),
+	FOREIGN KEY (practitioner_id) REFERENCES public.xa_member(id)
+);
+
+CREATE TABLE public.xa_visit_history (
+	id varchar(255) NOT NULL,
+    created_date timestamp(6) null,
+    created_by varchar(255) null,
+    last_modified_date timestamp(6) null,
+    last_modified_by varchar(255) null,
+	status varchar(50) NOT NULL,
+	start_time timestamp(6) NOT NULL,
+	end_time timestamp(6) NOT NULL,
+	visit_id varchar(255) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (visit_id) REFERENCES public.xa_visit(id)
+);
+
+CREATE SEQUENCE public.visit_sequence AS bigint;
+
+INSERT INTO public.version(commit_id, description)
+VALUES ('b1c35e7dc9327bc8a91624366754f8257309441e', 'Initialize xa_visit table');
+
+ALTER TABLE xa_clinic ADD COLUMN satu_sehat_clinic_reference_id VARCHAR(255) NOT NULL;
+ALTER TABLE xa_visit ALTER COLUMN end_time DROP NOT NULL;
+ALTER TABLE xa_visit_history ALTER COLUMN end_time DROP NOT NULL;
+
+INSERT INTO public.version(commit_id, description)
+VALUES ('8c496e9e57977abd65420eab0ae481784db59039', 'Added column for Satu Sehat Reference ID in SatuSehat and remove not null in xa_visit');
 
 
 

@@ -3,6 +3,8 @@ package com.satusehat.dto.request.patient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.satusehat.constant.KemkesURL;
+import com.satusehat.dto.request.commons.Address;
+import com.satusehat.dto.request.commons.Telecommunication;
 import lombok.Builder;
 import lombok.Data;
 
@@ -33,7 +35,8 @@ public class SatuSehatCreatePatientRequest {
   @JsonProperty(value = "deceasedBoolean")
   private Boolean isDeceased;
 
-  private List<Address> address = new ArrayList<>();
+  @JsonProperty(value = "address")
+  private List<Address> addresses = new ArrayList<>();
 
   // TODO: Investigate what this is for
   private Integer multipleBirthInteger = 0;
@@ -73,46 +76,6 @@ public class SatuSehatCreatePatientRequest {
 
   }
 
-  @Data
-  @Builder
-  public static class Telecommunication {
-
-    private String use;
-    private String value;
-    private String system;
-
-  }
-
-  @Data
-  @Builder
-  public static class Address {
-
-    private String use;
-    private List<String> line;
-    private String city;
-    private String postalCode;
-    private AddressExtension extension;
-
-
-    @Data
-    @Builder
-    public static class AddressExtension {
-
-      private String url;
-      private DetailAddressExtension extension;
-
-
-      @Data
-      @Builder
-      public static class DetailAddressExtension {
-
-        private String url;
-        private String valueCode;
-
-      }
-    }
-
-  }
 
   @Data
   @Builder
@@ -197,3 +160,112 @@ public class SatuSehatCreatePatientRequest {
   }
 
 }
+
+// EXAMPLE:
+//	{
+//	   "resourceType": "Patient",
+//	   "meta": {
+//	      "profile": [
+//	         "https://fhir.kemkes.go.id/r4/StructureDefinition/Patient"
+//	      ]
+//	   },
+//	   "identifier": [
+//	      {
+//	         "use": "official",
+//	         "system": "https://fhir.kemkes.go.id/id/nik",
+//	         "value": "3174031002891009"
+//	      }
+//	   ],
+//	   "active": true,
+//	   "name": [
+//	      {
+//	         "use": "official",
+//	         "text": "John Smith"
+//	      }
+//	   ],
+//	   "telecom": [
+//	      {
+//	         "system": "phone",
+//	         "value": "08123456789",
+//	         "use": "mobile"
+//	      },
+//	      {
+//	         "system": "phone",
+//	         "value": "+622123456789",
+//	         "use": "home"
+//	      },
+//	      {
+//	         "system": "email",
+//	         "value": "john.smith@xyz.com",
+//	         "use": "home"
+//	      }
+//	   ],
+//	   "gender": "female",
+//	   "birthDate": "1945-11-17",
+//	   "deceasedBoolean": false,
+//	   "address": [ {} ],
+//	   "maritalStatus": {
+//	      "coding": [
+//	         {
+//	            "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+//	            "code": "M",
+//	            "display": "Married"
+//	         }
+//	      ],
+//	      "text": "Married"
+//	   },
+//	   "multipleBirthInteger": 0,
+//	   "contact": [
+//	      {
+//	         "relationship": [
+//	            {
+//	               "coding": [
+//	                  {
+//	                     "system": "http://terminology.hl7.org/CodeSystem/v2-0131",
+//	                     "code": "C"
+//	                  }
+//	               ]
+//	            }
+//	         ],
+//	         "name": {
+//	            "use": "official",
+//	            "text": "Jane Smith"
+//	         },
+//	         "telecom": [
+//	            {
+//	               "system": "phone",
+//	               "value": "0690383372",
+//	               "use": "mobile"
+//	            }
+//	         ]
+//	      }
+//	   ],
+//	   "communication": [
+//	      {
+//	         "language": {
+//	            "coding": [
+//	               {
+//	                  "system": "urn:ietf:bcp:47",
+//	                  "code": "id-ID",
+//	                  "display": "Indonesian"
+//	               }
+//	            ],
+//	            "text": "Indonesian"
+//	         },
+//	         "preferred": true
+//	      }
+//	   ],
+//	   "extension": [
+//	      {
+//	         "url": "https://fhir.kemkes.go.id/r4/StructureDefinition/birthPlace",
+//	         "valueAddress": {
+//	            "city": "Bandung",
+//	            "country": "ID"
+//	         }
+//	      },
+//	      {
+//	         "url": "https://fhir.kemkes.go.id/r4/StructureDefinition/citizenshipStatus",
+//	         "valueCode": "WNI"
+//	      }
+//	   ]
+//	}
