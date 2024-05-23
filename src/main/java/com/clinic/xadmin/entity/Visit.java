@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,13 +34,13 @@ public class Visit extends BaseEntity {
   @Column(name = "code", nullable = false)
   private String code;
 
-  @Column(name = "cancelled", nullable = false)
-  private Boolean cancelled;
+  @Column(name = "status", nullable = false)
+  private String status;
 
-  @Column(name = "startTime", nullable = false)
+  @Column(name = "start_time", nullable = false)
   private LocalDateTime startTime;
 
-  @Column(name = "endTIme", nullable = false)
+  @Column(name = "end_time")
   private LocalDateTime endTime;
 
 }

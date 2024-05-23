@@ -13,6 +13,8 @@ public interface MemberCustomRepository {
 
   Member searchByClinicCodeAndNik(String clinicCode, String nik);
 
+  Member searchByClinicCodeAndCode(String clinicCode, String code);
+
   Page<Member> searchByFilter(MemberFilter filter);
 
 }
