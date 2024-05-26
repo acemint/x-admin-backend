@@ -133,6 +133,9 @@ ALTER TABLE xa_visit ADD CONSTRAINT xa_visit_room_id_fkey FOREIGN KEY (room_id) 
 
 CREATE SEQUENCE public.room_sequence AS bigint;
 
+INSERT INTO public.version(commit_id, description)
+VALUES ('35f671117981eda75ca3858c7b282e2e47abe0ee', 'Remove visit history and add room and room description in xa_visit and add xa_room');
+
 
 
 
