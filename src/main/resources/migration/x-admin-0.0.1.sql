@@ -111,6 +111,28 @@ ALTER TABLE xa_visit_history ALTER COLUMN end_time DROP NOT NULL;
 INSERT INTO public.version(commit_id, description)
 VALUES ('8c496e9e57977abd65420eab0ae481784db59039', 'Added column for Satu Sehat Reference ID in SatuSehat and remove not null in xa_visit');
 
+DROP TABLE xa_visit_history;
+ALTER TABLE xa_visit ADD COLUMN room VARCHAR(255);
+ALTER TABLE xa_visit ADD COLUMN room_description VARCHAR(255);
+CREATE TABLE public.xa_room (
+    id varchar(255) NOT NULL,
+    created_date timestamp(6) null,
+    created_by varchar(255) null,
+    last_modified_date timestamp(6) null,
+    last_modified_by varchar(255) null,
+    code varchar(255) not null,
+    name varchar(255) not null,
+    description varchar(255),
+    satu_sehat_room_reference_id varchar(255) NOT NULL,
+    clinic_id varchar(255) NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (clinic_id) REFERENCES public.xa_clinic(id)
+);
+ALTER TABLE xa_visit ADD COLUMN room_id varchar(255) NOT NULL;
+ALTER TABLE xa_visit ADD CONSTRAINT xa_visit_room_id_fkey FOREIGN KEY (room_id) REFERENCES xa_room(id);
+
+CREATE SEQUENCE public.room_sequence AS bigint;
+
 
 
 

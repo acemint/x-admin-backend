@@ -1,8 +1,8 @@
 package com.satusehat.constant.coding;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class ActCode {
 
   private final String system = "http://terminology.hl7.org/CodeSystem/v3-ActCode";

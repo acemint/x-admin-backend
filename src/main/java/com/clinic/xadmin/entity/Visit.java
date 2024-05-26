@@ -31,6 +31,10 @@ public class Visit extends BaseEntity {
   @JoinColumn(name ="patient_id", nullable = false)
   private Member patient;
 
+  @ManyToOne
+  @JoinColumn(name ="room_id", nullable = false)
+  private Room room;
+
   @Column(name = "code", nullable = false)
   private String code;
 

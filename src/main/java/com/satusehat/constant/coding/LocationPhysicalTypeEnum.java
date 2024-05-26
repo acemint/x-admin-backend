@@ -2,7 +2,10 @@ package com.satusehat.constant.coding;
 
 public enum LocationPhysicalTypeEnum {
 
-  RO("ro", "room");
+  RO("ro", "room"),
+  SI("si", "site"),
+  BU("bu", "building"),
+  VI("vi", "virtual");
 
   private final String code;
   private final String displayName;
