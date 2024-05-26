@@ -34,6 +34,9 @@ public class ControllerHelperImpl implements ControllerHelper {
   @Override
   public Clinic getClinicScope(String clinicCode) {
     Authentication authentication = this.appSecurityContextHolder.getCurrentContext().getAuthentication();
+    if (authentication.getAuthorities().stream().anyMatch(g -> g.getAuthority().contains("ROLE_ANONYMOUS"))) {
+      throw new XAdminForbiddenException("This API expects an authenticated user");
+    }
     Member currentAuthenticatedUser = ((CustomUserDetails) authentication.getPrincipal()).getMember();
     return this.getAccordingToRole(currentAuthenticatedUser, clinicCode);
   }
