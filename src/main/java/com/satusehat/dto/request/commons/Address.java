@@ -13,7 +13,7 @@ public class Address {
     private List<String> line;
     private String city;
     private String postalCode;
-    private AddressExtension extension;
+    private List<AddressExtension> extension;
 
 
     @Data
@@ -21,7 +21,7 @@ public class Address {
     public static class AddressExtension {
 
       private String url;
-      private DetailAddressExtension extension;
+      private List<DetailAddressExtension> extension;
 
 
       @Data

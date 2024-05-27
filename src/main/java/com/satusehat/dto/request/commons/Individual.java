@@ -18,7 +18,7 @@ public class Individual {
   public static class IndividualBuilder {
 
     public IndividualBuilder satuSehatReferenceId(ResourceType resourceType, String referenceId) {
-      this.satuSehatReferenceId = resourceType.name() + "/" + referenceId;
+      this.satuSehatReferenceId = resourceType.getValue() + "/" + referenceId;
       return this;
     }
 

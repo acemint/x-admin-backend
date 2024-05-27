@@ -12,5 +12,8 @@ public enum ResourceType {
     this.value = value;
   }
 
+  public String getValue() {
+    return value;
+  }
 
 }

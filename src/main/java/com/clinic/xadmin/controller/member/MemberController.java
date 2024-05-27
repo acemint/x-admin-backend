@@ -151,6 +151,7 @@ public class MemberController {
         .build());
   }
 
+  @Deprecated
   @Operation(summary = MemberControllerDocs.FALLBACK_FETCH_IHS_CODE_PATIENT_SUMMARY, description = MemberControllerDocs.FALLBACK_FETCH_IHS_CODE_PATIENT_DESCRIPTION)
   @GetMapping(value = MemberControllerPath.FALLBACK_REFETCH_IHS_CODE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<StandardizedResponse<FallbackRefetchIHSCodeResponse>> fallbackRefetchIHSCode() {
