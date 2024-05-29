@@ -24,6 +24,7 @@ public class RegisterMemberRequest {
 
   private String lastName;
 
+  @NotNull
   @ValidDateStringFormat
   private String dateOfBirth;
 
