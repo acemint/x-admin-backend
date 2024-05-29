@@ -1,11 +1,12 @@
 package com.satusehat.dto.request.commons;
 
-import com.satusehat.constant.ResourceType;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
+import lombok.Data;
 
 import java.util.Optional;
 
+@Data
 @Builder
 public class Telecommunication {
 
