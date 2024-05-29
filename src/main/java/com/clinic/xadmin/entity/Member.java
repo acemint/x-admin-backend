@@ -14,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @FieldNameConstants
 @Entity
@@ -96,7 +97,8 @@ public class Member extends BaseEntity {
   private BigDecimal practitionerTaxPercentage;
 
   public String getFullName() {
-    return this.getFirstName() + " " + this.getLastName();
+    String lastName = Optional.ofNullable(this.lastName).map(l -> " " + l).orElse("");
+    return this.getFirstName() + lastName;
   }
 
 }
