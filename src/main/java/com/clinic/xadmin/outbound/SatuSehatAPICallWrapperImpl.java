@@ -1,6 +1,7 @@
 package com.clinic.xadmin.outbound;
 
 import com.clinic.xadmin.entity.ClinicSatuSehatCredential;
+import com.clinic.xadmin.exception.XAdminAPICallException;
 import com.clinic.xadmin.exception.XAdminIllegalStateException;
 import com.clinic.xadmin.repository.clinic.ClinicSatuSehatCredentialRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.Optional;
@@ -58,7 +60,13 @@ public class SatuSehatAPICallWrapperImpl implements SatuSehatAPICallWrapper {
     }
 
     this.refetchSatuSehatAccessToken(credential);
-    return baseEndpoint.setAuthToken(credential.getSatuSehatToken()).performHttpRequest();
+
+    try {
+      return baseEndpoint.setAuthToken(credential.getSatuSehatToken()).performHttpRequest();
+    }
+    catch (HttpServerErrorException internalSE) {
+      throw new XAdminAPICallException(internalSE);
+    }
   }
 
   private void refetchSatuSehatAccessToken(ClinicSatuSehatCredential credential) {

@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SatuSehatSearchLocationsAsRoomsEndpoint implements SatuSehatEndpoint<StandardizedResourceResponse<SatuSehatSearchLocationResponse>> {
@@ -38,6 +39,11 @@ public class SatuSehatSearchLocationsAsRoomsEndpoint implements SatuSehatEndpoin
     response.getBody().setEntries(
         response.getBody().getEntries()
             .stream()
+            .filter(r -> r.getResource()
+                .getIdentifier()
+                .stream()
+                .anyMatch(i -> Optional.ofNullable(i.getSystem()).map(s -> s.contains(organizationId)).orElse(false))
+            )
             .filter(r -> r.getResource()
                 .getPhysicalType()
                 .getCoding()

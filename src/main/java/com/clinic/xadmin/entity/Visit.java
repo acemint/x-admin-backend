@@ -47,4 +47,7 @@ public class Visit extends BaseEntity {
   @Column(name = "end_time")
   private LocalDateTime endTime;
 
+  @Column(name = "satu_sehat_encounter_reference_id", nullable = false)
+  private String satuSehatEncounterReferenceId;
+
 }

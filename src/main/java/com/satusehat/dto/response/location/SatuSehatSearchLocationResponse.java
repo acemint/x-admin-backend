@@ -17,6 +17,8 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SatuSehatSearchLocationResponse {
 
   private String id;

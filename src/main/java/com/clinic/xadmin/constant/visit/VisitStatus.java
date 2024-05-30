@@ -2,11 +2,11 @@ package com.clinic.xadmin.constant.visit;
 
 public enum VisitStatus {
 
-  NOT_STARTED("NOT_STARTED", "Not Started"),
-  CANCELLED("CANCELLED", "Cancelled"),
-  IN_PROGRESS("IN_PROGRESS", "In Progress"),
-  FINISHED("FINISHED", "Finished"),
-  DISCHARGE_DISPOSITION("DISCHARGE_DISPOSITION", "Discharge Disposition");
+  PLANNED("PLANNED", "planned"),
+  CANCELLED("CANCELLED", "cancelled"),
+  IN_PROGRESS("IN_PROGRESS", "in-progress"),
+  COMPLETED("FINISHED", "completed"),
+  DISCHARGED("DISCHARGED", "discharged");
 
   private final String backendValue;
   private final String satuSehatValue;

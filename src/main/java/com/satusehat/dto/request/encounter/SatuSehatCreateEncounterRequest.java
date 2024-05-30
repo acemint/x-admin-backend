@@ -8,7 +8,7 @@ import com.satusehat.dto.request.commons.Individual;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -17,7 +17,9 @@ public class SatuSehatCreateEncounterRequest {
 
   private String resourceType = "Encounter";
   private String status;
-  private EncounterIdentifier identifier;
+
+  @JsonProperty(value = "identifier")
+  private List<EncounterIdentifier> identifiers;
 
   @JsonProperty(value = "class")
   private ActCode actCode;
@@ -63,11 +65,21 @@ public class SatuSehatCreateEncounterRequest {
   @Builder
   public static class Participant {
 
-    @JsonProperty(value = "coding")
-    private List<ParticipationType> participantType;
+    @JsonProperty(value = "type")
+    private List<ListParticipant> participantType;
 
     @JsonProperty(value = "individual")
     private Individual individual;
+
+  }
+
+
+  @Data
+  @Builder
+  public static class ListParticipant {
+
+    @JsonProperty(value = "coding")
+    public List<ParticipationType> participationType;
 
   }
 
@@ -75,7 +87,7 @@ public class SatuSehatCreateEncounterRequest {
   @Builder
   public static class Period {
 
-    private LocalDateTime start;
+    private String start;
 
   }
 
@@ -84,19 +96,7 @@ public class SatuSehatCreateEncounterRequest {
   public static class Location {
 
     @JsonProperty(value = "location")
-    private LocationData locationData;
-
-  }
-
-  @Data
-  @Builder
-  public static class LocationData {
-
-    @JsonProperty(value = "reference")
-    private String referenceId;
-
-    @JsonProperty(value = "display")
-    private String name;
+    private Individual locationData;
 
   }
 
