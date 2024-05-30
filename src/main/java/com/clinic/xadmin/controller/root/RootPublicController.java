@@ -23,6 +23,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.vault.core.VaultKeyValueOperationsSupport;
 import org.springframework.vault.core.VaultTemplate;
@@ -75,6 +76,20 @@ public class RootPublicController {
     return ResponseEntity.ok().body(
         StandardizedResponse.<MemberResponse>builder()
             .content(MemberMapper.INSTANCE.convertToAPIResponse(userDetails.getMember()))
+            .build());
+  }
+
+  @Operation(
+      summary = RootPublicControllerDocs.LOGOUT_SUMMARY,
+      description = RootPublicControllerDocs.LOGOUT_DESCRIPTION)
+  @PostMapping(value = RootPublicControllerPath.LOGOUT, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<StandardizedResponse<String>> logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    SecurityContext context = this.appSecurityContextHolder.getCurrentContext();
+
+    new SecurityContextLogoutHandler().logout(httpServletRequest, httpServletResponse, context.getAuthentication());
+    return ResponseEntity.ok().body(
+        StandardizedResponse.<String>builder()
+            .content("Successful logout")
             .build());
   }
 

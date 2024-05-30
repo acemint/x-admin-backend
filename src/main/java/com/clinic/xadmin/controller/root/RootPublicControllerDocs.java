@@ -11,4 +11,7 @@ public interface RootPublicControllerDocs {
       + "This will be a responsibility of the Front-End to redirect user to /login page<br><br>"
       + "Role Allowed: Unauthenticated User";
 
+  String LOGOUT_SUMMARY = "Logs out of current application";
+  String LOGOUT_DESCRIPTION = "Logs out of a user from the system";
+
 }
