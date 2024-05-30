@@ -43,7 +43,7 @@ public class RoomController {
   @PostMapping(value = RoomControllerPath.ADD, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<RoomResponse>> addRoom(
-      @RequestParam(name = "clinic-code", required = false) String clinicCode,
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestBody @Valid CreateRoomRequest request) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
 
@@ -58,7 +58,7 @@ public class RoomController {
   @GetMapping(value = RoomControllerPath.LIST, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<List<RoomResponse>>> getRooms(
-      @RequestParam(name = "clinic-code", required = false) String clinicCode) {
+      @RequestParam(name = "clinicCode", required = false) String clinicCode) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
 
     List<Room> rooms = this.roomService.getRooms(clinic);
