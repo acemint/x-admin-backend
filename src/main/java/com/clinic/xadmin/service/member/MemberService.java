@@ -22,6 +22,7 @@ public interface MemberService {
 
   Member resetPassword(ResetPasswordRequest request);
 
+  @Deprecated
   void fallbackRefetchIHSCode();
 
 }

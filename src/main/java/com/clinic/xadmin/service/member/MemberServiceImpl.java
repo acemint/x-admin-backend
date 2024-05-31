@@ -137,6 +137,7 @@ public class MemberServiceImpl implements MemberService {
     return this.memberRepository.save(existingMember);
   }
 
+  @Deprecated
   @Override
   public void fallbackRefetchIHSCode() {
     MemberFilter filterMemberPatientWithNoIHSCode = MemberFilter.builder()
