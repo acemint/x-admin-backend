@@ -41,7 +41,7 @@ public class VisitController {
   @PostMapping(value = VisitControllerPath.CREATE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<CreateVisitResponse>> createVisit(
-      @RequestParam(name = "clinic-code", required = false) String clinicCode,
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestBody @Valid CreateVisitRequest request) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     Visit visit = this.visitService.createVisit(clinic, request);

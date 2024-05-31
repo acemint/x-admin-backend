@@ -61,7 +61,7 @@ public class ClinicController {
   @PutMapping(value = ClinicControllerPath.EDIT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_DEVELOPER)
   public ResponseEntity<StandardizedResponse<ClinicResponse>> edit(
-      @RequestParam(name = "clinic-code") String clinicCode,
+      @RequestParam(name = "clinicCode") String clinicCode,
       @RequestBody @Valid UpdateClinicRequest request) {
     Clinic clinic = this.clinicService.editClinic(clinicCode, request);
 
@@ -77,7 +77,7 @@ public class ClinicController {
   @GetMapping(value = ClinicControllerPath.GET, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<ClinicResponse>> getClinic(
-      @RequestParam(name = "clinic-code") String clinicCode) {
+      @RequestParam(name = "clinicCode") String clinicCode) {
     Clinic clinic = this.clinicService.getClinic(clinicCode);
 
     return ResponseEntity.ok().body(

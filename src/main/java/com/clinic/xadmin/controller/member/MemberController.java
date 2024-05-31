@@ -63,7 +63,7 @@ public class MemberController {
   @PostMapping(value = MemberControllerPath.REGISTER_MANAGER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<MemberResponse>> registerManager(
-      @RequestParam(name = "clinic-code", required = false) String clinicCode,
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestBody @Valid RegisterMemberAsManagerRequest request) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     Member member = this.memberService.create(clinic, request);
@@ -78,7 +78,7 @@ public class MemberController {
   @PostMapping(value = MemberControllerPath.REGISTER_PATIENT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<MemberResponse>> registerPatient(
-      @RequestParam(name = "clinic-code", required = false) String clinicCode,
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestBody @Valid RegisterMemberAsPatientRequest request) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     Member member = this.memberService.create(clinic, request);
@@ -93,7 +93,7 @@ public class MemberController {
   @PostMapping(value = MemberControllerPath.REGISTER_PRACTITIONER, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
   public ResponseEntity<StandardizedResponse<MemberResponse>> registerPractitionerx(
-      @RequestParam(name = "clinic-code", required = false) String clinicCode,
+      @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestBody @Valid RegisterMemberAsPractitionerRequest request) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     Member member = this.memberService.create(clinic, request);

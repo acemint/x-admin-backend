@@ -12,4 +12,6 @@ public interface RoomService {
 
   List<Room> getRooms(Clinic clinic);
 
+  Room getFirstRoom(Clinic clinic);
+
 }

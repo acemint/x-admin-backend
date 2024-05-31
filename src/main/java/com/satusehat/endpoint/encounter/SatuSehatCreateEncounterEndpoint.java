@@ -2,6 +2,7 @@ package com.satusehat.endpoint.encounter;
 
 import com.satusehat.dto.request.encounter.SatuSehatCreateEncounterRequest;
 import com.satusehat.dto.response.StandardizedResourceResponse;
+import com.satusehat.dto.response.encounter.SatuSehatCreateEncounterResponse;
 import com.satusehat.endpoint.SatuSehatEndpoint;
 import com.satusehat.endpoint.restclients.SatuSehatRestClient;
 import lombok.Builder;
@@ -11,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
 public class SatuSehatCreateEncounterEndpoint implements
-    SatuSehatEndpoint<StandardizedResourceResponse<Object>> {
+    SatuSehatEndpoint<SatuSehatCreateEncounterResponse> {
 
   private String authToken;
   private SatuSehatCreateEncounterRequest requestBody;
@@ -22,10 +23,10 @@ public class SatuSehatCreateEncounterEndpoint implements
   }
 
   @Override
-  public ResponseEntity<StandardizedResourceResponse<Object>> performHttpRequest() {
+  public ResponseEntity<SatuSehatCreateEncounterResponse> performHttpRequest() {
     RestClient restClient = SatuSehatRestClient.getRestClient(this.authToken);
 
-    return restClient.method(HttpMethod.valueOf(HttpMethod.POST.name()))
+    return restClient.method(HttpMethod.POST)
         .uri(uriBuilder -> uriBuilder
             .path(SatuSehatEncounterPath.BASE_PATH)
             .build())
@@ -35,7 +36,7 @@ public class SatuSehatCreateEncounterEndpoint implements
   }
 
   @Override
-  public SatuSehatEndpoint<StandardizedResourceResponse<Object>> setAuthToken(String authToken) {
+  public SatuSehatEndpoint<SatuSehatCreateEncounterResponse> setAuthToken(String authToken) {
     this.authToken = authToken;
     return this;
   }

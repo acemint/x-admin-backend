@@ -6,8 +6,8 @@ import lombok.Data;
 public class ActCode {
 
   private final String system = "http://terminology.hl7.org/CodeSystem/v3-ActCode";
-  private final String code;
-  private final String display;
+  private String code;
+  private String display;
 
   public ActCode(ActCodeEnum actCodeEnum) {
     this.code = actCodeEnum.getCode();

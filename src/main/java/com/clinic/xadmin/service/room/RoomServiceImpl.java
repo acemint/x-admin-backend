@@ -72,6 +72,16 @@ public class RoomServiceImpl implements RoomService {
     return Optional.ofNullable(this.roomRepository.searchByClinicCode(clinic.getCode())).orElse(List.of());
   }
 
+  @Override
+  public Room getFirstRoom(Clinic clinic) {
+    List<Room> rooms = this.roomRepository.searchByClinicCode(clinic.getCode());
+    if (Objects.isNull(rooms) || rooms.isEmpty()) {
+      return null;
+    }
+    rooms.sort(Comparator.comparing(Room::getCreatedDate));
+    return rooms.getFirst();
+  }
+
   private void updateRoomsFromSatuSehatInstance(Clinic clinic) {
     // Insert all rooms existing in SatuSehat
     List<Room> existingSatuSehatRooms = this.callGETLocationAsRooms(clinic);

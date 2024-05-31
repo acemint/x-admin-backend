@@ -4,6 +4,7 @@ public enum ResourceType {
 
   ORGANIZATION("Organization"),
   PRACTITIONER("Practitioner"),
+  LOCATION("Location"),
   PATIENT("Patient");
 
   private final String value;

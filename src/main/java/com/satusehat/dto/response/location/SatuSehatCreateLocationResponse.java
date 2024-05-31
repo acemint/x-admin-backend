@@ -8,15 +8,19 @@ import com.satusehat.dto.request.commons.Coordinate;
 import com.satusehat.dto.request.commons.Individual;
 import com.satusehat.dto.request.commons.Telecommunication;
 import com.satusehat.dto.request.location.SatuSehatCreateLocationRequest;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SatuSehatCreateLocationResponse {
 
   private String id;
