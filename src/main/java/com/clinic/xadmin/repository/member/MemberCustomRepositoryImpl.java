@@ -8,7 +8,6 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -91,18 +90,17 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     QMember qMember = QMember.member;
     JPAQuery<Member> query = new JPAQuery<>(entityManager);
 
-    Pageable pageable = filter.getPageable();
-
     query = query.select(qMember)
         .from(qMember)
-        .where(this.getBooleanExpression(filter));
+        .where(this.getWhereConditions(filter));
 
-    if (!pageable.isUnpaged()) {
+    Pageable pageable = filter.getPageable();
+    if (pageable.isPaged()) {
       query = query.limit(pageable.getPageSize())
           .offset(pageable.getOffset());
     }
 
-    if (!pageable.getSort().isUnsorted()) {
+    if (pageable.getSort().isSorted()) {
       query = query.orderBy(this.getOrderSpecifier(pageable.getSort()).toArray(new OrderSpecifier[]{}));
     }
 
@@ -111,7 +109,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     return new PageImpl<>(members, filter.getPageable(), members.size());
   }
 
-  private @Nullable BooleanExpression getBooleanExpression(MemberFilter filter) {
+  private static BooleanExpression getWhereConditions(MemberFilter filter) {
     QMember qMember = QMember.member;
 
     BooleanExpression booleanExpression = qMember.id.isNotNull();

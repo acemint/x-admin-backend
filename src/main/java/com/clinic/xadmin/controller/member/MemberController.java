@@ -17,6 +17,7 @@ import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
 import com.clinic.xadmin.service.member.MemberService;
+import com.clinic.xadmin.validator.annotation.member.ValidMemberRoleSearch;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,8 +123,9 @@ public class MemberController {
   @GetMapping(value = MemberControllerPath.FILTER, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
   public ResponseEntity<StandardizedResponse<List<MemberResponse>>> filter(
-      @RequestParam(name = "name", required = false) String name,
       @RequestParam(name = "clinicCode", required = false) String clinicCode,
+      @RequestParam(name = "name", required = false) String name,
+      @RequestParam(name = "role", required = false) @ValidMemberRoleSearch String role,
       @RequestParam(name = "sortBy", required = false) String[] sortBy,
       @RequestParam(name = "sortDirection", defaultValue = MemberControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
       @RequestParam(name = "pageNumber", defaultValue = MemberControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
@@ -139,6 +141,7 @@ public class MemberController {
 
     MemberFilter memberFilter = MemberFilter.builder()
         .name(name)
+        .role(role)
         .clinicCode(clinicCode)
         .pageable(pageRequest)
         .build();
