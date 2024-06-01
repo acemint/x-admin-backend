@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -20,7 +21,7 @@ public class VisitResponse {
   private String status;
   private MemberResponse patient;
   private MemberResponse practitioner;
-  private LocalDateTime startTime;
-  private LocalDateTime endTime;
+  private Long startTime;
+  private Long endTime;
 
 }

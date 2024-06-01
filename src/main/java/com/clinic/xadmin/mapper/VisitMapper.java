@@ -16,12 +16,15 @@ import com.satusehat.dto.request.encounter.SatuSehatCreateEncounterRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Mapper
 public interface VisitMapper {
@@ -29,6 +32,15 @@ public interface VisitMapper {
   VisitMapper INSTANCE = Mappers.getMapper( VisitMapper.class );
 
   VisitResponse createFrom(Visit visit);
+
+  List<VisitResponse> convertToAPIResponse(List<Visit> visits);
+
+  default Long fromLocalDateTime(LocalDateTime localDateTime) {
+    if (Objects.isNull(localDateTime)) {
+      return null;
+    }
+    return localDateTime.toInstant(ZoneOffset.UTC).getEpochSecond();
+  }
 
   default Visit convertFromAPIRequest(Member patient, Member practitioner, Room room) {
     return Visit.builder()
