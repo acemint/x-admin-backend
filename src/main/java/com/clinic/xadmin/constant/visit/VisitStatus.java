@@ -1,5 +1,9 @@
 package com.clinic.xadmin.constant.visit;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public enum VisitStatus {
 
   PLANNED("PLANNED", "planned"),
@@ -14,6 +18,10 @@ public enum VisitStatus {
   VisitStatus(String backendValue, String satuSehatValue) {
     this.backendValue = backendValue;
     this.satuSehatValue = satuSehatValue;
+  }
+
+  public static Set<String> getAllVisitStatusBackendValues() {
+    return Arrays.stream(VisitStatus.values()).map(VisitStatus::getBackendValue).collect(Collectors.toSet());
   }
 
   public String getBackendValue() {

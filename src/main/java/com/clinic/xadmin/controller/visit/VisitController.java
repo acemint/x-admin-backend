@@ -4,7 +4,7 @@ package com.clinic.xadmin.controller.visit;
 import com.clinic.xadmin.controller.helper.ControllerHelper;
 import com.clinic.xadmin.dto.request.visit.CreateVisitRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
-import com.clinic.xadmin.dto.response.visit.CreateVisitResponse;
+import com.clinic.xadmin.dto.response.visit.VisitResponse;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Visit;
 import com.clinic.xadmin.mapper.VisitMapper;
@@ -40,14 +40,14 @@ public class VisitController {
   @Operation(summary = VisitControllerDocs.CREATE_VISIT_SUMMARY, description = VisitControllerDocs.CREATE_VISIT_DESCRIPTION)
   @PostMapping(value = VisitControllerPath.CREATE, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_CLINIC_ADMIN)
-  public ResponseEntity<StandardizedResponse<CreateVisitResponse>> createVisit(
+  public ResponseEntity<StandardizedResponse<VisitResponse>> createVisit(
       @RequestParam(name = "clinicCode", required = false) String clinicCode,
       @RequestBody @Valid CreateVisitRequest request) {
     Clinic clinic = controllerHelper.getClinicScope(clinicCode);
     Visit visit = this.visitService.createVisit(clinic, request);
 
     return ResponseEntity.ok().body(
-        StandardizedResponse.<CreateVisitResponse>builder()
+        StandardizedResponse.<VisitResponse>builder()
             .content(VisitMapper.INSTANCE.createFrom(visit))
             .build());
   }
