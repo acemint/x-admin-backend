@@ -9,7 +9,7 @@ INSERT INTO public.version(commit_id, description)
 VALUES ('d97c50a48432038bdf3e123cdc2207a60a8e6668', 'Initialize xa_clinic and xa_member table');
 
 CREATE TABLE public.version (
-    commit_id VARCHAR(255) NOT NULL
+    commit_id VARCHAR(255) NOT NULL,
     description TEXT
 )
 
@@ -137,6 +137,11 @@ INSERT INTO public.version(commit_id, description)
 VALUES ('35f671117981eda75ca3858c7b282e2e47abe0ee', 'Remove visit history and add room and room description in xa_visit and add xa_room');
 
 ALTER TABLE xa_visit ADD COLUMN satu_sehat_encounter_reference_id VARCHAR(255);
+ALTER TABLE xa_visit DROP COLUMN room;
+ALTER TABLE xa_visit DROP COLUMN room_description;
+
+INSERT INTO public.version(commit_id, description)
+VALUES ('22817ee9-329f-4e75-90db-199fa14300af', 'Remove unused column and add reference_id in xa_visit');
 
 
 
