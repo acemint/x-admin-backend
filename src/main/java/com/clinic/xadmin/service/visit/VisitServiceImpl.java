@@ -8,6 +8,7 @@ import com.clinic.xadmin.entity.Visit;
 import com.clinic.xadmin.exception.XAdminBadRequestException;
 import com.clinic.xadmin.exception.XAdminInternalException;
 import com.clinic.xadmin.mapper.VisitMapper;
+import com.clinic.xadmin.model.visit.VisitFilter;
 import com.clinic.xadmin.outbound.SatuSehatAPICallWrapper;
 import com.clinic.xadmin.repository.member.MemberRepository;
 import com.clinic.xadmin.repository.visit.VisitRepository;
@@ -16,6 +17,7 @@ import com.satusehat.dto.request.encounter.SatuSehatCreateEncounterRequest;
 import com.satusehat.dto.response.encounter.SatuSehatCreateEncounterResponse;
 import com.satusehat.endpoint.encounter.SatuSehatCreateEncounterEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,5 +73,11 @@ public class VisitServiceImpl implements VisitService {
     visit = this.visitRepository.save(visit);
     return visit;
   }
+
+  @Override
+  public Page<Visit> get(VisitFilter visitFilter) {
+    return this.visitRepository.searchByFilter(visitFilter);
+  }
+
 
 }

@@ -1,7 +1,7 @@
 package com.clinic.xadmin.mapper;
 
 import com.clinic.xadmin.constant.visit.VisitStatus;
-import com.clinic.xadmin.dto.response.visit.CreateVisitResponse;
+import com.clinic.xadmin.dto.response.visit.VisitResponse;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Member;
 import com.clinic.xadmin.entity.Room;
@@ -16,20 +16,31 @@ import com.satusehat.dto.request.encounter.SatuSehatCreateEncounterRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Mapper
 public interface VisitMapper {
 
   VisitMapper INSTANCE = Mappers.getMapper( VisitMapper.class );
 
-  CreateVisitResponse createFrom(Visit visit);
+  VisitResponse createFrom(Visit visit);
+
+  List<VisitResponse> convertToAPIResponse(List<Visit> visits);
+
+  default Long fromLocalDateTime(LocalDateTime localDateTime) {
+    if (Objects.isNull(localDateTime)) {
+      return null;
+    }
+    return localDateTime.toInstant(ZoneOffset.UTC).getEpochSecond();
+  }
 
   default Visit convertFromAPIRequest(Member patient, Member practitioner, Room room) {
     return Visit.builder()

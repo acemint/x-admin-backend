@@ -5,6 +5,7 @@ import com.clinic.xadmin.model.patient.SatuSehatPatientFilter;
 
 public interface PatientService {
 
+  @Deprecated
   String getPatientFromSatuSehat(SatuSehatPatientFilter filter);
 
   String getOrCreateSatuSehatPatient(Member member);
