@@ -61,15 +61,16 @@ public class VisitServiceImpl implements VisitService {
       throw new XAdminInternalException("Need to create room first before creating visit");
     }
 
-    Visit visit = VisitMapper.INSTANCE.convertFromAPIRequest(patient, practitioner, room);
+    Visit visit = VisitMapper.INSTANCE.convertFromAPIRequest(patient, practitioner, room, createVisitRequest);
     visit.setCode(this.visitRepository.getNextCode());
 
-    SatuSehatCreateEncounterRequest satuSehatCreateEncounterRequest = VisitMapper.INSTANCE.convertToSatuSehatRequest(visit, clinic);
-    SatuSehatCreateEncounterEndpoint endpoint = SatuSehatCreateEncounterEndpoint.builder()
-        .requestBody(satuSehatCreateEncounterRequest)
-        .build();
-    ResponseEntity<SatuSehatCreateEncounterResponse> response = this.apiCallWrapper.call(endpoint, clinic.getCode());
-    visit.setSatuSehatEncounterReferenceId(response.getBody().getId());
+//    TODO: Create an endpoint to move this commented code to another API which will be used to send to SatuSehat once the startTime has passed current timestamp
+//    SatuSehatCreateEncounterRequest satuSehatCreateEncounterRequest = VisitMapper.INSTANCE.convertToSatuSehatRequest(visit, clinic);
+//    SatuSehatCreateEncounterEndpoint endpoint = SatuSehatCreateEncounterEndpoint.builder()
+//        .requestBody(satuSehatCreateEncounterRequest)
+//        .build();
+//    ResponseEntity<SatuSehatCreateEncounterResponse> response = this.apiCallWrapper.call(endpoint, clinic.getCode());
+//    visit.setSatuSehatEncounterReferenceId(response.getBody().getId());
     visit = this.visitRepository.save(visit);
     return visit;
   }

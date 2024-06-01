@@ -1,6 +1,7 @@
 package com.clinic.xadmin.mapper;
 
 import com.clinic.xadmin.constant.visit.VisitStatus;
+import com.clinic.xadmin.dto.request.visit.CreateVisitRequest;
 import com.clinic.xadmin.dto.response.visit.VisitResponse;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Member;
@@ -42,13 +43,22 @@ public interface VisitMapper {
     return localDateTime.toInstant(ZoneOffset.UTC).getEpochSecond();
   }
 
-  default Visit convertFromAPIRequest(Member patient, Member practitioner, Room room) {
+  default LocalDateTime fromEpoch(Long epochSecond) {
+    if (Objects.isNull(epochSecond)) {
+      return null;
+    }
+    return LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSecond), ZoneId.systemDefault())
+        .truncatedTo(ChronoUnit.MINUTES);
+  }
+
+  default Visit convertFromAPIRequest(Member patient, Member practitioner, Room room, CreateVisitRequest request) {
     return Visit.builder()
         .patient(patient)
         .practitioner(practitioner)
         .room(room)
         .status(VisitStatus.PLANNED.getBackendValue())
-        .startTime(LocalDateTime.now())
+        .startTime(fromEpoch(request.getStartTime()))
+        .endTime(fromEpoch(request.getEndTime()))
         .build();
   }
 
