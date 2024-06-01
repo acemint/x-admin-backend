@@ -38,6 +38,7 @@ public class PatientServiceImpl implements PatientService {
     this.clinicSatuSehatCredentialRepository = clinicSatuSehatCredentialRepository;
   }
 
+  @Deprecated
   @Override
   public String getPatientFromSatuSehat(SatuSehatPatientFilter filter) {
     SatuSehatEndpoint<StandardizedResourceResponse<PatientSearchResourceResponse>> endpoint = null;
