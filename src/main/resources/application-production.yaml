@@ -1,3 +1,5 @@
+spring.config.import: vault://
+
 spring.datasource:
   url: ${SPRING_DATASOURCE_URL}
   username: ${SPRING_DATASOURCE_USERNAME}
@@ -7,15 +9,18 @@ spring.cloud.vault:
   uri: ${SPRING_CLOUD_VAULT_URI}
   connection-timeout: ${SPRING_CLOUD_VAULT_CONNECTION_TIMEOUT:5000}
   read-timeout: ${SPRING_CLOUD_VAULT_READ_TIMEOUT:15000}
-  authentication: ${SPRING_CLOUD_VAULT_AUTHENTICATION:TOKEN}
+  
+  # To authenticate to vault
+  authentication: APP_ROLE
+  fail-fast: true
+  app-role:
+    role-id: ${SPRING_CLOUD_VAULT_APP_ROLE_ROLE_ID}
+    secret-id: ${SPRING_CLOUD_VAULT_APP_ROLE_SECRET_ID}
+
+  # Enable vault's key-value
   kv:
     enable: true
-    backend: secret
-
-# DEPRECATED
-# xadmin.jwt:
-#  secret-key: ${XADMIN_JWT_SECRET_KEY}
-#  expiration-time-in-ms: 18000000
+    backend: ${SPRING_CLOUD_VAULT_KV_BACKEND}
 
 xadmin.security:
   cors:
@@ -23,4 +28,4 @@ xadmin.security:
       - ${XADMIN_CORS_ALLOWED_HOST_1}
 
 xadmin.satusehat.integration:
-  environment: production
+  environment: ${SATU_SEHAT_PRODUCTION_ENVIRONMENT_NAME:production}

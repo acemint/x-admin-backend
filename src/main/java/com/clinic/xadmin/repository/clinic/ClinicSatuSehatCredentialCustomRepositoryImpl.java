@@ -46,6 +46,8 @@ public class ClinicSatuSehatCredentialCustomRepositoryImpl implements ClinicSatu
     if (Objects.isNull(vaultResponse)) {
       throw new XAdminInternalException("Clinic auth not found " + clinicProperty.getName());
     }
+    // So that it won't create new secret in vault if for some reason this response is saved
+    vaultResponse.setRequestId(clinic.getCode());
     return this.objectMapper.convertValue(vaultResponse.getRequiredData(), ClinicSatuSehatCredential.class);
   }
 }

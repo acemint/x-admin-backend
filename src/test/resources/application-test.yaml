@@ -1,5 +1,5 @@
 spring.datasource:
-  url: jdbc:postgresql://localhost:5433/x-admin-db
+  url: jdbc:postgresql://localhost:5432/x-admin-db
   username: postgres
   password: admin123
 
@@ -21,3 +21,6 @@ xadmin.security:
   cors:
     allowed-hosts:
       - http://localhost:5173/
+
+xadmin.satusehat.integration:
+  environment: staging

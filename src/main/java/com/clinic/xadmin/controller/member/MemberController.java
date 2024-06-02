@@ -6,6 +6,7 @@ import com.clinic.xadmin.dto.request.member.RegisterMemberAsPractitionerRequest;
 import com.clinic.xadmin.dto.request.member.RegisterMemberAsManagerRequest;
 import com.clinic.xadmin.dto.request.member.RegisterMemberAsPatientRequest;
 import com.clinic.xadmin.dto.response.StandardizedResponse;
+import com.clinic.xadmin.dto.response.member.FallbackRefetchIHSCodeResponse;
 import com.clinic.xadmin.dto.response.member.MemberResponse;
 import com.clinic.xadmin.entity.Clinic;
 import com.clinic.xadmin.entity.Member;
@@ -16,6 +17,7 @@ import com.clinic.xadmin.security.authprovider.CustomUserDetails;
 import com.clinic.xadmin.security.constant.SecurityAuthorizationType;
 import com.clinic.xadmin.security.context.AppSecurityContextHolder;
 import com.clinic.xadmin.service.member.MemberService;
+import com.clinic.xadmin.validator.annotation.member.ValidMemberRoleSearch;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,11 @@ import java.util.Objects;
 @RestController
 @RequestMapping(value = MemberControllerPath.BASE)
 public class MemberController {
+
+  // TODO: Create a PATCH API to fetch Patient IHS Code for existing Member
+  // TODO: Create a PATCH API to fetch Practitioner IHS Code for existing Member
+
+  // TODO: Create a validation in register member, such that IHS Code from searchByNik = searchByDescription
 
   private final ControllerHelper controllerHelper;
   private final MemberService memberService;
@@ -64,7 +71,7 @@ public class MemberController {
 
     return ResponseEntity.ok().body(
         StandardizedResponse.<MemberResponse>builder()
-            .content(MemberMapper.INSTANCE.createFrom(member))
+            .content(MemberMapper.INSTANCE.convertToAPIResponse(member))
             .build());
   }
 
@@ -79,7 +86,7 @@ public class MemberController {
 
     return ResponseEntity.ok().body(
         StandardizedResponse.<MemberResponse>builder()
-            .content(MemberMapper.INSTANCE.createFrom(member))
+            .content(MemberMapper.INSTANCE.convertToAPIResponse(member))
             .build());
   }
 
@@ -94,7 +101,7 @@ public class MemberController {
 
     return ResponseEntity.ok().body(
         StandardizedResponse.<MemberResponse>builder()
-            .content(MemberMapper.INSTANCE.createFrom(member))
+            .content(MemberMapper.INSTANCE.convertToAPIResponse(member))
             .build());
   }
 
@@ -106,7 +113,7 @@ public class MemberController {
     CustomUserDetails userDetails = (CustomUserDetails) this.appSecurityContextHolder.getCurrentContext().getAuthentication().getPrincipal();
     return ResponseEntity.ok().body(
         StandardizedResponse.<MemberResponse>builder()
-            .content(MemberMapper.INSTANCE.createFrom(userDetails.getMember()))
+            .content(MemberMapper.INSTANCE.convertToAPIResponse(userDetails.getMember()))
             .build());
   }
 
@@ -116,8 +123,9 @@ public class MemberController {
   @GetMapping(value = MemberControllerPath.FILTER, produces = MediaType.APPLICATION_JSON_VALUE)
   @PreAuthorize(SecurityAuthorizationType.IS_FULLY_AUTHENTICATED)
   public ResponseEntity<StandardizedResponse<List<MemberResponse>>> filter(
-      @RequestParam(name = "name", required = false) String name,
       @RequestParam(name = "clinicCode", required = false) String clinicCode,
+      @RequestParam(name = "name", required = false) String name,
+      @RequestParam(name = "role", required = false) @ValidMemberRoleSearch String role,
       @RequestParam(name = "sortBy", required = false) String[] sortBy,
       @RequestParam(name = "sortDirection", defaultValue = MemberControllerDefaultValue.DEFAULT_SORT_ORDER) String sortDirection,
       @RequestParam(name = "pageNumber", defaultValue = MemberControllerDefaultValue.DEFAULT_PAGE_NUMBER) Integer pageNumber,
@@ -133,6 +141,7 @@ public class MemberController {
 
     MemberFilter memberFilter = MemberFilter.builder()
         .name(name)
+        .role(role)
         .clinicCode(clinicCode)
         .pageable(pageRequest)
         .build();
@@ -140,9 +149,23 @@ public class MemberController {
 
     return ResponseEntity.ok().body(StandardizedResponse
         .<List<MemberResponse>>builder()
-        .content(MemberMapper.INSTANCE.createFrom(members.getContent()))
+        .content(MemberMapper.INSTANCE.convertToAPIResponse(members.getContent()))
         .paginationMetadata(PaginationMapper.INSTANCE.createFrom(members))
         .build());
+  }
+
+  @Deprecated
+  @Operation(summary = MemberControllerDocs.FALLBACK_FETCH_IHS_CODE_PATIENT_SUMMARY, description = MemberControllerDocs.FALLBACK_FETCH_IHS_CODE_PATIENT_DESCRIPTION)
+  @GetMapping(value = MemberControllerPath.FALLBACK_REFETCH_IHS_CODE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<StandardizedResponse<FallbackRefetchIHSCodeResponse>> fallbackRefetchIHSCode() {
+    this.memberService.fallbackRefetchIHSCode();
+    return ResponseEntity.ok().body(
+        StandardizedResponse.<FallbackRefetchIHSCodeResponse>builder()
+            .content(FallbackRefetchIHSCodeResponse.builder()
+                .success(true)
+                .build())
+            .build()
+    );
   }
 
 }

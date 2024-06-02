@@ -30,7 +30,7 @@ public class SatuSehatOauthEndpoint implements SatuSehatEndpoint<OAuthResponse> 
   }
 
   @Override
-  public ResponseEntity<OAuthResponse> getMethodCall() {
+  public ResponseEntity<OAuthResponse> performHttpRequest() {
     RestClient restClient = RestClient.builder()
         .baseUrl(SatuSehatPropertyHolder.getInstance().getAuthUrl())
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

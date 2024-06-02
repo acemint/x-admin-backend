@@ -422,14 +422,14 @@ public class MemberControllerTest extends BaseControllerTest {
 
     RegisterMemberRequest requestBody = IntegrationTestHelper
         .readJsonFile("member_register_normalUser.json", RegisterMemberRequest.class, IntegrationTestHelper.JSON_HINT, IntegrationTestHelper.REQUEST_HINT);
-    requestBody.setAge(1);
+    requestBody.setDateOfBirth("2020-09-01");
 
     this.mockMvc.perform(MockMvcRequestBuilders.post(
                 MemberControllerPath.BASE + MemberControllerPath.REGISTER_PRACTITIONER)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(IntegrationTestHelper.convertToByte(requestBody)))
         .andExpect(MockMvcResultMatchers.status().is(HttpStatus.BAD_REQUEST.value()))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterMemberRequest.Fields.age)));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.fields", Matchers.hasKey(RegisterMemberRequest.Fields.dateOfBirth)));
   }
 
   @Test

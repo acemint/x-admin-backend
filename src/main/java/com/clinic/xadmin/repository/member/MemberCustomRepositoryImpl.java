@@ -8,7 +8,6 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +20,7 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -32,7 +32,7 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
   static {
     AVAILABLE_SORTED_BY.add("name");
     AVAILABLE_SORTED_BY.add(Member.Fields.practitionerType);
-    AVAILABLE_SORTED_BY.add(Member.Fields.status);
+    AVAILABLE_SORTED_BY.add(Member.Fields.activationStatus);
   }
 
   @Autowired
@@ -62,24 +62,54 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
   }
 
   @Override
-  public Page<Member> searchByFilter(MemberFilter filter) {
+  public Member searchByClinicCodeAndNik(String clinicCode, String nik) {
     QMember qMember = QMember.member;
     JPAQuery<?> query = new JPAQuery<>(entityManager);
 
-    Pageable pageable = filter.getPageable();
-
-    List<Member> members = query.select(qMember)
+    return query.select(qMember)
         .from(qMember)
-        .where(this.getBooleanExpression(filter))
-        .limit(pageable.getPageSize())
-        .offset(pageable.getOffset())
-        .orderBy(this.getOrderSpecifier(pageable.getSort()).toArray(new OrderSpecifier[]{}))
-        .fetch();
+        .where(qMember.nik.eq(nik)
+            .and(qMember.clinic.code.eq(clinicCode)))
+        .fetchOne();
+  }
+
+  @Override
+  public Member searchByClinicCodeAndCode(String clinicCode, String code) {
+    QMember qMember = QMember.member;
+    JPAQuery<?> query = new JPAQuery<>(entityManager);
+
+    return query.select(qMember)
+        .from(qMember)
+        .where(qMember.code.eq(code)
+            .and(qMember.clinic.code.eq(clinicCode)))
+        .fetchOne();
+  }
+
+  @Override
+  public Page<Member> searchByFilter(MemberFilter filter) {
+    QMember qMember = QMember.member;
+    JPAQuery<Member> query = new JPAQuery<>(entityManager);
+
+    query = query.select(qMember)
+        .from(qMember)
+        .where(this.getWhereConditions(filter));
+
+    Pageable pageable = filter.getPageable();
+    if (pageable.isPaged()) {
+      query = query.limit(pageable.getPageSize())
+          .offset(pageable.getOffset());
+    }
+
+    if (pageable.getSort().isSorted()) {
+      query = query.orderBy(this.getOrderSpecifier(pageable.getSort()).toArray(new OrderSpecifier[]{}));
+    }
+
+    List<Member> members = query.fetch();
 
     return new PageImpl<>(members, filter.getPageable(), members.size());
   }
 
-  private @Nullable BooleanExpression getBooleanExpression(MemberFilter filter) {
+  private static BooleanExpression getWhereConditions(MemberFilter filter) {
     QMember qMember = QMember.member;
 
     BooleanExpression booleanExpression = qMember.id.isNotNull();
@@ -92,6 +122,20 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
     if (StringUtils.hasText(filter.getClinicCode())) {
       booleanExpression = booleanExpression.and(
           qMember.clinic.code.eq(filter.getClinicCode()));
+    }
+    if (StringUtils.hasText(filter.getRole())) {
+      booleanExpression = booleanExpression.and(
+          qMember.role.eq(filter.getRole()));
+    }
+    if (Objects.nonNull(filter.getFilterIHSCode())) {
+      if (filter.getFilterIHSCode().isNull()) {
+        booleanExpression = booleanExpression.and(
+            qMember.satuSehatPatientReferenceId.isNull());
+      }
+      else {
+        booleanExpression = booleanExpression.and(
+            qMember.satuSehatPatientReferenceId.isNotNull());
+      }
     }
     return booleanExpression;
   }
@@ -113,8 +157,8 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository {
         orderSpecifiers.add(new OrderSpecifier<>(order, qMember.practitionerType));
         continue;
       }
-      if (property.equals(Member.Fields.status)) {
-        orderSpecifiers.add(new OrderSpecifier<>(order, qMember.status));
+      if (property.equals(Member.Fields.activationStatus)) {
+        orderSpecifiers.add(new OrderSpecifier<>(order, qMember.activationStatus));
         continue;
       }
     }

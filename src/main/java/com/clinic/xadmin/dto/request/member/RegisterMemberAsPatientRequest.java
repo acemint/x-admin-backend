@@ -1,8 +1,7 @@
 package com.clinic.xadmin.dto.request.member;
 
-import com.clinic.xadmin.constant.member.MemberRole;
+import com.clinic.xadmin.validator.annotation.member.ValidRegisterPatientNikAndMotherNik;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,9 +16,10 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldNameConstants
+@ValidRegisterPatientNikAndMotherNik
 public class RegisterMemberAsPatientRequest extends RegisterMemberRequest {
 
-  @NotNull
-  private String satuSehatPatientReferenceId;
+  private String nik;
+  private String mothersNik;
 
 }

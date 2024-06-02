@@ -1,0 +1,23 @@
+{
+  "api": {
+    "address": "https://localhost:8200",
+    "token" : "testing123"
+  },
+  "storage": {
+    "file": {
+      "path": "/vault/file"
+    }
+  },
+  "listener": [
+    {
+      "tcp": {
+        "address": "[::]:8200",
+        "tls_disable": "false",
+        "tls_cert_file": "/vault/config/tls/tls.crt",
+        "tls_key_file": "/vault/config/tls/tls.key"
+      }
+    }
+  ],
+  "ui": true,
+  "disable_mlock": true
+}

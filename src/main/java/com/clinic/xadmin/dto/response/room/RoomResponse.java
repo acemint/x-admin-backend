@@ -1,5 +1,6 @@
-package com.clinic.xadmin.dto.response.patient;
+package com.clinic.xadmin.dto.response.room;
 
+import com.clinic.xadmin.dto.response.member.MemberResponse;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,15 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PatientResponse {
+public class RoomResponse {
 
   private String code;
-  private String firstName;
-  private String lastName;
-  private Integer age;
-  private String gender;
-  private String emailAddress;
-  private String address;
-  private String phoneNumber;
+  private String name;
+  private String description;
 
 }

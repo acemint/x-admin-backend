@@ -13,7 +13,7 @@ public interface PatientControllerDocs {
       + "`pageSize`: the size of data requested per page<br><br>"
       + "Role Allowed: All Authenticated User";
 
-  String SEARCH_PATIENT_SUMMARY = "Get patient IHS Code from Satu Sehat";
+  String SEARCH_PATIENT_SUMMARY = "[`DEPRECATED`] Get patient IHS Code from Satu Sehat";
   String SEARCH_PATIENT_DESCRIPTION = "Available searchBy are: " + "\"nik\", \"mother-nik\", \"description\", " + "<br>"
       + "Conditions: <br>"
       + "when searching by NIK / mother's NIK, will only return 1<br>"

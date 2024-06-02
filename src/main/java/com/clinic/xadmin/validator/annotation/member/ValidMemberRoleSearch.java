@@ -1,6 +1,7 @@
-package com.clinic.xadmin.validator.annotation;
+package com.clinic.xadmin.validator.annotation.member;
 
 import com.clinic.xadmin.constant.member.MemberRole;
+import com.clinic.xadmin.controller.patient.PatientControllerSpecialValue;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -20,30 +21,25 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({TYPE, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
-@Constraint(validatedBy = ValidRegisterManagerRole.Validator.class)
+@Constraint(validatedBy = ValidMemberRoleSearch.Validator.class)
 @Documented
-public @interface ValidRegisterManagerRole {
+public @interface ValidMemberRoleSearch {
 
-  String message() default "invalid role creation: ${validatedValue}";
+  String message() default "invalid role: ${validatedValue} not found";
 
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};
 
 
-  class Validator implements ConstraintValidator<ValidRegisterManagerRole, String> {
-
-    private static final String[] VALID_ROLE_TO_REGISTER = {
-        MemberRole.ROLE_CLINIC_ADMIN,
-    };
+  class Validator implements ConstraintValidator<ValidMemberRoleSearch, String> {
 
     @Override
     public boolean isValid(String role, ConstraintValidatorContext context) {
       if (Objects.isNull(role)) {
         return true;
       }
-
-      if (!Arrays.stream(VALID_ROLE_TO_REGISTER).toList().contains(role)) {
+      if (!MemberRole.ALL_ROLES.contains(role)) {
         return false;
       }
       return true;

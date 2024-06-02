@@ -1,12 +1,48 @@
-version: '1'
+version: "3"
 services:
+  x-admin-backend-app:
+    image: ghcr.io/acemint/x-admin-backend:main
+    container_name: x-admin-backend-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/x-admin-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin123
+      SPRING_CLOUD_VAULT_URI: https://localhost:8200
+      SPRING_CLOUD_VAULT_AUTHENTICATION: testing123
+      SATU_SEHAT_PRODUCTION_ENVIRONMENT_NAME: staging
+    ports:
+      - "8080:8080"
   postgresql:
     image: docker.io/postgres:14-alpine
     container_name: x-admin-db
-    restart: always
     environment:
       POSTGRES_DB: x-admin-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5432:5432"
+  vault:
+    image: docker.io/hashicorp/vault:1.16
+    container_name: x-admin-vault
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ./config/vault/:/vault/config
+      - vault_file:/vault/file
+      - vault_logs:/vault/logs
+      - vault_tls:/vault/tls
+    ports:
+      - "8200:8200"
+    entrypoint: vault server -config=/vault/config/vault.json
+
+volumes:
+  postgres_data:
+    external: true
+  vault_file:
+    external: true
+  vault_logs:
+    external: true
+  vault_tls:
+    external: true
